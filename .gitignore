@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.key
+*.pem
+
+# IDE and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Generated outputs and runtime files
+outputs/
+runs/
+logs/
+.cache/
+cache/
+tmp/
+temp/
+
+# Models and checkpoints
+checkpoints/
+weights/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.bin
+*.safetensors
+
+# Dataset and archives
+data/
+*.zip
+
+# Notebook-generated files
+.ipynb_checkpoints/
+
