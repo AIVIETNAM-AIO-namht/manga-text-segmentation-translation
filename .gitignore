@@ -45,3 +45,4 @@ data/
 # Notebook-generated files
 .ipynb_checkpoints/
 
+.specify/
