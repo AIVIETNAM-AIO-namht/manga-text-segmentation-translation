@@ -1,0 +1,28 @@
+{
+  "method": "manga-text-segmentation",
+  "total_pages": 390,
+  "success_count": 390,
+  "failed_count": 0,
+  "iou": {
+    "mean": 0.7530751052563229,
+    "std": 0.14428455230301032
+  },
+  "precision": {
+    "mean": 0.8634515006805096,
+    "std": 0.1189766130403735
+  },
+  "recall": {
+    "mean": 0.8546848687337262,
+    "std": 0.13457851969366177
+  },
+  "f1": {
+    "mean": 0.849942152891167,
+    "std": 0.11382587688410231
+  },
+  "inference_time_seconds": {
+    "mean": 0.5999941868659777,
+    "std": 0.04639840752993265
+  },
+  "device": "cuda",
+  "checkpoint_strategy": "single-fold-fallback (fold.0 only)"
+}
