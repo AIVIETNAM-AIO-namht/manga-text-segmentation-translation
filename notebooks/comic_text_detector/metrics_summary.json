@@ -1,0 +1,21 @@
+{
+  "method": "comic-text-detector",
+  "total_valid_pages": 390,
+  "successful_pages": 390,
+  "failed_pages": 0,
+  "metrics_mean": {
+    "iou": 0.142,
+    "precision": 0.3372,
+    "recall": 0.1896,
+    "f1": 0.2297
+  },
+  "metrics_std": {
+    "iou": 0.1255,
+    "precision": 0.2388,
+    "recall": 0.1567,
+    "f1": 0.1752
+  },
+  "average_inference_time_seconds": 0.3813,
+  "total_inference_time_seconds": 148.7,
+  "device": "cuda"
+}

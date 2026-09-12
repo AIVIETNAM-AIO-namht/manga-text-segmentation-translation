@@ -1,0 +1,30 @@
+{
+  "image_id": "AisazuNihaIrarenai/001",
+  "method": "comic-text-detector",
+  "repository": "https://github.com/Ajatt-Tools/comic_text_detector",
+  "commit": "e958d8b4a7461528e8df8aa8156e3928b57b2fc6",
+  "checkpoint": "comictextdetector.pt",
+  "input_size": [
+    1654,
+    1170
+  ],
+  "output_size": [
+    1654,
+    1170
+  ],
+  "preprocessing": [
+    "letterbox_1024x1024_stride64",
+    "scale_1_div_255"
+  ],
+  "postprocessing": [
+    "sigmoid_threshold_0.235",
+    "unpad_and_crop",
+    "resize_nearest_to_aligned_space"
+  ],
+  "threshold": 0.235,
+  "alignment": "spec-001-aligned-space",
+  "device": "cuda",
+  "inference_time_seconds": 0.7882,
+  "status": "success",
+  "error": null
+}
