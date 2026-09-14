@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Manifest",
+  "description": "Deterministic index of valid image-mask pairs (FR-004, FR-005). Ordered by (manga, stem).",
+  "type": "object",
+  "required": ["run_id", "pairs"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "pairs": {
+      "type": "array",
+      "minItems": 390,
+      "maxItems": 390,
+      "items": {
+        "type": "object",
+        "required": ["manga", "stem", "raw_path", "mask_path", "mask_encoding"],
+        "properties": {
+          "manga": { "type": "string" },
+          "stem": { "type": "string", "pattern": "^[0-9]{3}$" },
+          "raw_path": { "type": "string" },
+          "mask_path": { "type": "string" },
+          "mask_encoding": {
+            "type": "string",
+            "enum": ["magenta-black", "magenta-only", "near-black-only", "all-white-empty"]
+          }
+        }
+      }
+    }
+  }
+}

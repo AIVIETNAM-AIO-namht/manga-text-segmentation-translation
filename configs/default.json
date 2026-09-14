@@ -1,0 +1,27 @@
+{
+  "dataset": {
+    "raw_root": "data/raw/Manga109s_released_2026_05_21/images",
+    "gt_root": "data/groundtruth/post-processed"
+  },
+  "output_root": "outputs/segmentation",
+  "run_id": "default",
+  "alignment": {
+    "strategy": "crop-topleft"
+  },
+  "preprocessing": {
+    "denoise": "none"
+  },
+  "methods": [
+    {"name": "otsu", "params": {"blur_ksize": 5}},
+    {"name": "adaptive", "params": {"block_size": 35, "c": 5}},
+    {"name": "mser", "params": {}},
+    {"name": "edges", "params": {"low": 50, "high": 150}},
+    {"name": "components", "params": {"min_area": 50, "max_aspect_ratio": 20.0}},
+    {"name": "morphology", "params": {"kernel": 3, "open_iter": 1, "close_iter": 1}}
+  ],
+  "metrics": ["iou", "precision", "recall", "f1"],
+  "visualization": {
+    "mode": "first-N",
+    "n": 20
+  }
+}

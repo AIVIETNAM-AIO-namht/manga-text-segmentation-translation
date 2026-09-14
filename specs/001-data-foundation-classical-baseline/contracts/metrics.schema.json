@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PerImageMetrics",
+  "description": "Per-image metric rows + per-method summary (FR-027..FR-031). No Pixel Accuracy field exists by design.",
+  "type": "object",
+  "required": ["run_id", "rows", "summaries"],
+  "properties": {
+    "run_id": { "type": "string" },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["manga", "stem", "method", "iou", "precision", "recall", "f1", "tp", "fp", "fn", "inference_time_seconds"],
+        "properties": {
+          "manga": { "type": "string" },
+          "stem": { "type": "string" },
+          "method": { "type": "string" },
+          "iou": { "type": "number", "minimum": 0, "maximum": 1 },
+          "precision": { "type": "number", "minimum": 0, "maximum": 1 },
+          "recall": { "type": "number", "minimum": 0, "maximum": 1 },
+          "f1": { "type": "number", "minimum": 0, "maximum": 1 },
+          "tp": { "type": "integer", "minimum": 0 },
+          "fp": { "type": "integer", "minimum": 0 },
+          "fn": { "type": "integer", "minimum": 0 },
+          "inference_time_seconds": { "type": "number", "minimum": 0 }
+        }
+      }
+    },
+    "summaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["method", "n_images", "mean_iou", "std_iou", "mean_precision", "mean_recall", "mean_f1", "mean_time_seconds"],
+        "properties": {
+          "method": { "type": "string" },
+          "n_images": { "type": "integer", "minimum": 0 },
+          "mean_iou": { "type": "number", "minimum": 0, "maximum": 1 },
+          "std_iou": { "type": "number", "minimum": 0 },
+          "mean_precision": { "type": "number", "minimum": 0, "maximum": 1 },
+          "mean_recall": { "type": "number", "minimum": 0, "maximum": 1 },
+          "mean_f1": { "type": "number", "minimum": 0, "maximum": 1 },
+          "mean_time_seconds": { "type": "number", "minimum": 0 }
+        }
+      }
+    }
+  }
+}
