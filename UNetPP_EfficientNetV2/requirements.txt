@@ -1,0 +1,11 @@
+torch
+torchvision
+opencv-python
+numpy
+albumentations==2.0.8
+segmentation-models-pytorch==0.5.0
+timm==1.0.29
+huggingface-hub
+Pillow
+pandas
+matplotlib
