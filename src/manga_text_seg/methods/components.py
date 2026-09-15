@@ -17,7 +17,6 @@ class ComponentsMethod(BaseSegmentationMethod):
     """Binary segmentation via Otsu binarization + component area/aspect filter."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         self._min_area = float(config.get("min_area", 50))
         self._max_aspect_ratio = float(config.get("max_aspect_ratio", 20.0))
         if self._min_area < 0:

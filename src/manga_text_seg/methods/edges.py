@@ -16,7 +16,6 @@ class EdgesMethod(BaseSegmentationMethod):
     """Binary segmentation via Canny edges, dilation, and contour filling."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         self._low = int(config.get("low", 50))
         self._high = int(config.get("high", 150))
         if self._low < 0 or self._high < self._low:

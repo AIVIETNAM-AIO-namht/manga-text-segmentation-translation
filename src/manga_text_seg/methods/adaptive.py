@@ -18,7 +18,6 @@ class AdaptiveMethod(BaseSegmentationMethod):
     """Binary segmentation via Gaussian adaptive thresholding."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         self._block_size = int(config.get("block_size", 35))
         self._c = int(config.get("c", 5))
         if self._block_size % 2 == 0:

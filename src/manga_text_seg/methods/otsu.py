@@ -16,7 +16,6 @@ class OtsuMethod(BaseSegmentationMethod):
     """Binary segmentation via Otsu thresholding, with optional Gaussian blur."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         self._blur_ksize = int(config.get("blur_ksize", 5))
         if self._blur_ksize % 2 == 0:
             raise ValueError(f"otsu: blur_ksize must be odd, got {self._blur_ksize}")

@@ -17,7 +17,6 @@ class MserMethod(BaseSegmentationMethod):
     """Binary segmentation via MSER region detection + convex-hull filling."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         # OpenCV 5.0.0's default min_diversity=0.2 discards clean, low-diversity
         # text regions — verified empirically in this environment: flat discs and
         # putText glyphs both yield 0 regions under stock defaults, but are

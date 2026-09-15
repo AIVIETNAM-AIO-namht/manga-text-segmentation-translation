@@ -23,7 +23,6 @@ class MorphologyMethod(BaseSegmentationMethod):
     """Binary segmentation via Otsu binarization + opening/closing."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         self._kernel_size = int(config.get("kernel", 3))
         self._open_iter = int(config.get("open_iter", 1))
         self._close_iter = int(config.get("close_iter", 1))

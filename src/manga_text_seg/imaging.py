@@ -100,9 +100,3 @@ def save_mask(path: Path, mask: np.ndarray) -> None:
     """Write a mask to disk as PNG (lossless)."""
     path.parent.mkdir(parents=True, exist_ok=True)
     cv2.imwrite(str(path), mask)
-
-
-def save_raw(path: Path, img: np.ndarray) -> None:
-    """Write a grayscale image to disk as PNG."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    cv2.imwrite(str(path), img)

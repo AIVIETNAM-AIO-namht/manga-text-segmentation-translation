@@ -22,7 +22,6 @@ class PipelineMethod(BaseSegmentationMethod):
     """Binary segmentation by chaining registered methods in sequence."""
 
     def __init__(self, config: dict) -> None:
-        self._config = config
         stages = config.get("stages") or DEFAULT_STAGES
         if not isinstance(stages, list):
             raise ValueError(
