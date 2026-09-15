@@ -1,5 +1,25 @@
 # Deliverable: Manga-Text-Segmentation (Method A)
 
+> ## ⚠️ BẢN NÀY KHÔNG ĐẠT CHUẨN — ĐỪNG COPY LÀM MẪU
+>
+> Audit ngày 2026-09-15 đối chiếu spec 002: đây là **bản chạy thăm dò**, không phải kết quả benchmark
+> hợp lệ. IoU 0.7531 **không so sánh được với bất cứ thứ gì**, vì hai lý do độc lập:
+>
+> 1. **FR-013a** — chỉ dùng 1 checkpoint (`fold.0`) cho cả 390 page thay vì LOFO 5 checkpoint.
+>    Theo đúng câu chữ FR-013a, kết quả này phải được báo `unavailable` kèm lý do, **không** được
+>    công bố như một con số.
+> 2. **GT convention khác Spec 001** — notebook dùng `~np.all(gt_rgb == 255)` ("không trắng = text"),
+>    Spec 001 dùng `normalize_mask` (KMeans k=2, cluster ít pixel hơn = text). Đo trên cả 390 page:
+>    **308 page cho ra mask khác nhau**, IoU giữa hai định nghĩa GT xuống tới 0.015.
+>    README này **không** khai báo điểm khác biệt này — người đọc sẽ tưởng hai bên khớp nhau.
+>
+> **Nếu bạn là teammate B/C: đọc `ONBOARDING.md` §6, §7, §9 đã cập nhật, rồi làm theo đó.**
+> Các mục dưới đây chỉ giữ lại để tham khảo cấu trúc notebook, không phải để bắt chước kết luận.
+>
+> Cụ thể bản này **sai** ở: metrics tự tính trong runner (FR-057), prediction masks để trên Drive
+> không commit (FR-036/043), metadata thiếu checksum/license/package versions/seed/timestamp
+> (FR-056), tự dựng manifest (FR-001/002/054/054a), device chỉ ghi `"cuda"` (FR-060).
+
 ## Model
 - Kiến trúc: U-Net, backbone ResNet34 (fastai `unet_learner`).
 - Repository: https://github.com/juvian/Manga-Text-Segmentation

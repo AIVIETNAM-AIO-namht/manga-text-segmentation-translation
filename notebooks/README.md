@@ -33,24 +33,33 @@ Mỗi notebook nên bao gồm:
 
 - thông tin model và repository;
 - commit/version;
-- checkpoint source;
+- checkpoint source + checksum;
+- license của code và của weights;
 - environment và package versions;
-- cách lấy hoặc mount dataset;
-- cách chạy thử một vài page;
+- cách lấy page list do project phát (không tự dựng manifest);
+- cách mount dataset;
+- cách chạy full 390 page và kiểm tra output trên đường đi;
 - cách chạy benchmark;
 - cách xuất prediction masks;
 - cách xuất metadata sidecar;
-- cách tính hoặc xuất metrics;
 - cách ghi nhận lỗi;
 - cách đóng gói deliverables.
+
+**Không tính metrics trong notebook.** Metrics do project chính tính bằng quy trình dùng chung
+(FR-057). Xem `ONBOARDING.md` §7.
+
+**Không đọc ground-truth khi chạy benchmark**, và **không** đưa ground-truth vào visualization hay
+bất kỳ deliverable nào. Runner nhận ảnh, không nhận đáp án. Xem `ONBOARDING.md` §3 và §8.
 
 ## Không commit vào repository
 
 - dataset;
 - checkpoint/weights;
 - API key hoặc secret;
-- toàn bộ output ảnh lớn;
-- cache model;
+- ảnh trung gian, ảnh debug, cache model;
 - file environment chứa secret.
+
+**Prediction masks thì PHẢI commit** — đó là deliverable chính, không phải "output ảnh lớn". Mask
+PNG nhị phân nén rất tốt. Xem `ONBOARDING.md` §9.
 
 Chi tiết output contract và checklist bàn giao nằm trong `ONBOARDING.md`.
