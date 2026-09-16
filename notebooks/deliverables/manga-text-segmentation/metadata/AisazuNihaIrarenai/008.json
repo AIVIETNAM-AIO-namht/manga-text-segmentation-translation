@@ -1,0 +1,57 @@
+{
+  "image_id": "AisazuNihaIrarenai/008",
+  "page_list_identity": "39a6a4f8c365ccda47804233309f072ea01d5d5a571aa7f1c7c2235f4fdf3e6a",
+  "input_image_identity": "0724ec0bbda677c67911527a8c88f0ab14bf88f2b228da13bcff70689dbb16fa",
+  "method": "manga-text-segmentation",
+  "repository": "https://github.com/juvian/Manga-Text-Segmentation",
+  "commit": "de8f148c78978d70ad0e0ae3242566da6d70f3a5",
+  "code_license": "MIT",
+  "checkpoint": {
+    "name": "model.pkl",
+    "source": "https://github.com/juvian/Manga-Text-Segmentation/releases/download/v1.0/fold.0.-.final.refined.model.2.pkl",
+    "size_bytes": 344290372,
+    "sha256": "fa1d074002955c66f7df32ff60f6602d4aa21f1e1c1ca158dcb852b7e9eeb623",
+    "weight_license": "MIT (suy luận: repo license MIT, không có license riêng công bố cho release assets — chưa có xác nhận tường minh từ tác giả cho riêng weights)",
+    "loaded_evidence": "sha256(first_layer_weights)=e372494cb16df1fd...; total_params=41221068"
+  },
+  "fold_attribution": "fold_0",
+  "checkpoint_strategy": "single-fold-fallback (fold.0 only) — LOFO 5-checkpoint chưa triển khai, quyết định của runner do giới hạn thời gian/băng thông, chờ nhóm trưởng duyệt lại",
+  "input_size": [
+    1654,
+    1170
+  ],
+  "model_raw_output_size": [
+    1654,
+    1170
+  ],
+  "output_size": [
+    1654,
+    1170
+  ],
+  "preprocessing": [
+    "ImageNet mean/std normalization (fastai default)",
+    "internal resize/pad theo fastai transform"
+  ],
+  "postprocessing": [
+    "sigmoid threshold @ 0.5",
+    "pad/crop to canonical 1654x1170"
+  ],
+  "threshold": 0.5,
+  "alignment": "spec-001-aligned-space",
+  "device": {
+    "type": "cuda",
+    "name": "Tesla T4"
+  },
+  "interpreter": "Python 3.8.20",
+  "packages": {
+    "torch": "1.4.0",
+    "fastai": "1.0.60"
+  },
+  "seed": 42,
+  "run_timestamp": "2026-09-16T10:04:38.100886+00:00",
+  "inference_time_seconds": 0.5271461009979248,
+  "preprocessing_time_seconds": 0.004068613052368164,
+  "postprocessing_time_seconds": 0.020890474319458008,
+  "status": "success",
+  "error": null
+}
