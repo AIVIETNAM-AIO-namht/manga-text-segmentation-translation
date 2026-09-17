@@ -1,0 +1,53 @@
+{
+  "image_id": "AisazuNihaIrarenai/069",
+  "page_list_identity": "spec-002-canonical-manifest-v1",
+  "input_image_identity": "5c6288e9582fef64b3735e5b7707415a3776de5950b86fcdca5bc708424a85a1",
+  "method": "comic-text-detector",
+  "repository": "https://github.com/Ajatt-Tools/comic_text_detector",
+  "commit": "e958d8b4a7461528e8df8aa8156e3928b57b2fc6",
+  "code_license": "GPL-3.0",
+  "checkpoint": {
+    "name": "comictextdetector.pt",
+    "source": "https://github.com/zyddnys/manga-image-translator/releases/download/beta-0.2.1/comictextdetector.pt",
+    "size_bytes": 79948869,
+    "sha256": "1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb",
+    "weight_license": "GPL-3.0",
+    "loaded_evidence": "verified size=79948869 sha256=1f90fa60aeeb1eb8..."
+  },
+  "input_size": [
+    1654,
+    1170
+  ],
+  "output_size": [
+    1654,
+    1170
+  ],
+  "preprocessing": [
+    "letterbox_1024x1024_stride64",
+    "scale_1_div_255"
+  ],
+  "postprocessing": [
+    "sigmoid_threshold_0.235",
+    "unpad_and_crop",
+    "resize_nearest_to_aligned_space"
+  ],
+  "threshold": 0.235,
+  "alignment": "spec-001-aligned-space",
+  "device": {
+    "type": "cuda",
+    "name": "Tesla T4"
+  },
+  "interpreter": "Python 3.13.15",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "opencv-python": "5.0.0"
+  },
+  "seed": 42,
+  "run_timestamp": "2026-09-17T23:01:54.553054+07:00",
+  "inference_time_seconds": 0.38,
+  "preprocessing_time_seconds": 0.012,
+  "postprocessing_time_seconds": 0.008,
+  "status": "success",
+  "error": null
+}
