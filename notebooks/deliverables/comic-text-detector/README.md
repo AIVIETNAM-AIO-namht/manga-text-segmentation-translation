@@ -17,7 +17,8 @@ Tập dữ liệu huấn luyện công bố của `comic-text-detector` có trí
 
 ## Đánh giá & Metrics
 - **Quy định FR-057:** Runner **KHÔNG TÍNH VÀ KHÔNG NỘP METRICS** (`metrics_per_page.csv`, `metrics_summary.json`). Toàn bộ metrics (IoU, Precision, Recall, F1) sẽ do quy trình đánh giá dùng chung của project chính tính toán tập trung từ các prediction mask bàn giao.
-- **Tổng số trang xử lý thành công:** 140/390 trang (0 trang lỗi).
+- **Tổng số trang xử lý thành công:** 390/390 trang (0 trang lỗi).
+
 - **Thiết bị suy luận:** Tesla T4 (loại: cuda).
 - **Thời gian suy luận per-page:** Được ghi nhận chi tiết tại từng sidecar JSON (gồm `inference_time_seconds`, `preprocessing_time_seconds`, `postprocessing_time_seconds`).
 
@@ -36,9 +37,9 @@ deliverables/comic-text-detector/
 ├── README.md
 ├── requirements.txt
 ├── errors.json                 # Rỗng [] — không có trang lỗi
-├── masks/                      # 140 masks PNG 1654x1170 {0, 255}
+├── masks/                      # 390 masks PNG 1654x1170 {0, 255}
 │   └── <manga>/<page_id>.png
-├── metadata/                   # 140 metadata JSON sidecar
+├── metadata/                   # 390 metadata JSON sidecar
 │   └── <manga>/<page_id>.json
 └── visualizations/             # Ảnh minh họa không dùng GT
     ├── representative_cases.png
