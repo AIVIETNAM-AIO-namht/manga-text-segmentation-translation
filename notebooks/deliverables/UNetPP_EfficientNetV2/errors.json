@@ -1,0 +1,8 @@
+{
+  "method": "UNetPP_EfficientNetV2",
+  "run_timestamp": "2026-09-18T16:19:36.440220+00:00",
+  "page_list_source": "ground-truth name-matched discovery",
+  "page_count": 390,
+  "error_count": 0,
+  "errors": []
+}
