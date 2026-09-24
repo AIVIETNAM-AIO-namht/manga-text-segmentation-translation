@@ -301,7 +301,12 @@ Mask **không** cần đổi ở bất kỳ đâu — convention đã đúng c�
 
 ## 5. Tự soát trước khi gửi
 
-Chạy đoạn này ở gốc repo trước khi bàn giao. Nó kiểm tra đúng những gì cửa FR-058 kiểm tra:
+Chạy đoạn này ở gốc repo trước khi bàn giao. Nó kiểm tra đúng những gì cửa FR-058 kiểm tra.
+
+> Đánh số ở đây theo **code** (`receipt.validate_handoff`), không theo bảng trong
+> `returned-result.md`. Code chạy 7 check: bảng contract liệt kê 6 và gộp `deviation` vào rule 7 dạng
+> văn xuôi, nên check `fold_attribution` là **#7** trong code nhưng là **#6** trong bảng. Cùng một
+> check, chỉ khác cách đếm — đừng để lệch số làm bạn tưởng thiếu bước.
 
 ```python
 import json, pathlib
@@ -402,11 +407,24 @@ Những thứ này đúng rồi và việc "sửa" chúng sẽ làm hỏng kết
 
 ## 7. Sau khi gửi lại
 
-Project sẽ chạy `manga-text-seg admit --run <run_id> --method <method> <hand-off>`. Nếu qua cả sáu
+Project sẽ chạy `manga-text-seg admit --run <run_id> --method <method> <hand-off>`. Nếu qua hết các
 check, mask được copy vào `deliverables/<run_id>/<method>/` và **chỉ khi đó** mới chấm điểm — trên
 máy project, bằng quy trình dùng chung.
 
 Hiện tại **chưa method nào được admit**, và cả bốn method trong `benchmark/availability.json` đang là
-`unavailable` vì máy project không có checkpoint nào. Nghĩa là kể cả hand-off hợp lệ cũng chưa chấm
-được cho tới khi checkpoint có mặt. Đó là việc của project, không phải của runner — nhưng nếu bạn có
-sẵn checkpoint, báo lại để đẩy tiến độ.
+`unavailable` vì máy project không có checkpoint nào.
+
+**Nhưng đó không phải điều kiện để được chấm.** `availability.json` là pre-flight cho `run`/`sweep`
+— nó trả lời "máy này có chạy được model không". Còn `admit` chỉ đọc page list, identity record,
+manifest và mask bạn trả về; nó không import `availability` và không mở file checkpoint nào. Metrics
+được tính từ ground-truth cộng với mask bạn gửi (FR-057), và inference đã xảy ra trên máy bạn rồi.
+
+Hệ quả cụ thể:
+
+- **B và C chấm được ngay** khi hand-off hợp lệ — không phải tải weight nào cả. (C còn phải cắt về
+  đúng 390 page trước đã, xem mục 3.)
+- **A** vẫn cần đủ 5 checkpoint, nhưng chỉ vì phải **chạy lại inference**. Riêng check
+  `fold_attribution` thì không mở checkpoint — nó suy bảng fold từ seed công bố rồi so với sidecar.
+
+Nếu bạn có sẵn checkpoint, báo lại — nó giúp Method A chạy lại, **không** phải điều kiện để B/C được
+chấm.
