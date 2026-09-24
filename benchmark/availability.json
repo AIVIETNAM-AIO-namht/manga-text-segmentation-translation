@@ -1,0 +1,122 @@
+{
+  "verdicts": [
+    {
+      "method": "manga-text-segmentation",
+      "verdict": "unavailable",
+      "reason": "checkpoint fold.0.-.final.refined.model.2.pkl is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.0.-.final.refined.model.2.pkl; checkpoint fold.1.-.final.refined.model.2.pkl is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.1.-.final.refined.model.2.pkl; checkpoint fold.2.-.final.refined.model.2.pkl is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.2.-.final.refined.model.2.pkl; checkpoint fold.3.-.final.refined.model.2.pkl is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.3.-.final.refined.model.2.pkl; checkpoint fold.4.-.final.refined.model.2.pkl is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.4.-.final.refined.model.2.pkl; no local checkout is recorded for https://github.com/juvian/Manga-Text-Segmentation, so the pinned revision de8f148c78978d70ad0e0ae3242566da6d70f3a5 cannot be confirmed here",
+      "environment": {
+        "interpreter": "3.10.1",
+        "device": {
+          "type": "cpu",
+          "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+        },
+        "packages": {}
+      },
+      "checkpoint_status": {
+        "present": false,
+        "missing_artefact": "fold.0.-.final.refined.model.2.pkl",
+        "obtain_from": "https://github.com/juvian/Manga-Text-Segmentation",
+        "size_bytes": 344290372
+      },
+      "repository_status": {
+        "present": false,
+        "revision_matches": false,
+        "detail": "no local checkout is recorded for https://github.com/juvian/Manga-Text-Segmentation, so the pinned revision de8f148c78978d70ad0e0ae3242566da6d70f3a5 cannot be confirmed here"
+      },
+      "dependency_status": {
+        "satisfied": true,
+        "conflict": null
+      },
+      "license_status": {
+        "code": "MIT",
+        "weights": "MIT",
+        "restriction": "MIT — the identifier is recorded as declared by the upstream project, not as a determination that reuse is permitted here"
+      },
+      "remediation": [
+        "obtain fold.0.-.final.refined.model.2.pkl (344290372 bytes) from https://github.com/juvian/Manga-Text-Segmentation and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.0.-.final.refined.model.2.pkl",
+        "obtain fold.1.-.final.refined.model.2.pkl (344289930 bytes) from https://github.com/juvian/Manga-Text-Segmentation and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.1.-.final.refined.model.2.pkl",
+        "obtain fold.2.-.final.refined.model.2.pkl (344289982 bytes) from https://github.com/juvian/Manga-Text-Segmentation and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.2.-.final.refined.model.2.pkl",
+        "obtain fold.3.-.final.refined.model.2.pkl (344289958 bytes) from https://github.com/juvian/Manga-Text-Segmentation and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.3.-.final.refined.model.2.pkl",
+        "obtain fold.4.-.final.refined.model.2.pkl (344289948 bytes) from https://github.com/juvian/Manga-Text-Segmentation and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\manga-text-segmentation\\fold.4.-.final.refined.model.2.pkl",
+        "clone https://github.com/juvian/Manga-Text-Segmentation at revision de8f148c78978d70ad0e0ae3242566da6d70f3a5, point repository.path at the checkout, and re-check"
+      ],
+      "checked_at": "2026-09-24T03:28:57.365644+00:00"
+    },
+    {
+      "method": "comic-text-detector",
+      "verdict": "unavailable",
+      "reason": "checkpoint comictextdetector.pt is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\comic-text-detector\\comictextdetector.pt; no local checkout is recorded for https://github.com/dmMaze/comic-text-detector, so the pinned revision 440b978563c71b758e31aaa315d100faba1efa2f cannot be confirmed here",
+      "environment": {
+        "interpreter": "3.10.1",
+        "device": {
+          "type": "cpu",
+          "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+        },
+        "packages": {}
+      },
+      "checkpoint_status": {
+        "present": false,
+        "missing_artefact": "comictextdetector.pt",
+        "obtain_from": "https://github.com/dmMaze/comic-text-detector",
+        "size_bytes": 79948869
+      },
+      "repository_status": {
+        "present": false,
+        "revision_matches": false,
+        "detail": "no local checkout is recorded for https://github.com/dmMaze/comic-text-detector, so the pinned revision 440b978563c71b758e31aaa315d100faba1efa2f cannot be confirmed here"
+      },
+      "dependency_status": {
+        "satisfied": true,
+        "conflict": null
+      },
+      "license_status": {
+        "code": "GPL-3.0",
+        "weights": "GPL-3.0",
+        "restriction": "GPL-3.0 — the identifier is recorded as declared by the upstream project, not as a determination that reuse is permitted here"
+      },
+      "remediation": [
+        "obtain comictextdetector.pt (79948869 bytes) from https://github.com/dmMaze/comic-text-detector and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\comic-text-detector\\comictextdetector.pt",
+        "clone https://github.com/dmMaze/comic-text-detector at revision 440b978563c71b758e31aaa315d100faba1efa2f, point repository.path at the checkout, and re-check"
+      ],
+      "checked_at": "2026-09-24T03:28:57.366601+00:00"
+    },
+    {
+      "method": "unetpp-efficientnetv2",
+      "verdict": "unavailable",
+      "reason": "checkpoint model.pth is not present at D:\\UTE\\DIPR\\Project\\checkpoints\\unetpp-efficientnetv2\\model.pth; no local checkout is recorded for https://github.com/ContemporaryCat/Manga-Text-Segmentation, so the pinned revision 6cfa907b0721faa398054be527de98171746ef1b cannot be confirmed here",
+      "environment": {
+        "interpreter": "3.10.1",
+        "device": {
+          "type": "cpu",
+          "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+        },
+        "packages": {}
+      },
+      "checkpoint_status": {
+        "present": false,
+        "missing_artefact": "model.pth",
+        "obtain_from": "https://github.com/ContemporaryCat/Manga-Text-Segmentation",
+        "size_bytes": 216911417
+      },
+      "repository_status": {
+        "present": false,
+        "revision_matches": false,
+        "detail": "no local checkout is recorded for https://github.com/ContemporaryCat/Manga-Text-Segmentation, so the pinned revision 6cfa907b0721faa398054be527de98171746ef1b cannot be confirmed here"
+      },
+      "dependency_status": {
+        "satisfied": true,
+        "conflict": null
+      },
+      "license_status": {
+        "code": "none",
+        "weights": "none",
+        "restriction": "no licence is declared upstream for the code and weights; redistribution and reuse are unverified, so this is recorded as declared rather than read as permission"
+      },
+      "remediation": [
+        "obtain model.pth (216911417 bytes) from https://github.com/ContemporaryCat/Manga-Text-Segmentation and place it at D:\\UTE\\DIPR\\Project\\checkpoints\\unetpp-efficientnetv2\\model.pth",
+        "clone https://github.com/ContemporaryCat/Manga-Text-Segmentation at revision 6cfa907b0721faa398054be527de98171746ef1b, point repository.path at the checkout, and re-check"
+      ],
+      "checked_at": "2026-09-24T03:28:57.367640+00:00"
+    }
+  ]
+}

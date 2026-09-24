@@ -1,0 +1,2755 @@
+{
+  "generated_at_run": "default",
+  "aligned_size": [
+    1654,
+    1170
+  ],
+  "alignment": "crop-topleft",
+  "mask_convention": {
+    "dtype": "uint8",
+    "channels": 1,
+    "values": [
+      0,
+      255
+    ],
+    "text": 255,
+    "background": 0
+  },
+  "image_bundle": {
+    "root": "dist/images",
+    "identity_record": "image-identity.json"
+  },
+  "pages": [
+    {
+      "manga": "ARMS",
+      "stem": "000",
+      "image_id": "ARMS/000",
+      "image_ref": "ARMS/000.jpg",
+      "input_image_identity": "df100de06cbcfd9aa4a8836e5c8288e5477707859d3e045f673e12ae18523842"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "001",
+      "image_id": "ARMS/001",
+      "image_ref": "ARMS/001.jpg",
+      "input_image_identity": "41af52e737bf340ec41a51cf68f6d630f363281802e115a5a003c0c3b80cb177"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "002",
+      "image_id": "ARMS/002",
+      "image_ref": "ARMS/002.jpg",
+      "input_image_identity": "b86a30c47bc2e5de2a487dc16df4fc5e63996ab1b494c4eef76bcbaff693b1bf"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "003",
+      "image_id": "ARMS/003",
+      "image_ref": "ARMS/003.jpg",
+      "input_image_identity": "36c8e700d5b856dc2c03f7dcd7ffbff7ba2842ca63ea6b0df917301e3c706b00"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "004",
+      "image_id": "ARMS/004",
+      "image_ref": "ARMS/004.jpg",
+      "input_image_identity": "95ff01127d3ba3ec0c621ee2f7519f25c4eca3bf7b1c1b597bb946733c6cf526"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "005",
+      "image_id": "ARMS/005",
+      "image_ref": "ARMS/005.jpg",
+      "input_image_identity": "4fca375db1d252ce78c6cd4112863ce7b558e136b0a0a01bb951687c8e5e171f"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "006",
+      "image_id": "ARMS/006",
+      "image_ref": "ARMS/006.jpg",
+      "input_image_identity": "f8f9a0ae3c4d5bb3347f60978a8dfcb92dcbe359efe06560792e5a1394be74d5"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "007",
+      "image_id": "ARMS/007",
+      "image_ref": "ARMS/007.jpg",
+      "input_image_identity": "9edb961e9f919f934954fa0572f1d7e060156f2f4a314b0615204711a8bd9c21"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "008",
+      "image_id": "ARMS/008",
+      "image_ref": "ARMS/008.jpg",
+      "input_image_identity": "2943449e2ede3bc179bf0f4f81c54e64fa5f017e9aae1b99a5ebd3d044ab6582"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "009",
+      "image_id": "ARMS/009",
+      "image_ref": "ARMS/009.jpg",
+      "input_image_identity": "cd415edb3468a87f2bc9f3d4c8fd65940b8e7a17d310b94ff21a27896a0974d6"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "000",
+      "image_id": "AisazuNihaIrarenai/000",
+      "image_ref": "AisazuNihaIrarenai/000.jpg",
+      "input_image_identity": "9cbb21f97c53fd850fb631a9f0a185ab83160590c35bb58cb3cc2306520f826b"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "001",
+      "image_id": "AisazuNihaIrarenai/001",
+      "image_ref": "AisazuNihaIrarenai/001.jpg",
+      "input_image_identity": "cb704d45a5f57dd1647b06ab66a822df44bb412c9bcf707820a16b9ddc9d1f78"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "002",
+      "image_id": "AisazuNihaIrarenai/002",
+      "image_ref": "AisazuNihaIrarenai/002.jpg",
+      "input_image_identity": "3458a5f667e665b26931734ad481a33ddca02b60abf31ad42aaa8811dd09e010"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "003",
+      "image_id": "AisazuNihaIrarenai/003",
+      "image_ref": "AisazuNihaIrarenai/003.jpg",
+      "input_image_identity": "1e69adb2d183ba31defd0c2c9752de90074957b1f0a0137afb435c78639b9253"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "004",
+      "image_id": "AisazuNihaIrarenai/004",
+      "image_ref": "AisazuNihaIrarenai/004.jpg",
+      "input_image_identity": "70d880a23fbb9aabf3b2ae0ca3d4084209b315c41242c5d99f333c42284b6ff1"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "005",
+      "image_id": "AisazuNihaIrarenai/005",
+      "image_ref": "AisazuNihaIrarenai/005.jpg",
+      "input_image_identity": "ec7d7ba0fdb8b9190d99c724d33d0c81254936a065932840dd82d6a330f8d070"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "006",
+      "image_id": "AisazuNihaIrarenai/006",
+      "image_ref": "AisazuNihaIrarenai/006.jpg",
+      "input_image_identity": "c5ef28f1f64b6fda5db3c29c2f76c9afaddd6bd78c961614e8e129991cfe5b4b"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "007",
+      "image_id": "AisazuNihaIrarenai/007",
+      "image_ref": "AisazuNihaIrarenai/007.jpg",
+      "input_image_identity": "c65e9deace7a654d147320b1514d6f3f243bbe46dc4e7ce30a5f9ae039cbe00e"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "008",
+      "image_id": "AisazuNihaIrarenai/008",
+      "image_ref": "AisazuNihaIrarenai/008.jpg",
+      "input_image_identity": "0724ec0bbda677c67911527a8c88f0ab14bf88f2b228da13bcff70689dbb16fa"
+    },
+    {
+      "manga": "AisazuNihaIrarenai",
+      "stem": "009",
+      "image_id": "AisazuNihaIrarenai/009",
+      "image_ref": "AisazuNihaIrarenai/009.jpg",
+      "input_image_identity": "7390ec520ace314f8b8e3e1b5e8a5ba0be54f675e6d9c0ba86c66a9058a12d39"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "000",
+      "image_id": "AkkeraKanjinchou/000",
+      "image_ref": "AkkeraKanjinchou/000.jpg",
+      "input_image_identity": "9b375696dea742a59d63f9f0542a6a0cfacd8715939e1981a3768736d29a0e54"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "001",
+      "image_id": "AkkeraKanjinchou/001",
+      "image_ref": "AkkeraKanjinchou/001.jpg",
+      "input_image_identity": "11e301b9a9a97a35624a96047a8320acfc2bd818cc7acc485479670d6d57d9ee"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "002",
+      "image_id": "AkkeraKanjinchou/002",
+      "image_ref": "AkkeraKanjinchou/002.jpg",
+      "input_image_identity": "bdd82dc8eec6c53adac48f08743533f6267f7cea593e8aae122eb3c78d1892e6"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "003",
+      "image_id": "AkkeraKanjinchou/003",
+      "image_ref": "AkkeraKanjinchou/003.jpg",
+      "input_image_identity": "1fcc69f0ba13bb22deb3c2fe857b4d4e1e6e8ab1cd9e0a8e9055a148af997bdb"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "004",
+      "image_id": "AkkeraKanjinchou/004",
+      "image_ref": "AkkeraKanjinchou/004.jpg",
+      "input_image_identity": "3b5d668e717d492fb3f98e1a672262147925d759d4e9b6493512aaa696b84c02"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "005",
+      "image_id": "AkkeraKanjinchou/005",
+      "image_ref": "AkkeraKanjinchou/005.jpg",
+      "input_image_identity": "6516964bfa57cfcf2f662cd7d0b077e3deef29aa7129b66fda4260ee81e594a4"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "006",
+      "image_id": "AkkeraKanjinchou/006",
+      "image_ref": "AkkeraKanjinchou/006.jpg",
+      "input_image_identity": "d16f3f3055fda45331b69dd53f362b48fe98cf17e10dedfe15dbb3c51775ad6d"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "007",
+      "image_id": "AkkeraKanjinchou/007",
+      "image_ref": "AkkeraKanjinchou/007.jpg",
+      "input_image_identity": "928d3b31119733e8a66c40eb0f7c204257c00e9f8c3db4e5086f7dbfe55826a7"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "008",
+      "image_id": "AkkeraKanjinchou/008",
+      "image_ref": "AkkeraKanjinchou/008.jpg",
+      "input_image_identity": "d0a0f0cb86fdf9e2a73d020d21e54e76634d1ba3543810727dd059c9ab81cdaf"
+    },
+    {
+      "manga": "AkkeraKanjinchou",
+      "stem": "009",
+      "image_id": "AkkeraKanjinchou/009",
+      "image_ref": "AkkeraKanjinchou/009.jpg",
+      "input_image_identity": "1b7088f67c0ea9546ea6cd02e77e177cc464dd078600e8131ae444a9aae55d32"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "000",
+      "image_id": "Akuhamu/000",
+      "image_ref": "Akuhamu/000.jpg",
+      "input_image_identity": "e2ba2a0db960ce06f75a706c73af40acb5bcf4688066eb0f0c03d38b96ec530e"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "001",
+      "image_id": "Akuhamu/001",
+      "image_ref": "Akuhamu/001.jpg",
+      "input_image_identity": "13706097cab4caf710ee1424cb6ca75d0b5bfb7cd5b5d41c8317e05de3ae8844"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "002",
+      "image_id": "Akuhamu/002",
+      "image_ref": "Akuhamu/002.jpg",
+      "input_image_identity": "b76a1e31c1344906f709fe4d379e948628b8d53556b0a4404b92cb74c6f35da4"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "003",
+      "image_id": "Akuhamu/003",
+      "image_ref": "Akuhamu/003.jpg",
+      "input_image_identity": "a6b94f99d5c3a4552c6376c799b72a7fa8c5c110e4ee0f7d00257f10dce86da1"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "004",
+      "image_id": "Akuhamu/004",
+      "image_ref": "Akuhamu/004.jpg",
+      "input_image_identity": "498b537fae9af36fa5109ec98f83fc76410f7042f06948151674543c3f9842f5"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "005",
+      "image_id": "Akuhamu/005",
+      "image_ref": "Akuhamu/005.jpg",
+      "input_image_identity": "ef1a497dcd8e850085b162ada968b6524e111d73a94093f6768aa47a3ff7fbfc"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "006",
+      "image_id": "Akuhamu/006",
+      "image_ref": "Akuhamu/006.jpg",
+      "input_image_identity": "f661e5d15cfc0b3f04a890d3db300b4b5fd1a8368752c39c046b72ae756e3dc7"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "007",
+      "image_id": "Akuhamu/007",
+      "image_ref": "Akuhamu/007.jpg",
+      "input_image_identity": "ce12a0e396cbdff5b451a2e0c60cc898164ae5cefc76ea086851358488006bf9"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "008",
+      "image_id": "Akuhamu/008",
+      "image_ref": "Akuhamu/008.jpg",
+      "input_image_identity": "41fc7390c46db60cfaee3f6d5b673094b4bbe3e126c22de1cd45f83ef97822ef"
+    },
+    {
+      "manga": "Akuhamu",
+      "stem": "009",
+      "image_id": "Akuhamu/009",
+      "image_ref": "Akuhamu/009.jpg",
+      "input_image_identity": "2bc3b8076bcd4bc8a2d0f68a433e17bf29fd24dc1e448e5ef9115d584e2e799e"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "000",
+      "image_id": "AosugiruHaru/000",
+      "image_ref": "AosugiruHaru/000.jpg",
+      "input_image_identity": "02366202a4ea42c47f48db5f203a9e7ac4772e6bafb9f4df7a76bf07157aaa89"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "001",
+      "image_id": "AosugiruHaru/001",
+      "image_ref": "AosugiruHaru/001.jpg",
+      "input_image_identity": "ad8320a22485ba5606b0c421afee10932cc90878adac6a57e92aebafaa04cd86"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "002",
+      "image_id": "AosugiruHaru/002",
+      "image_ref": "AosugiruHaru/002.jpg",
+      "input_image_identity": "d5cc6252b341edc2908de84f2729dfd3d76fcc6deb3e2e7b4cfdff51a3196eb3"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "003",
+      "image_id": "AosugiruHaru/003",
+      "image_ref": "AosugiruHaru/003.jpg",
+      "input_image_identity": "9295b8b10ac36c5c4d3071f63ed2dcfd7f80e9a3e918f21618822b2860fb17af"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "004",
+      "image_id": "AosugiruHaru/004",
+      "image_ref": "AosugiruHaru/004.jpg",
+      "input_image_identity": "0d3df6630c416bcfdb901291b43a09ed7e49e89a7487328b79ba94b86eae997c"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "005",
+      "image_id": "AosugiruHaru/005",
+      "image_ref": "AosugiruHaru/005.jpg",
+      "input_image_identity": "4be1df0b7851c13274e75078d84d765f9ae8c220fd246ae5f7af72f9e7a63c2e"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "006",
+      "image_id": "AosugiruHaru/006",
+      "image_ref": "AosugiruHaru/006.jpg",
+      "input_image_identity": "49539755faf5fe888c53e14001e49cd76b59d4555c68bd4e31475688a9b232a5"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "007",
+      "image_id": "AosugiruHaru/007",
+      "image_ref": "AosugiruHaru/007.jpg",
+      "input_image_identity": "157941658928005d93117d775aeb6c1e574b435bd6fcc4c37dc6c7f82a5352da"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "008",
+      "image_id": "AosugiruHaru/008",
+      "image_ref": "AosugiruHaru/008.jpg",
+      "input_image_identity": "d93c5f25981967c0fe2c91ca580cb53f47f14d5d0d815bc923fffc67ced0fc00"
+    },
+    {
+      "manga": "AosugiruHaru",
+      "stem": "009",
+      "image_id": "AosugiruHaru/009",
+      "image_ref": "AosugiruHaru/009.jpg",
+      "input_image_identity": "00a5fa0902cb84474debe104ba54cabd50d60eef706cd463b8818a4f87dbdff1"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "000",
+      "image_id": "AppareKappore/000",
+      "image_ref": "AppareKappore/000.jpg",
+      "input_image_identity": "81f054e6bfb5f042db9faabca902c4337e69f2b6ee8d9f6c69d2c8aa3994a2ac"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "001",
+      "image_id": "AppareKappore/001",
+      "image_ref": "AppareKappore/001.jpg",
+      "input_image_identity": "b8b44a73eecd0b77727376897260883230ad1781a9414c41dc4b2a064192f2a1"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "002",
+      "image_id": "AppareKappore/002",
+      "image_ref": "AppareKappore/002.jpg",
+      "input_image_identity": "e957e4ecfce818de9901cfaa53f510724e0a92be5404b9abba9af359924ea073"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "003",
+      "image_id": "AppareKappore/003",
+      "image_ref": "AppareKappore/003.jpg",
+      "input_image_identity": "71e211a2ae00bb8173d25e7733db71915dc84c6a5b9b1dd0db46f22512ed9d08"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "004",
+      "image_id": "AppareKappore/004",
+      "image_ref": "AppareKappore/004.jpg",
+      "input_image_identity": "1a360a8c56d4091016d203593771b8a4a9b61b32feff5377e430c93116d9ed42"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "005",
+      "image_id": "AppareKappore/005",
+      "image_ref": "AppareKappore/005.jpg",
+      "input_image_identity": "9cddceafc9fb4cb38072b2322197e463c3fca99cd94b94b688d3d2402a33a79c"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "006",
+      "image_id": "AppareKappore/006",
+      "image_ref": "AppareKappore/006.jpg",
+      "input_image_identity": "bd146b0b2fff2676b7163358a913208b2eadc2f62fc2d87517fe9be6eecbe673"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "007",
+      "image_id": "AppareKappore/007",
+      "image_ref": "AppareKappore/007.jpg",
+      "input_image_identity": "0f785713d2147886e0e64ad5bc6789d3f7187f72695821c0b3e95e4aa612add6"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "008",
+      "image_id": "AppareKappore/008",
+      "image_ref": "AppareKappore/008.jpg",
+      "input_image_identity": "2222c3387e532fa68499fd1a8d03dff144f5907b6abc5317ed048e534fecb897"
+    },
+    {
+      "manga": "AppareKappore",
+      "stem": "009",
+      "image_id": "AppareKappore/009",
+      "image_ref": "AppareKappore/009.jpg",
+      "input_image_identity": "5b07d10e63577dae1504ffdc929476b81002559ea8fa007b8345d5659a1c785d"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "000",
+      "image_id": "Arisa/000",
+      "image_ref": "Arisa/000.jpg",
+      "input_image_identity": "b357525abaa0d1fd2d061194a3eaef804e3991d70578d43102a21581e5902f86"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "001",
+      "image_id": "Arisa/001",
+      "image_ref": "Arisa/001.jpg",
+      "input_image_identity": "dd329e8797699dbd78f8c464cd5d79169a6a4dd8fc857ed3337e89251db21eda"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "002",
+      "image_id": "Arisa/002",
+      "image_ref": "Arisa/002.jpg",
+      "input_image_identity": "4f65bac37a914da48cd12a70284132f7db617ab40b59b42e2c7a9884cc738171"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "003",
+      "image_id": "Arisa/003",
+      "image_ref": "Arisa/003.jpg",
+      "input_image_identity": "dcf65217472ff6f93d8b99bb0eadf75ed1a2430099bce66ee9a70f663943223d"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "004",
+      "image_id": "Arisa/004",
+      "image_ref": "Arisa/004.jpg",
+      "input_image_identity": "d23d7e399384dfacf9bbffecb3dc0f31b26c7fa9f26c3f93423841d082b1e069"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "005",
+      "image_id": "Arisa/005",
+      "image_ref": "Arisa/005.jpg",
+      "input_image_identity": "71caf5eeaa4e7bbd4436b2ad4e98e23f99bccdb77f4f2813734b33d7f4d05fed"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "006",
+      "image_id": "Arisa/006",
+      "image_ref": "Arisa/006.jpg",
+      "input_image_identity": "9ee40b25bf5df7c6a6a4c71d1e33444a0fbee7fe86e892eeda6c767475d38d83"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "007",
+      "image_id": "Arisa/007",
+      "image_ref": "Arisa/007.jpg",
+      "input_image_identity": "99403967b8ff16c7b16433da2ada50ea34c248ab1dc998f3a3e59b14967726b4"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "008",
+      "image_id": "Arisa/008",
+      "image_ref": "Arisa/008.jpg",
+      "input_image_identity": "35e54dedccd8770d0944b55ac3cb62c6716917b8e5ec32f158821654e596c8c7"
+    },
+    {
+      "manga": "Arisa",
+      "stem": "009",
+      "image_id": "Arisa/009",
+      "image_ref": "Arisa/009.jpg",
+      "input_image_identity": "793e055bab479cb52f61c50f95e02abaf08d970784866b4140a6cf36835c3e43"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "000",
+      "image_id": "BEMADER_P/000",
+      "image_ref": "BEMADER_P/000.jpg",
+      "input_image_identity": "fd7a9121e46fb14a511d766ee8e6d93ab365f01531612b0ddd1dab7f32fc9dd2"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "001",
+      "image_id": "BEMADER_P/001",
+      "image_ref": "BEMADER_P/001.jpg",
+      "input_image_identity": "5dba9c54326ee1b2b7bafda832cd94dab30b8cb48708117ddcced694d64f27c9"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "002",
+      "image_id": "BEMADER_P/002",
+      "image_ref": "BEMADER_P/002.jpg",
+      "input_image_identity": "835facdaf88a5597e52a70ce5937e561eee8876c2f7b07f88ef2e58f50a2606e"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "003",
+      "image_id": "BEMADER_P/003",
+      "image_ref": "BEMADER_P/003.jpg",
+      "input_image_identity": "ed813ddb91c31972a97909b180c6eb33eaa64220afd53d116600113c84492a6b"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "004",
+      "image_id": "BEMADER_P/004",
+      "image_ref": "BEMADER_P/004.jpg",
+      "input_image_identity": "6209832207278072e17d7d53a1d88248af197236da631ea9b6f819badfc4f8f5"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "005",
+      "image_id": "BEMADER_P/005",
+      "image_ref": "BEMADER_P/005.jpg",
+      "input_image_identity": "96492bc8c8dd176efe759cbbece2b51c8b1642952dd8bdcd13a871785a9022dc"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "006",
+      "image_id": "BEMADER_P/006",
+      "image_ref": "BEMADER_P/006.jpg",
+      "input_image_identity": "e466ac196e99020ee4481cbe8ca8817f18f75af2b0abd3f90e88c943306f4d23"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "007",
+      "image_id": "BEMADER_P/007",
+      "image_ref": "BEMADER_P/007.jpg",
+      "input_image_identity": "dce16014f565e8a84dd572bf9112b69c58dc8186a495986538161dd2cec263b2"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "008",
+      "image_id": "BEMADER_P/008",
+      "image_ref": "BEMADER_P/008.jpg",
+      "input_image_identity": "ecbce5f962ad4ca272383f128670944451fbd6dafcc350201b1bff74104f33f0"
+    },
+    {
+      "manga": "BEMADER_P",
+      "stem": "009",
+      "image_id": "BEMADER_P/009",
+      "image_ref": "BEMADER_P/009.jpg",
+      "input_image_identity": "b039292a76ffc7d6edf764f3249055a08a8a0424685ec1bfc0317d8782d6a05c"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "000",
+      "image_id": "BakuretsuKungFuGirl/000",
+      "image_ref": "BakuretsuKungFuGirl/000.jpg",
+      "input_image_identity": "3c6eb1cfdb25ab2ae55b19f988e399a8bf6d7529b3591da179b5cc3426a17059"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "001",
+      "image_id": "BakuretsuKungFuGirl/001",
+      "image_ref": "BakuretsuKungFuGirl/001.jpg",
+      "input_image_identity": "039943407e6a6e0e89eb3241b633798914737a764429938aa916c0384f4e4b03"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "002",
+      "image_id": "BakuretsuKungFuGirl/002",
+      "image_ref": "BakuretsuKungFuGirl/002.jpg",
+      "input_image_identity": "4d30d62a3c3bf52072a7e5abdca96229f801ffb8e7b02ea871df13e2e1d70db6"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "003",
+      "image_id": "BakuretsuKungFuGirl/003",
+      "image_ref": "BakuretsuKungFuGirl/003.jpg",
+      "input_image_identity": "45d056f9300d84a4fc96ef106e61965ebd0326aba8050940bab3ab774e264ad5"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "004",
+      "image_id": "BakuretsuKungFuGirl/004",
+      "image_ref": "BakuretsuKungFuGirl/004.jpg",
+      "input_image_identity": "8fb16395399efad33f34b6eb6e2b1c2858562f4eef31e8a9076baa0b71d1570d"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "005",
+      "image_id": "BakuretsuKungFuGirl/005",
+      "image_ref": "BakuretsuKungFuGirl/005.jpg",
+      "input_image_identity": "f9834549fca5d96336e0757dd2ed8a634f8885ad6105ee29d7b65cf238741173"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "006",
+      "image_id": "BakuretsuKungFuGirl/006",
+      "image_ref": "BakuretsuKungFuGirl/006.jpg",
+      "input_image_identity": "245d22b72904d24a0218fed9c580dbb53a3a53a773c2f0ae8b4eb09cbfe41f39"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "007",
+      "image_id": "BakuretsuKungFuGirl/007",
+      "image_ref": "BakuretsuKungFuGirl/007.jpg",
+      "input_image_identity": "1be1668851b7f9609fa8dad9df6a2d1f5357d6bf2f958411ff5eb382c4b0bd4c"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "008",
+      "image_id": "BakuretsuKungFuGirl/008",
+      "image_ref": "BakuretsuKungFuGirl/008.jpg",
+      "input_image_identity": "47c8671df40dfda213e138af68b7a00ad64aa5182fe8b81b1dc1eb825b537de6"
+    },
+    {
+      "manga": "BakuretsuKungFuGirl",
+      "stem": "009",
+      "image_id": "BakuretsuKungFuGirl/009",
+      "image_ref": "BakuretsuKungFuGirl/009.jpg",
+      "input_image_identity": "d5def687f5c547c439d94dc9371250901e9274665d7c02afb8b5fe523bb11697"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "000",
+      "image_id": "BurariTessenTorimonocho/000",
+      "image_ref": "BurariTessenTorimonocho/000.jpg",
+      "input_image_identity": "1f7d568116e4f7adef3c6655bd965154571c04dd4117307b7447807aa0e6687c"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "001",
+      "image_id": "BurariTessenTorimonocho/001",
+      "image_ref": "BurariTessenTorimonocho/001.jpg",
+      "input_image_identity": "93a8f6d325ebd2e621f4dc939d449bd55a61a0907742108ecf86c78f3edb5d02"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "002",
+      "image_id": "BurariTessenTorimonocho/002",
+      "image_ref": "BurariTessenTorimonocho/002.jpg",
+      "input_image_identity": "4215bdd419cb88e33c58e4808cda69b789bb374fa54296ded337b35a5390840e"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "003",
+      "image_id": "BurariTessenTorimonocho/003",
+      "image_ref": "BurariTessenTorimonocho/003.jpg",
+      "input_image_identity": "f866f406314f171d2c5bbce9266aaae7a25ed51c416d67495e4432d8a3791ea6"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "004",
+      "image_id": "BurariTessenTorimonocho/004",
+      "image_ref": "BurariTessenTorimonocho/004.jpg",
+      "input_image_identity": "dea796ae39080d995c156a339eddf9142ed245f7dfb385e6853b7d260d7038e6"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "005",
+      "image_id": "BurariTessenTorimonocho/005",
+      "image_ref": "BurariTessenTorimonocho/005.jpg",
+      "input_image_identity": "09f2be796c99e2e3f3a65f7c34b7073e473b3266f5579aec312f1c6f33327921"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "006",
+      "image_id": "BurariTessenTorimonocho/006",
+      "image_ref": "BurariTessenTorimonocho/006.jpg",
+      "input_image_identity": "78095f4d0c523f3f1726264bd6b1913625472dc64a6693ffc9a00c2d5f4308ab"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "007",
+      "image_id": "BurariTessenTorimonocho/007",
+      "image_ref": "BurariTessenTorimonocho/007.jpg",
+      "input_image_identity": "6f2741d8d3412489d37e87b0d27a69657a90c7a677ab23f3f45e61f4baf0524e"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "008",
+      "image_id": "BurariTessenTorimonocho/008",
+      "image_ref": "BurariTessenTorimonocho/008.jpg",
+      "input_image_identity": "fd9cf2a163a09b87994a5e68f5175d975f2bbc277d4235d5cf494bfbb4eeac25"
+    },
+    {
+      "manga": "BurariTessenTorimonocho",
+      "stem": "009",
+      "image_id": "BurariTessenTorimonocho/009",
+      "image_ref": "BurariTessenTorimonocho/009.jpg",
+      "input_image_identity": "90ba9e2bae337d3622b4ec52d33a94efd4abfe79faf616acc1095a7df128d77f"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "000",
+      "image_id": "Count3DeKimeteAgeru/000",
+      "image_ref": "Count3DeKimeteAgeru/000.jpg",
+      "input_image_identity": "250280444241ee8d0243e0aecbe13ebe3f84f6d88c6a5763551b2be79f56ac0b"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "001",
+      "image_id": "Count3DeKimeteAgeru/001",
+      "image_ref": "Count3DeKimeteAgeru/001.jpg",
+      "input_image_identity": "813d52fbf7adb3b4538b26f04479f3a3641ee0afd800dac07c9acb18dbab3c3a"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "002",
+      "image_id": "Count3DeKimeteAgeru/002",
+      "image_ref": "Count3DeKimeteAgeru/002.jpg",
+      "input_image_identity": "7c30a0673968603f86dab83ecd27dc8915863d7ee25051a7dae883c85c1a96f2"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "003",
+      "image_id": "Count3DeKimeteAgeru/003",
+      "image_ref": "Count3DeKimeteAgeru/003.jpg",
+      "input_image_identity": "f75f0507e95ac98a5d47305e12e5afa189c6228bd88e7a6bccc0e639a26a25f6"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "004",
+      "image_id": "Count3DeKimeteAgeru/004",
+      "image_ref": "Count3DeKimeteAgeru/004.jpg",
+      "input_image_identity": "331afee50917752707b13de5df84eecc9e5d7422f63254319eb06161e2a2139e"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "005",
+      "image_id": "Count3DeKimeteAgeru/005",
+      "image_ref": "Count3DeKimeteAgeru/005.jpg",
+      "input_image_identity": "556218afd3cd5e3b216862d509cfaa885aa2d78cde25096f877f65276b826a6a"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "006",
+      "image_id": "Count3DeKimeteAgeru/006",
+      "image_ref": "Count3DeKimeteAgeru/006.jpg",
+      "input_image_identity": "eabfc37dac969902ac6e1bb8f1475a302a5658daeca6e25e940eb115fcb82bc5"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "007",
+      "image_id": "Count3DeKimeteAgeru/007",
+      "image_ref": "Count3DeKimeteAgeru/007.jpg",
+      "input_image_identity": "dcf7e1d29c94c0060589396767ac297d2f4a2138060b8ac42a02053d5cd93682"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "008",
+      "image_id": "Count3DeKimeteAgeru/008",
+      "image_ref": "Count3DeKimeteAgeru/008.jpg",
+      "input_image_identity": "f60765f02538ae2c0a9baae208e603790eb9e3ae85b740a12993572d15f6c101"
+    },
+    {
+      "manga": "Count3DeKimeteAgeru",
+      "stem": "009",
+      "image_id": "Count3DeKimeteAgeru/009",
+      "image_ref": "Count3DeKimeteAgeru/009.jpg",
+      "input_image_identity": "d6c12efcac7f66c2947de34758d6ac3a30005ce06f80e746eaa0cc86830e666b"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "000",
+      "image_id": "DollGun/000",
+      "image_ref": "DollGun/000.jpg",
+      "input_image_identity": "58c8bb3eeedd3820122a4987b0b04eca16336901996554be4bb203396bda24c0"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "001",
+      "image_id": "DollGun/001",
+      "image_ref": "DollGun/001.jpg",
+      "input_image_identity": "375183099bfabf9323802bc75bf62cf2b079a48fe74c5a11e6492a4ccab79b7f"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "002",
+      "image_id": "DollGun/002",
+      "image_ref": "DollGun/002.jpg",
+      "input_image_identity": "78857c29e707404b9a6ffe0035f2a1aa916ee9dee9378250ea560c222641b03d"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "003",
+      "image_id": "DollGun/003",
+      "image_ref": "DollGun/003.jpg",
+      "input_image_identity": "c12794d61cbdea13a8ab783f60f46df14519a4c2f0998bde3cb17d6e78b54dca"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "004",
+      "image_id": "DollGun/004",
+      "image_ref": "DollGun/004.jpg",
+      "input_image_identity": "2a16a38362520ed1cd9db85639b74140ee1dbf9184d8e6b09515225dd328749b"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "005",
+      "image_id": "DollGun/005",
+      "image_ref": "DollGun/005.jpg",
+      "input_image_identity": "444cf3e6b5ce37a756876c782caa50496ed5eca9e0ac8e4fb9ff4566949add2f"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "006",
+      "image_id": "DollGun/006",
+      "image_ref": "DollGun/006.jpg",
+      "input_image_identity": "18d51f302b37a8d190cd0a1cb4b3edd57105f0534f34ca518da83e7b45db6251"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "007",
+      "image_id": "DollGun/007",
+      "image_ref": "DollGun/007.jpg",
+      "input_image_identity": "3d030c76d46b28fbeab2aaf56caee828ce09f79012985ab8520956999a1a5ca7"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "008",
+      "image_id": "DollGun/008",
+      "image_ref": "DollGun/008.jpg",
+      "input_image_identity": "9924fd4c8e94af9c9553f788b5900a89330c280d84395600350c05f348afd771"
+    },
+    {
+      "manga": "DollGun",
+      "stem": "009",
+      "image_id": "DollGun/009",
+      "image_ref": "DollGun/009.jpg",
+      "input_image_identity": "5d82c561f798a8b4db76f4b26ad8e06e4d9263da827a864e1e0ea93050d3bc40"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "000",
+      "image_id": "Donburakokko/000",
+      "image_ref": "Donburakokko/000.jpg",
+      "input_image_identity": "a29df65689b219dcf04aa39ace9d1d9b37f66b00edc314c62f5921f6773d7a2b"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "001",
+      "image_id": "Donburakokko/001",
+      "image_ref": "Donburakokko/001.jpg",
+      "input_image_identity": "4d9d22bc733a3b776251592100064d226455527b2ca73cd6a9ceb9cb001613c7"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "002",
+      "image_id": "Donburakokko/002",
+      "image_ref": "Donburakokko/002.jpg",
+      "input_image_identity": "d180710c8f6437d44df3993084de06aa2dbd2112d52573bcafd0aac77ce07f35"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "003",
+      "image_id": "Donburakokko/003",
+      "image_ref": "Donburakokko/003.jpg",
+      "input_image_identity": "6c81ac2fd808f6052ca2026b3f972edab680ed25a55e98a465944b10a682e966"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "004",
+      "image_id": "Donburakokko/004",
+      "image_ref": "Donburakokko/004.jpg",
+      "input_image_identity": "978743f06239e8a957de56721b6e53a116be4809a48021b7b3bef0456890ca72"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "005",
+      "image_id": "Donburakokko/005",
+      "image_ref": "Donburakokko/005.jpg",
+      "input_image_identity": "37e7b9b0817dd2877b44fe0eed00e6f34c911998f5407d6d4e72265208526ea6"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "006",
+      "image_id": "Donburakokko/006",
+      "image_ref": "Donburakokko/006.jpg",
+      "input_image_identity": "16eae5c419723108df7f2585ec494fc665c3fa300f833b80423c1dca248f79f3"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "007",
+      "image_id": "Donburakokko/007",
+      "image_ref": "Donburakokko/007.jpg",
+      "input_image_identity": "7816af6c0a1243eb616ed60c022e2f0d0f5ca0e0f7742ea01f9c7b354851a7cc"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "008",
+      "image_id": "Donburakokko/008",
+      "image_ref": "Donburakokko/008.jpg",
+      "input_image_identity": "14bf5895078c5b74213aa6ef1d6472153331d61ea1d9db193c5963e57f8fab04"
+    },
+    {
+      "manga": "Donburakokko",
+      "stem": "009",
+      "image_id": "Donburakokko/009",
+      "image_ref": "Donburakokko/009.jpg",
+      "input_image_identity": "c7ca8e5a08a9be72996a18575e3f5ab9d9644067b609da8c90fa3579b9b8aa79"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "000",
+      "image_id": "DualJustice/000",
+      "image_ref": "DualJustice/000.jpg",
+      "input_image_identity": "78082fbf1614529786d34b99a1beeb88d49da673f7fa247b0236253568fb4af8"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "001",
+      "image_id": "DualJustice/001",
+      "image_ref": "DualJustice/001.jpg",
+      "input_image_identity": "589ee89e44a11f4568bf99a20024c9191b62112fab6949fa6f35ff6d8930dc67"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "002",
+      "image_id": "DualJustice/002",
+      "image_ref": "DualJustice/002.jpg",
+      "input_image_identity": "580c7188e61a5fb68ea066bd0f3aae8b00a2ef524992589f4506eaf53101bf27"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "003",
+      "image_id": "DualJustice/003",
+      "image_ref": "DualJustice/003.jpg",
+      "input_image_identity": "dabf35f4ab5433826055f7f4dbea1470083c0fdf70bb99268822570338e26ba2"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "004",
+      "image_id": "DualJustice/004",
+      "image_ref": "DualJustice/004.jpg",
+      "input_image_identity": "a4378fc1836739738bb4a2b42092cd9efa1e994942bea501a08422b9718522a1"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "005",
+      "image_id": "DualJustice/005",
+      "image_ref": "DualJustice/005.jpg",
+      "input_image_identity": "2b70237c823ff9a8442c6f66582762540bc015e02f6b1ff180bb280fb6f25eb8"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "006",
+      "image_id": "DualJustice/006",
+      "image_ref": "DualJustice/006.jpg",
+      "input_image_identity": "d09d25d918519a1ee8df380486605654b50dfb54c657292eaeb6e78b0005b555"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "007",
+      "image_id": "DualJustice/007",
+      "image_ref": "DualJustice/007.jpg",
+      "input_image_identity": "41faaefc5b7af0c006be396c76c219a1ebd03206fe5afe4449c855c510c61ba3"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "008",
+      "image_id": "DualJustice/008",
+      "image_ref": "DualJustice/008.jpg",
+      "input_image_identity": "0fd92f3d10ef763f103a43a8003e4fa26d6f8a4a9972c521613bd3a5ce7e7190"
+    },
+    {
+      "manga": "DualJustice",
+      "stem": "009",
+      "image_id": "DualJustice/009",
+      "image_ref": "DualJustice/009.jpg",
+      "input_image_identity": "1dde8b4f9038de866ac23a5fca358b47c5da3346b8dfd10e300c2d6729deee3f"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "000",
+      "image_id": "EienNoWith/000",
+      "image_ref": "EienNoWith/000.jpg",
+      "input_image_identity": "83fa7e12d3ed636ae8ca0769d72bc3597902d0fd0c64e2fb504ac85a3f6628d2"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "001",
+      "image_id": "EienNoWith/001",
+      "image_ref": "EienNoWith/001.jpg",
+      "input_image_identity": "a2a26e47756b9891a70d692774f71782cf298d6ea3a4d6be5e4c07575bcf8d7e"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "002",
+      "image_id": "EienNoWith/002",
+      "image_ref": "EienNoWith/002.jpg",
+      "input_image_identity": "0620b207298fc2839a29ddd836c26f3e42fb1a15261f1faed57f847d6cd023f6"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "003",
+      "image_id": "EienNoWith/003",
+      "image_ref": "EienNoWith/003.jpg",
+      "input_image_identity": "5273f74dd18c85732a61a95f314c2cd2797852f000d7a85587ef011e80121162"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "004",
+      "image_id": "EienNoWith/004",
+      "image_ref": "EienNoWith/004.jpg",
+      "input_image_identity": "1726f09e05ad9c281663fc355d8d027980f9c04fbf5f2cae80a96eefd178f838"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "005",
+      "image_id": "EienNoWith/005",
+      "image_ref": "EienNoWith/005.jpg",
+      "input_image_identity": "ee25c9a878411f1c32f71f6cbdd8142b7eda044ab7a6de93372ecf528f58ba94"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "006",
+      "image_id": "EienNoWith/006",
+      "image_ref": "EienNoWith/006.jpg",
+      "input_image_identity": "ba1783aebcf27ca5dfddc43154a99b4a388f26a3b6bedf9d97637ac809307ff9"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "007",
+      "image_id": "EienNoWith/007",
+      "image_ref": "EienNoWith/007.jpg",
+      "input_image_identity": "99a0b51b809cb2cfd16ffd22d92ff427844ee6467aaeaf7aba297861fafc6db8"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "008",
+      "image_id": "EienNoWith/008",
+      "image_ref": "EienNoWith/008.jpg",
+      "input_image_identity": "9e03f418006aad285647a9b245ef132b332c63172fea5041a2fa43a1f79406f0"
+    },
+    {
+      "manga": "EienNoWith",
+      "stem": "009",
+      "image_id": "EienNoWith/009",
+      "image_ref": "EienNoWith/009.jpg",
+      "input_image_identity": "24391c2b0c20375e3c8acb43e22a6da372d2eb567b7ec46081c3f916c3bac4da"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "000",
+      "image_id": "EvaLady/000",
+      "image_ref": "EvaLady/000.jpg",
+      "input_image_identity": "257057b69376a950d09e3406e79143a5ccf2d5729dbbb9d85993d9740b0467c8"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "001",
+      "image_id": "EvaLady/001",
+      "image_ref": "EvaLady/001.jpg",
+      "input_image_identity": "e814bb1702469b5e84baf3dda29820678005c96d1ce357240982a673bec419b2"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "002",
+      "image_id": "EvaLady/002",
+      "image_ref": "EvaLady/002.jpg",
+      "input_image_identity": "51d0cfb9ef3f181e86dce61db9943817f736ade63bbb4dbd59ae07cca8b90798"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "003",
+      "image_id": "EvaLady/003",
+      "image_ref": "EvaLady/003.jpg",
+      "input_image_identity": "d16e16af813846a66aa91b75705724f936f6a59ca467a8e39b126aac437af8bb"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "004",
+      "image_id": "EvaLady/004",
+      "image_ref": "EvaLady/004.jpg",
+      "input_image_identity": "7c10e32283554317e4c9ca6ed30b7b28059c0615e9197d4047496bcdb03e2c64"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "005",
+      "image_id": "EvaLady/005",
+      "image_ref": "EvaLady/005.jpg",
+      "input_image_identity": "e0a8e12b442348fc586483c1c79e9ed3b55449747730cc8d0594ae16ae42d172"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "006",
+      "image_id": "EvaLady/006",
+      "image_ref": "EvaLady/006.jpg",
+      "input_image_identity": "7b4cda38ec240c99be2e1b3290acb498c4069ca740bdec4ab489096f8555b794"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "007",
+      "image_id": "EvaLady/007",
+      "image_ref": "EvaLady/007.jpg",
+      "input_image_identity": "d4e266d05513db01e507f2c30e305a97200bcc8286388f5390cc642fa821fa39"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "008",
+      "image_id": "EvaLady/008",
+      "image_ref": "EvaLady/008.jpg",
+      "input_image_identity": "24f8de7e7f95469cb2d29fbe00f65bd51744a90078ddd47b353aee2068e7baf8"
+    },
+    {
+      "manga": "EvaLady",
+      "stem": "009",
+      "image_id": "EvaLady/009",
+      "image_ref": "EvaLady/009.jpg",
+      "input_image_identity": "cf439525c2a627b4440f6da1bd42c8b6f5834dacb378badca30dbe9ea6fb4766"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "000",
+      "image_id": "EverydayOsakanaChan/000",
+      "image_ref": "EverydayOsakanaChan/000.jpg",
+      "input_image_identity": "21aafcce80a86f748f10530d542d42227d369e63db01e81c2d0358f645123a30"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "001",
+      "image_id": "EverydayOsakanaChan/001",
+      "image_ref": "EverydayOsakanaChan/001.jpg",
+      "input_image_identity": "a7d7e9d47d5d0def17962947cf427090e0990487adc4ef2e9ce8f95f306dad03"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "002",
+      "image_id": "EverydayOsakanaChan/002",
+      "image_ref": "EverydayOsakanaChan/002.jpg",
+      "input_image_identity": "2013af64487797897775dcb0a3bbdcb98b8dad450751909324488b84b8e273c6"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "003",
+      "image_id": "EverydayOsakanaChan/003",
+      "image_ref": "EverydayOsakanaChan/003.jpg",
+      "input_image_identity": "2347bbb56d56ae394890e39df801a6c97ab7de437800b91c332dbe227e692191"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "004",
+      "image_id": "EverydayOsakanaChan/004",
+      "image_ref": "EverydayOsakanaChan/004.jpg",
+      "input_image_identity": "5b398d52aeb59444c6f38c8c68c705676cecaa6711fc94723a73f193afa7fd1b"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "005",
+      "image_id": "EverydayOsakanaChan/005",
+      "image_ref": "EverydayOsakanaChan/005.jpg",
+      "input_image_identity": "6622dab83cec56d72ce08a95a73b4b7e9c5bbc43cd5007dfe758f45391c14248"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "006",
+      "image_id": "EverydayOsakanaChan/006",
+      "image_ref": "EverydayOsakanaChan/006.jpg",
+      "input_image_identity": "b977a7324402c687a31d8a1fdb57bca7ba8c3a3484b6b6166567b03b7cb19fb6"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "007",
+      "image_id": "EverydayOsakanaChan/007",
+      "image_ref": "EverydayOsakanaChan/007.jpg",
+      "input_image_identity": "e5d6061816ad9933f25dc30a09e030573b6adc9b3bb2b35066d8b030176e4e17"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "008",
+      "image_id": "EverydayOsakanaChan/008",
+      "image_ref": "EverydayOsakanaChan/008.jpg",
+      "input_image_identity": "a50d0a5d39b9f1a1f1dc0ff33fb0557012d2982e2bc64cc36a1ad4083b6f9fbf"
+    },
+    {
+      "manga": "EverydayOsakanaChan",
+      "stem": "009",
+      "image_id": "EverydayOsakanaChan/009",
+      "image_ref": "EverydayOsakanaChan/009.jpg",
+      "input_image_identity": "2773e6eeae031bf81a0ee56f4ca7fa542585d34bfd1023c32ef65e34558ea490"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "000",
+      "image_id": "GakuenNoise/000",
+      "image_ref": "GakuenNoise/000.jpg",
+      "input_image_identity": "73bb2e29723d026c09256c448f8b0f88846816da8e6349fba80c5abfd7af4558"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "001",
+      "image_id": "GakuenNoise/001",
+      "image_ref": "GakuenNoise/001.jpg",
+      "input_image_identity": "59ca1637993591ca8c8281546e779d8a46045f061668b4144382f2d01f48a517"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "002",
+      "image_id": "GakuenNoise/002",
+      "image_ref": "GakuenNoise/002.jpg",
+      "input_image_identity": "a97c2b857d8d542d3124569616441e00d733bedb272146e390b35802102d7cfb"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "003",
+      "image_id": "GakuenNoise/003",
+      "image_ref": "GakuenNoise/003.jpg",
+      "input_image_identity": "dd4a9571004966343fcf9085fc3c9dd5f205af0db54d02ce74a068ca8bfd0ce0"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "004",
+      "image_id": "GakuenNoise/004",
+      "image_ref": "GakuenNoise/004.jpg",
+      "input_image_identity": "5c583ac97243529d8a9749dde746ade484ecfa790f24a6c78e9c99bec8cdf6b8"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "005",
+      "image_id": "GakuenNoise/005",
+      "image_ref": "GakuenNoise/005.jpg",
+      "input_image_identity": "64635d8631a7cb5c3b2ce396b6c7e3674ab95caf456fd260541e31ca12a889b9"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "006",
+      "image_id": "GakuenNoise/006",
+      "image_ref": "GakuenNoise/006.jpg",
+      "input_image_identity": "0fe40a574f2cdce3023ba1fe2b928f810fddd1fc7205ca279bfc6c109ae64cc1"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "007",
+      "image_id": "GakuenNoise/007",
+      "image_ref": "GakuenNoise/007.jpg",
+      "input_image_identity": "77bb340f7f1cff58ac89ee09b9c1d37e3d21761f5c78b59174163e9086e01c47"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "008",
+      "image_id": "GakuenNoise/008",
+      "image_ref": "GakuenNoise/008.jpg",
+      "input_image_identity": "20a5df2e9a073f9ab74a9d820328c5ee02dca096ca3b4edbec56e34980b58f76"
+    },
+    {
+      "manga": "GakuenNoise",
+      "stem": "009",
+      "image_id": "GakuenNoise/009",
+      "image_ref": "GakuenNoise/009.jpg",
+      "input_image_identity": "df06f1ead33831489a67753c2a760c27e63b94b6d46528eae1095ba36924dfc4"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "000",
+      "image_id": "GarakutayaManta/000",
+      "image_ref": "GarakutayaManta/000.jpg",
+      "input_image_identity": "eb7f273b32e4c89c528bfbd50856978eebebe8a332842262868d37d4c3428711"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "001",
+      "image_id": "GarakutayaManta/001",
+      "image_ref": "GarakutayaManta/001.jpg",
+      "input_image_identity": "cf6d89c34047e48618f705a465eaca5471046028e9fc94acc27009b6902b8d6b"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "002",
+      "image_id": "GarakutayaManta/002",
+      "image_ref": "GarakutayaManta/002.jpg",
+      "input_image_identity": "d0d3209c9c3a22e5073e1fe057a541bc48e7e5d3823470761ffa8ef2fa848931"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "003",
+      "image_id": "GarakutayaManta/003",
+      "image_ref": "GarakutayaManta/003.jpg",
+      "input_image_identity": "69e4ec62455ca1d313ce95820a5c55129195c485fb06f118e02dbd9f41b14115"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "004",
+      "image_id": "GarakutayaManta/004",
+      "image_ref": "GarakutayaManta/004.jpg",
+      "input_image_identity": "c2223fc13b1796442bfe8f9cbffbbefe3c9cc39eeedc148072bbcb36bd4ec19e"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "005",
+      "image_id": "GarakutayaManta/005",
+      "image_ref": "GarakutayaManta/005.jpg",
+      "input_image_identity": "98b5df7e8da31b48ddbeade9e9af60134f0d15dbf6f061bedac2c1a209696491"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "006",
+      "image_id": "GarakutayaManta/006",
+      "image_ref": "GarakutayaManta/006.jpg",
+      "input_image_identity": "e443f1d4f7f3c0b82d770d6a021b3a1ba87f0de6bdffcf125e1d17299e33cd89"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "007",
+      "image_id": "GarakutayaManta/007",
+      "image_ref": "GarakutayaManta/007.jpg",
+      "input_image_identity": "db0a863d9bd801091e20e2ddb124578e353ade7de913be6f8e7288795863ea29"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "008",
+      "image_id": "GarakutayaManta/008",
+      "image_ref": "GarakutayaManta/008.jpg",
+      "input_image_identity": "799cea6ce392947d290c418d15ccc81e70b13501fb6dbaa756dbc0b287d5dc24"
+    },
+    {
+      "manga": "GarakutayaManta",
+      "stem": "009",
+      "image_id": "GarakutayaManta/009",
+      "image_ref": "GarakutayaManta/009.jpg",
+      "input_image_identity": "c4fd13ba8aba42db21cd10167252fbd2adebd00a5c5c6dd3467b23017dbe915e"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "000",
+      "image_id": "GinNoChimera/000",
+      "image_ref": "GinNoChimera/000.jpg",
+      "input_image_identity": "b577223d9f44c0905bbf5d680b2ae95ae96fcd835b16f383058368575c4f22e8"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "001",
+      "image_id": "GinNoChimera/001",
+      "image_ref": "GinNoChimera/001.jpg",
+      "input_image_identity": "62505fd3bf9db0ff2a0c096911c669c451d8477e405b2a6bcd4d79e91fe144de"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "002",
+      "image_id": "GinNoChimera/002",
+      "image_ref": "GinNoChimera/002.jpg",
+      "input_image_identity": "2fd14b15f2095979ff34992f1eb1a6eb2ca92d342dfd41f6309c4c488375bfe9"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "003",
+      "image_id": "GinNoChimera/003",
+      "image_ref": "GinNoChimera/003.jpg",
+      "input_image_identity": "c529aabbf58ad308ef24b414f7fdd97fae44295d54af6c6e388a56704779f492"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "004",
+      "image_id": "GinNoChimera/004",
+      "image_ref": "GinNoChimera/004.jpg",
+      "input_image_identity": "01b7cd9d7bc4eec7fa9632977619e1585b8b0c2e46adcb17cbcb66a0c862a2fa"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "005",
+      "image_id": "GinNoChimera/005",
+      "image_ref": "GinNoChimera/005.jpg",
+      "input_image_identity": "e030a8ff4a7e64f91ab51240c2b2367aaa302283b39218f6d1c7886a8f1ec903"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "006",
+      "image_id": "GinNoChimera/006",
+      "image_ref": "GinNoChimera/006.jpg",
+      "input_image_identity": "3a45d31fe905fafc9032351f10433a06f3ba8659b1204b27a2add421f1c85281"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "007",
+      "image_id": "GinNoChimera/007",
+      "image_ref": "GinNoChimera/007.jpg",
+      "input_image_identity": "db160ce7d004d990a685320509c9d436a7dd9adbc32fd012cf025e419f9cdf1a"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "008",
+      "image_id": "GinNoChimera/008",
+      "image_ref": "GinNoChimera/008.jpg",
+      "input_image_identity": "ea6c94b6ed71d088cfd850ef96cfce829807e11c2226a336cad9c1a4525835a8"
+    },
+    {
+      "manga": "GinNoChimera",
+      "stem": "009",
+      "image_id": "GinNoChimera/009",
+      "image_ref": "GinNoChimera/009.jpg",
+      "input_image_identity": "876f6e72bda29afeda78e32a95aff547f7fd141f12e24fd3224cf9cc76c463f9"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "000",
+      "image_id": "Hamlet/000",
+      "image_ref": "Hamlet/000.jpg",
+      "input_image_identity": "0f0dac6b73890b2ba95a828076a1ca89907126fe42d901284e0ceeed4cf0d89f"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "001",
+      "image_id": "Hamlet/001",
+      "image_ref": "Hamlet/001.jpg",
+      "input_image_identity": "3b291f6c6079500cd7744e4ae1b382fc429e4e349b6c0966f2f3d59827613e44"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "002",
+      "image_id": "Hamlet/002",
+      "image_ref": "Hamlet/002.jpg",
+      "input_image_identity": "8da290fdecd8e415b98effaa26a5c973530e06d9feaede526f59335c24920a83"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "003",
+      "image_id": "Hamlet/003",
+      "image_ref": "Hamlet/003.jpg",
+      "input_image_identity": "fa9cc35471d4f980e064cc36bfe72cf299850cbc4e5deabfadea57e8d2cb7062"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "004",
+      "image_id": "Hamlet/004",
+      "image_ref": "Hamlet/004.jpg",
+      "input_image_identity": "cdc2282e6677787377367a457a56ee1e5fcf2555b5d9f291690c9bb6ba2e7616"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "005",
+      "image_id": "Hamlet/005",
+      "image_ref": "Hamlet/005.jpg",
+      "input_image_identity": "0381939346d0b91d9c91e75afd535940c5c892b0ea6655f0ed54d1cafdccf14f"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "006",
+      "image_id": "Hamlet/006",
+      "image_ref": "Hamlet/006.jpg",
+      "input_image_identity": "e516a702c7d79cc7f3a52aed6dab434e32deb3912132018f5aa1bc20a796daaf"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "007",
+      "image_id": "Hamlet/007",
+      "image_ref": "Hamlet/007.jpg",
+      "input_image_identity": "195972559ec55979142b46553e18029f44dbf71bc37d2a24e0cc9657eb6ef0cb"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "008",
+      "image_id": "Hamlet/008",
+      "image_ref": "Hamlet/008.jpg",
+      "input_image_identity": "63aae97065810e24938ae351def9d3cacc28f28d6214380c4ee59da56532c5cc"
+    },
+    {
+      "manga": "Hamlet",
+      "stem": "009",
+      "image_id": "Hamlet/009",
+      "image_ref": "Hamlet/009.jpg",
+      "input_image_identity": "946f5cb28a3e8817c2cf5bda3afd5ea82367bd8d67d07b6d283d714bd160b4fa"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "000",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/000",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/000.jpg",
+      "input_image_identity": "b59420db25c5bf2c2fc63e7eedf305bab93743febbb7af0c965fb421ded6d1d0"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "001",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/001",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/001.jpg",
+      "input_image_identity": "4fff43b177ea94a48175af58806384be6d4d34e3a50a86e928d9957d5ed8f728"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "002",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/002",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/002.jpg",
+      "input_image_identity": "abc93b57334723983fdfae0dfa9e337a1f9a64d9e3fcdc32d25ce6e100a9c7fd"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "003",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/003",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/003.jpg",
+      "input_image_identity": "99d7925020547f76239667a692cfb447e72eb94c546453bf1bd0dab29b1b1085"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "004",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/004",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/004.jpg",
+      "input_image_identity": "cd409835c14c894b9876e866a487ba2261cda71ab74a66861b02521a86ac30f1"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "005",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/005",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/005.jpg",
+      "input_image_identity": "5b5d915bc81a1e033083e06f05c797c22f50714c65a0fa6621e1887bb124e6e6"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "006",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/006",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/006.jpg",
+      "input_image_identity": "c36172e22887bd053eb8e2c84b28f380892a83cc0237d6a7a56e549ff6fd0996"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "007",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/007",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/007.jpg",
+      "input_image_identity": "a816c46843ee800664376bdba28f3578199e72e6689021530e4b9d63edb99789"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "008",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/008",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/008.jpg",
+      "input_image_identity": "c3f2a58e75f965e9795940bb227a0cc48ce86f759ac3ad42da375a14738436d3"
+    },
+    {
+      "manga": "HanzaiKousyouninMinegishiEitarou",
+      "stem": "009",
+      "image_id": "HanzaiKousyouninMinegishiEitarou/009",
+      "image_ref": "HanzaiKousyouninMinegishiEitarou/009.jpg",
+      "input_image_identity": "561b70edb1901db985ae7cd3ba4d55a4d6a38ddff341f493a89daa497f9b30b1"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "000",
+      "image_id": "HaruichibanNoFukukoro/000",
+      "image_ref": "HaruichibanNoFukukoro/000.jpg",
+      "input_image_identity": "3fcc4572ede1db26e699ef3d4b76bd24ee8fbb389f33b2737232b15a747abe1a"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "001",
+      "image_id": "HaruichibanNoFukukoro/001",
+      "image_ref": "HaruichibanNoFukukoro/001.jpg",
+      "input_image_identity": "1046315c21aefa12cd3754f460df8f050c165f9bcae227d43d7b4fff5008a8c2"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "002",
+      "image_id": "HaruichibanNoFukukoro/002",
+      "image_ref": "HaruichibanNoFukukoro/002.jpg",
+      "input_image_identity": "3ff84d3a57baa7ef6ececb822fc8584c66d550a529e7d082ae0d6b5026ca5894"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "003",
+      "image_id": "HaruichibanNoFukukoro/003",
+      "image_ref": "HaruichibanNoFukukoro/003.jpg",
+      "input_image_identity": "5c7df59115fcbf13951085efd17b7fddce336d9d59a0b4f54fb4acf11263b9cd"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "004",
+      "image_id": "HaruichibanNoFukukoro/004",
+      "image_ref": "HaruichibanNoFukukoro/004.jpg",
+      "input_image_identity": "6d4494b62ca4e965899e5995d549480e4dc875988b9de7997753c919365db6bf"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "005",
+      "image_id": "HaruichibanNoFukukoro/005",
+      "image_ref": "HaruichibanNoFukukoro/005.jpg",
+      "input_image_identity": "d2578394e8db9437112cd3b3cfd084140b46c3860a24f8acbef67fd9747a8f0d"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "006",
+      "image_id": "HaruichibanNoFukukoro/006",
+      "image_ref": "HaruichibanNoFukukoro/006.jpg",
+      "input_image_identity": "39136a9e0810766511c13c8ed069106dd034e6da151b48272a8b1698c57ccbeb"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "007",
+      "image_id": "HaruichibanNoFukukoro/007",
+      "image_ref": "HaruichibanNoFukukoro/007.jpg",
+      "input_image_identity": "666dba6918e332d31678c831de076c42f22009f86ffc114d904e015a1d6bb2e2"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "008",
+      "image_id": "HaruichibanNoFukukoro/008",
+      "image_ref": "HaruichibanNoFukukoro/008.jpg",
+      "input_image_identity": "25b2fc0ae825746947c6d2fd6d4a5b14993cebdb56bd98e7de83e4312ea45024"
+    },
+    {
+      "manga": "HaruichibanNoFukukoro",
+      "stem": "009",
+      "image_id": "HaruichibanNoFukukoro/009",
+      "image_ref": "HaruichibanNoFukukoro/009.jpg",
+      "input_image_identity": "31237de8498b27ede8aba62ebd9992b4c2b2e6d941d128b614a48ee44ce5b0c4"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "000",
+      "image_id": "HarukaRefrain/000",
+      "image_ref": "HarukaRefrain/000.jpg",
+      "input_image_identity": "24e6d8dad1a09a2c17d95e7fda15b4904c695cad4e7f83d27e70a3c47565b2b2"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "001",
+      "image_id": "HarukaRefrain/001",
+      "image_ref": "HarukaRefrain/001.jpg",
+      "input_image_identity": "2853174e2c535f9659902803d83c9c6576260dbd2561e416f42eabebd9544136"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "002",
+      "image_id": "HarukaRefrain/002",
+      "image_ref": "HarukaRefrain/002.jpg",
+      "input_image_identity": "e4215b2817789f72ec328bdd214ae5ed0a598a54e8da3cf90e41f57131b3b037"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "003",
+      "image_id": "HarukaRefrain/003",
+      "image_ref": "HarukaRefrain/003.jpg",
+      "input_image_identity": "c8f506648eab4ac127bdbd1fd22a36af32bc42bcbefe2b90a6050a8b30a85dbe"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "004",
+      "image_id": "HarukaRefrain/004",
+      "image_ref": "HarukaRefrain/004.jpg",
+      "input_image_identity": "1ab93d23c52c8d1081d3914ad503c3055643bb382386697882666455c073bec3"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "005",
+      "image_id": "HarukaRefrain/005",
+      "image_ref": "HarukaRefrain/005.jpg",
+      "input_image_identity": "719f5c1de33dceb845b9b90a2e0528c8e96cdffff4aef8f37f4d91c46e017ec6"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "006",
+      "image_id": "HarukaRefrain/006",
+      "image_ref": "HarukaRefrain/006.jpg",
+      "input_image_identity": "86853ff6cc0373dd8d01667f2c1883eda5005670357e41c96054fe9fe574664d"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "007",
+      "image_id": "HarukaRefrain/007",
+      "image_ref": "HarukaRefrain/007.jpg",
+      "input_image_identity": "b851134f95b006b758fe13a51cb331730acc2b6225204d657b5b6ca2fccba3f0"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "008",
+      "image_id": "HarukaRefrain/008",
+      "image_ref": "HarukaRefrain/008.jpg",
+      "input_image_identity": "b4b7fed43aaf3d0985eefea79de6d4e6060a4e3512d6ad8cfb91dedf2b0eb4af"
+    },
+    {
+      "manga": "HarukaRefrain",
+      "stem": "009",
+      "image_id": "HarukaRefrain/009",
+      "image_ref": "HarukaRefrain/009.jpg",
+      "input_image_identity": "a91648b66688474c67cbf7cfcfcb39ec7dd59e33507c373ab716636acc7b0aa0"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "000",
+      "image_id": "HealingPlanet/000",
+      "image_ref": "HealingPlanet/000.jpg",
+      "input_image_identity": "16f88d43732a3247799a31586a3cb16c45bbb893dadf19593556d5685d558550"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "001",
+      "image_id": "HealingPlanet/001",
+      "image_ref": "HealingPlanet/001.jpg",
+      "input_image_identity": "59294134c146de6bb50c9319dad5cdc2332c89ec036cf6a6ce3ae1fb18a2bf9b"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "002",
+      "image_id": "HealingPlanet/002",
+      "image_ref": "HealingPlanet/002.jpg",
+      "input_image_identity": "cb7c708e4e9b867abc51168f8019947eadb21a1581ff37e048872101c31345f1"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "003",
+      "image_id": "HealingPlanet/003",
+      "image_ref": "HealingPlanet/003.jpg",
+      "input_image_identity": "816b07a4fc63da76da86cdbb1440e9e88ee5d4ff89cd99840757d9a49cd8267b"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "004",
+      "image_id": "HealingPlanet/004",
+      "image_ref": "HealingPlanet/004.jpg",
+      "input_image_identity": "afdb113bf0dd8fda5f44ef4e2ed7635907d83ddceffb75736ff7ec4465a02bf4"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "005",
+      "image_id": "HealingPlanet/005",
+      "image_ref": "HealingPlanet/005.jpg",
+      "input_image_identity": "415e264244198eeac8e47728e6c4cd22ff37ce676b69033d514ac8c7b5e91410"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "006",
+      "image_id": "HealingPlanet/006",
+      "image_ref": "HealingPlanet/006.jpg",
+      "input_image_identity": "9e1cff712506d71d4fe87772cd1017ff1f7f2bfbc1b7ea95d3a1a3ea0673ca2f"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "007",
+      "image_id": "HealingPlanet/007",
+      "image_ref": "HealingPlanet/007.jpg",
+      "input_image_identity": "3652c949ac2d3bbcc02d04b735b5e8ca0bebd900185c9a6d763558b197a0133f"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "008",
+      "image_id": "HealingPlanet/008",
+      "image_ref": "HealingPlanet/008.jpg",
+      "input_image_identity": "a9f38c93b334a3389a6f57c1cffe0630e8a43a08d8a1264e1158e1f805cdac9d"
+    },
+    {
+      "manga": "HealingPlanet",
+      "stem": "009",
+      "image_id": "HealingPlanet/009",
+      "image_ref": "HealingPlanet/009.jpg",
+      "input_image_identity": "d725003c28fbfa415e3353d3379a845e3d75caf2b1229ad9872d82d2f78ac7f3"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "000",
+      "image_id": "ToutaMairimasu/000",
+      "image_ref": "ToutaMairimasu/000.jpg",
+      "input_image_identity": "6d3879fc8bd528fe639729994b75d7405304967188049f8d7306adb840d2b46c"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "001",
+      "image_id": "ToutaMairimasu/001",
+      "image_ref": "ToutaMairimasu/001.jpg",
+      "input_image_identity": "18251f978af214c59446fdcaa2b7aca88a45760e13c3964b9130f94df845024d"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "002",
+      "image_id": "ToutaMairimasu/002",
+      "image_ref": "ToutaMairimasu/002.jpg",
+      "input_image_identity": "a60740af2b52c83b15c197db356344e519a27d08afafbfd17293d47998cb1b65"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "003",
+      "image_id": "ToutaMairimasu/003",
+      "image_ref": "ToutaMairimasu/003.jpg",
+      "input_image_identity": "de1a5d851ca8e1aa1bd27b48c8dc1360478000d7be23d42c1ed04a0caf918c6e"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "004",
+      "image_id": "ToutaMairimasu/004",
+      "image_ref": "ToutaMairimasu/004.jpg",
+      "input_image_identity": "3ee53947c51e5788a8beb2956f40dce324420f2cfd477bf1cd70b6b36ba5ef32"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "005",
+      "image_id": "ToutaMairimasu/005",
+      "image_ref": "ToutaMairimasu/005.jpg",
+      "input_image_identity": "d3baee2a179a030e81fac42e7cb104e1c385aececa446c35e47030f1d26a85f1"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "006",
+      "image_id": "ToutaMairimasu/006",
+      "image_ref": "ToutaMairimasu/006.jpg",
+      "input_image_identity": "296053153fc4991e6abc1bc0fa081db866f987f5937e68784f1b3fe1d5809561"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "007",
+      "image_id": "ToutaMairimasu/007",
+      "image_ref": "ToutaMairimasu/007.jpg",
+      "input_image_identity": "58b066671c18afaf0af70bd12b5e57d03359958643a84e3ada2d4da91326cd8b"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "008",
+      "image_id": "ToutaMairimasu/008",
+      "image_ref": "ToutaMairimasu/008.jpg",
+      "input_image_identity": "a0d90d0ab035a661cf605d31a80104ff2057827b96a624e3d531bcc53737f6cc"
+    },
+    {
+      "manga": "ToutaMairimasu",
+      "stem": "009",
+      "image_id": "ToutaMairimasu/009",
+      "image_ref": "ToutaMairimasu/009.jpg",
+      "input_image_identity": "d89466900b50bb0a806360e0e2300c0f994804a2f793e48598becdde9ba46f71"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "000",
+      "image_id": "TouyouKidan/000",
+      "image_ref": "TouyouKidan/000.jpg",
+      "input_image_identity": "5af9714a585fad568cd08157d71b7d9d6292d1b84dc62299afeab70f3fe7aa8a"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "001",
+      "image_id": "TouyouKidan/001",
+      "image_ref": "TouyouKidan/001.jpg",
+      "input_image_identity": "289d8e0865aff280c0ffa01ddb61a3f92c9e9560ffbabe8f024a273ddf4436b6"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "002",
+      "image_id": "TouyouKidan/002",
+      "image_ref": "TouyouKidan/002.jpg",
+      "input_image_identity": "f61fa9b1d4006ceda8830fb998585e5eb507e972031c85cd8f2949490c6382a3"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "003",
+      "image_id": "TouyouKidan/003",
+      "image_ref": "TouyouKidan/003.jpg",
+      "input_image_identity": "209aa33f1ca6242135fd447e5b969bd534bc84b688482aa96f34e26977107f03"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "004",
+      "image_id": "TouyouKidan/004",
+      "image_ref": "TouyouKidan/004.jpg",
+      "input_image_identity": "c8d3dc931413fe26965566c20059272c38fe79c9fe0b42a8564c7bdb410f7636"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "005",
+      "image_id": "TouyouKidan/005",
+      "image_ref": "TouyouKidan/005.jpg",
+      "input_image_identity": "071afbdf220244a842eb044b8ff977b51ac184c7135766fc093b08cdc6b50651"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "006",
+      "image_id": "TouyouKidan/006",
+      "image_ref": "TouyouKidan/006.jpg",
+      "input_image_identity": "9ddc2a0035695d2fef8ea7740c6a138362e96d4a0093f7d2e45b66e82a88c299"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "007",
+      "image_id": "TouyouKidan/007",
+      "image_ref": "TouyouKidan/007.jpg",
+      "input_image_identity": "7451848aff7208ee3d92770eecbfe7d24a216950428a0057e270278d5acb84d3"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "008",
+      "image_id": "TouyouKidan/008",
+      "image_ref": "TouyouKidan/008.jpg",
+      "input_image_identity": "e7149a22daa2f1179b236a8fda0b812f6116b40e854259383c4f1753e93ce800"
+    },
+    {
+      "manga": "TouyouKidan",
+      "stem": "009",
+      "image_id": "TouyouKidan/009",
+      "image_ref": "TouyouKidan/009.jpg",
+      "input_image_identity": "a251e162fb8cc338a91a41114b3360a14aba11d20373ffdee707c219bf5e610e"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "000",
+      "image_id": "TsubasaNoKioku/000",
+      "image_ref": "TsubasaNoKioku/000.jpg",
+      "input_image_identity": "6bc10034917880d67539c5fb934fd07438304e8aa8104a85508c2303ed374d83"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "001",
+      "image_id": "TsubasaNoKioku/001",
+      "image_ref": "TsubasaNoKioku/001.jpg",
+      "input_image_identity": "ac8ec6c93fabfa1d766f126b535dea3cc26b5e44a96caee3ac5392e29f9a1abe"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "002",
+      "image_id": "TsubasaNoKioku/002",
+      "image_ref": "TsubasaNoKioku/002.jpg",
+      "input_image_identity": "4a00ebd082d888a09f09960321ba0cffb3f14b98a5f45b5fd63e7e8269dd66e8"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "003",
+      "image_id": "TsubasaNoKioku/003",
+      "image_ref": "TsubasaNoKioku/003.jpg",
+      "input_image_identity": "ec5190b0d89b1cb81ba23f63aefcb1d70c6f8d99f5cf227563cbf5d2bb8f6471"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "004",
+      "image_id": "TsubasaNoKioku/004",
+      "image_ref": "TsubasaNoKioku/004.jpg",
+      "input_image_identity": "758d7d9f5ca07588134171ec49cf1b6a5d146ff1cdf54e1c4bd8f6c989ddb241"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "005",
+      "image_id": "TsubasaNoKioku/005",
+      "image_ref": "TsubasaNoKioku/005.jpg",
+      "input_image_identity": "ab26d97a37ba766c6cd1881a207d692cdb56021ed6cd2b3067c367b5d84a2dcb"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "006",
+      "image_id": "TsubasaNoKioku/006",
+      "image_ref": "TsubasaNoKioku/006.jpg",
+      "input_image_identity": "31b6af6cd9d32e2e45b6e6e63cbdb3acac2f13cc91dd37731fab430508284a36"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "007",
+      "image_id": "TsubasaNoKioku/007",
+      "image_ref": "TsubasaNoKioku/007.jpg",
+      "input_image_identity": "48220d266a1eb116d68960c4e8038a445e9fd69280aee04b3743a259d6ee13b0"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "008",
+      "image_id": "TsubasaNoKioku/008",
+      "image_ref": "TsubasaNoKioku/008.jpg",
+      "input_image_identity": "9dca67c9f750ac73808bab9fecab1d2bd3978d17a97bc7342a56ce5b90f07f94"
+    },
+    {
+      "manga": "TsubasaNoKioku",
+      "stem": "009",
+      "image_id": "TsubasaNoKioku/009",
+      "image_ref": "TsubasaNoKioku/009.jpg",
+      "input_image_identity": "a0d2ccdff6c9ff13e73d6ba75d367e057a9e9e737648675542f684d92842aac0"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "000",
+      "image_id": "UchiNoNyan'sDiary/000",
+      "image_ref": "UchiNoNyan'sDiary/000.jpg",
+      "input_image_identity": "8b64e2d4ecd1256112d518b7e5f49bfb3038af0a8e62be3e0ec6e96084f0cb6e"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "001",
+      "image_id": "UchiNoNyan'sDiary/001",
+      "image_ref": "UchiNoNyan'sDiary/001.jpg",
+      "input_image_identity": "3edef476c546704d9f072df6894f78f4fdad86eb689cdba90bf42d314ad106e8"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "002",
+      "image_id": "UchiNoNyan'sDiary/002",
+      "image_ref": "UchiNoNyan'sDiary/002.jpg",
+      "input_image_identity": "7d1e3d81ee58d5dfaa45e4b191de9dd43757535fac7d9f77057bcb50f53c8f69"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "003",
+      "image_id": "UchiNoNyan'sDiary/003",
+      "image_ref": "UchiNoNyan'sDiary/003.jpg",
+      "input_image_identity": "e7981ba9d39cdc2f1b2b8101311455862d05e7582612eccd5e5667aeea165b33"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "004",
+      "image_id": "UchiNoNyan'sDiary/004",
+      "image_ref": "UchiNoNyan'sDiary/004.jpg",
+      "input_image_identity": "793836f48d8fe0c5cd3457d42950a477787efa7f0a7f54cafb9e7d6ae9d47f19"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "005",
+      "image_id": "UchiNoNyan'sDiary/005",
+      "image_ref": "UchiNoNyan'sDiary/005.jpg",
+      "input_image_identity": "bb1a09160296e98d460e921a3609475682b1fa9f85c38fa56c1eae0dc5ce9bde"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "006",
+      "image_id": "UchiNoNyan'sDiary/006",
+      "image_ref": "UchiNoNyan'sDiary/006.jpg",
+      "input_image_identity": "6c789373d42d2e0f9d23ab538884d5a210de3be2106e5aa0834d99c9c852f82b"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "007",
+      "image_id": "UchiNoNyan'sDiary/007",
+      "image_ref": "UchiNoNyan'sDiary/007.jpg",
+      "input_image_identity": "879cd28dcabe86afdd27357b7b316d1ac148b8c1b97d22aa614abbaeed246d9e"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "008",
+      "image_id": "UchiNoNyan'sDiary/008",
+      "image_ref": "UchiNoNyan'sDiary/008.jpg",
+      "input_image_identity": "d2d01deef19f56979af6e7d66dcc16ecbb4681b32f06c7b46bcc2d357bf7e3dd"
+    },
+    {
+      "manga": "UchiNoNyan'sDiary",
+      "stem": "009",
+      "image_id": "UchiNoNyan'sDiary/009",
+      "image_ref": "UchiNoNyan'sDiary/009.jpg",
+      "input_image_identity": "f00f35424e77cb895fa4fcf802efc9f9a93a44e398eeadbb5143d99b2bafa1d7"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "000",
+      "image_id": "UchuKigekiM774/000",
+      "image_ref": "UchuKigekiM774/000.jpg",
+      "input_image_identity": "b38c6fe84a8a7168d0de31aa3cfe237782f8ee5bbe554f970d09e56b9d6e4c98"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "001",
+      "image_id": "UchuKigekiM774/001",
+      "image_ref": "UchuKigekiM774/001.jpg",
+      "input_image_identity": "de3f10b03801550522239c9db1855be3a0d1fe5fceb484b7b719f86c18942273"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "002",
+      "image_id": "UchuKigekiM774/002",
+      "image_ref": "UchuKigekiM774/002.jpg",
+      "input_image_identity": "32a159fbceef0b1e96095d6b9eb9114aaa4ed42cf81d22ea4bc3c618627c7112"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "003",
+      "image_id": "UchuKigekiM774/003",
+      "image_ref": "UchuKigekiM774/003.jpg",
+      "input_image_identity": "1bf78eb249fd64a2b94d576d0b3b781bffa833305fb1f63effb7e1760059b63e"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "004",
+      "image_id": "UchuKigekiM774/004",
+      "image_ref": "UchuKigekiM774/004.jpg",
+      "input_image_identity": "8b038e902e65eb12009b09f36cda72cc09b2a884334a6175189d0ec120e24219"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "005",
+      "image_id": "UchuKigekiM774/005",
+      "image_ref": "UchuKigekiM774/005.jpg",
+      "input_image_identity": "a19ded5c1968d6302833cb0893d3408bc574a5f09e5b10aa2ca801e93fc5cf5f"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "006",
+      "image_id": "UchuKigekiM774/006",
+      "image_ref": "UchuKigekiM774/006.jpg",
+      "input_image_identity": "6d788a99203d54da19b559513e7e6e5395a75bae52b77a2b563d59b22c637968"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "007",
+      "image_id": "UchuKigekiM774/007",
+      "image_ref": "UchuKigekiM774/007.jpg",
+      "input_image_identity": "99249370034a3e1fd52e01250933ee48bfb501b66768ee0d650efccb0d6dc384"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "008",
+      "image_id": "UchuKigekiM774/008",
+      "image_ref": "UchuKigekiM774/008.jpg",
+      "input_image_identity": "f6e41d241c30356789a576b6a0c3a0a31ca53d67afa1482aac7b9520ed938729"
+    },
+    {
+      "manga": "UchuKigekiM774",
+      "stem": "009",
+      "image_id": "UchuKigekiM774/009",
+      "image_ref": "UchuKigekiM774/009.jpg",
+      "input_image_identity": "00bd59d0599c7b47dad356afdd2363cc593db5e32e0f994213a05fd9e8274a06"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "000",
+      "image_id": "UltraEleven/000",
+      "image_ref": "UltraEleven/000.jpg",
+      "input_image_identity": "dc1c608bf4a03d4634a7492b438dfe921748270ca8a3fc8528a56c20b40b7c6e"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "001",
+      "image_id": "UltraEleven/001",
+      "image_ref": "UltraEleven/001.jpg",
+      "input_image_identity": "2eb19462e0b1e231b40df62983d33a3d7bc3339b3b075db81430b5b9ad8ee70c"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "002",
+      "image_id": "UltraEleven/002",
+      "image_ref": "UltraEleven/002.jpg",
+      "input_image_identity": "717c86b86443488302dc7e32186626c1e33189b756f82965664cc1f71d357516"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "003",
+      "image_id": "UltraEleven/003",
+      "image_ref": "UltraEleven/003.jpg",
+      "input_image_identity": "3d6c79e18c424e86b2daf37f53394f725084cf562afe38f2723f8d78974087a6"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "004",
+      "image_id": "UltraEleven/004",
+      "image_ref": "UltraEleven/004.jpg",
+      "input_image_identity": "dc978d1302dd402c4d78c85a06a963724ec46ee77d1a8e4302bdd2b34266f128"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "005",
+      "image_id": "UltraEleven/005",
+      "image_ref": "UltraEleven/005.jpg",
+      "input_image_identity": "724fa65626ba10e091204cb01d4cdab274b49deeb7eae316b64be018cddd1a37"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "006",
+      "image_id": "UltraEleven/006",
+      "image_ref": "UltraEleven/006.jpg",
+      "input_image_identity": "9d8834cca9a8d4438ab84b02df7df3135d77561ead3f6e4d15eb6dc5a53600c2"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "007",
+      "image_id": "UltraEleven/007",
+      "image_ref": "UltraEleven/007.jpg",
+      "input_image_identity": "eec61526e5ff79655b811bf91f461a8d600a24cfc26ae2ee9c96fd982546002d"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "008",
+      "image_id": "UltraEleven/008",
+      "image_ref": "UltraEleven/008.jpg",
+      "input_image_identity": "9ea56af532c3bdfd83d350bd167d1f2db9fa9a3ae370851b8b2e6f3846be558c"
+    },
+    {
+      "manga": "UltraEleven",
+      "stem": "009",
+      "image_id": "UltraEleven/009",
+      "image_ref": "UltraEleven/009.jpg",
+      "input_image_identity": "84cf8a5668703c1952e21e04a170aef800830ff79f4878ffbfdc5a3fb7058091"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "000",
+      "image_id": "UnbalanceTokyo/000",
+      "image_ref": "UnbalanceTokyo/000.jpg",
+      "input_image_identity": "595fd7830436a062928f58e17b15cef8236971955467804c4c68860db1ad545b"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "001",
+      "image_id": "UnbalanceTokyo/001",
+      "image_ref": "UnbalanceTokyo/001.jpg",
+      "input_image_identity": "4c4f368478197c57cae4718752d9fb2fc6e02b43c8215150754d88d93c2a17a2"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "002",
+      "image_id": "UnbalanceTokyo/002",
+      "image_ref": "UnbalanceTokyo/002.jpg",
+      "input_image_identity": "a498e38969e9b3407fd63ff20a7eeda4b065a5f780653c3248ca18095fa86941"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "003",
+      "image_id": "UnbalanceTokyo/003",
+      "image_ref": "UnbalanceTokyo/003.jpg",
+      "input_image_identity": "bc23088cac9762ba5ab1465384cff237c484ba73679cc77a4b61dcc69e7ca547"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "004",
+      "image_id": "UnbalanceTokyo/004",
+      "image_ref": "UnbalanceTokyo/004.jpg",
+      "input_image_identity": "ec86c5baecddb961bd8ee1299cc3ef17f4edb7facc93f02926fe54d0d4dc5acc"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "005",
+      "image_id": "UnbalanceTokyo/005",
+      "image_ref": "UnbalanceTokyo/005.jpg",
+      "input_image_identity": "ea81236fb771400c8dece327a739e55063800483c2ff963b0b259656517ca80f"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "006",
+      "image_id": "UnbalanceTokyo/006",
+      "image_ref": "UnbalanceTokyo/006.jpg",
+      "input_image_identity": "dca2e633b3ff780a2c783d4f7cc00c2a036c6a186b1bb3d5428dfd51f09a6a66"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "007",
+      "image_id": "UnbalanceTokyo/007",
+      "image_ref": "UnbalanceTokyo/007.jpg",
+      "input_image_identity": "60ffdccdb18b2df051bd319a638b324c9979912f73e7325cb207a078da513078"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "008",
+      "image_id": "UnbalanceTokyo/008",
+      "image_ref": "UnbalanceTokyo/008.jpg",
+      "input_image_identity": "8d2749e35f138bef89d60dd9baa7732e2927b76ee5d2ccc597eef9bff94c4db3"
+    },
+    {
+      "manga": "UnbalanceTokyo",
+      "stem": "009",
+      "image_id": "UnbalanceTokyo/009",
+      "image_ref": "UnbalanceTokyo/009.jpg",
+      "input_image_identity": "75390605ce4a58f1e26bbfbf2d1f2371660296f97520e255a8b4e1e1236d6aca"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "000",
+      "image_id": "WarewareHaOniDearu/000",
+      "image_ref": "WarewareHaOniDearu/000.jpg",
+      "input_image_identity": "c29f5b7a1329e3d594c0d10d8595ecd2f3fc03fe4fd8a4267b5d3cc6d2109a98"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "001",
+      "image_id": "WarewareHaOniDearu/001",
+      "image_ref": "WarewareHaOniDearu/001.jpg",
+      "input_image_identity": "3da05ffc0e655fd6b06f635c15b4df029dbf76cc36b1ee30aee449fe8cfe57cc"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "002",
+      "image_id": "WarewareHaOniDearu/002",
+      "image_ref": "WarewareHaOniDearu/002.jpg",
+      "input_image_identity": "55305c04eeef17ad80f3d3666fa4024c06e40c3313b86d05b1c76828ae65cf82"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "003",
+      "image_id": "WarewareHaOniDearu/003",
+      "image_ref": "WarewareHaOniDearu/003.jpg",
+      "input_image_identity": "538f0ba32452c800ca960656fdf4ca390d121259f57ecf1af0bf65204d8f9314"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "004",
+      "image_id": "WarewareHaOniDearu/004",
+      "image_ref": "WarewareHaOniDearu/004.jpg",
+      "input_image_identity": "eccb595e805532a0f16adfc17adbbc8911c32e74e4f1a43e71aad19212d0adfb"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "005",
+      "image_id": "WarewareHaOniDearu/005",
+      "image_ref": "WarewareHaOniDearu/005.jpg",
+      "input_image_identity": "37241e43c2f4880146af5eb154aa19a2c0a2f7c0d04031d02760d32966f1b659"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "006",
+      "image_id": "WarewareHaOniDearu/006",
+      "image_ref": "WarewareHaOniDearu/006.jpg",
+      "input_image_identity": "90b54fe4873f4fcc79a8e737d92783fbe29900c3d4d31466927f989e734bca94"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "007",
+      "image_id": "WarewareHaOniDearu/007",
+      "image_ref": "WarewareHaOniDearu/007.jpg",
+      "input_image_identity": "38d4a9684adbd322ead70f3324b0a7bea4a86cd2d862bafd3ce311422cf756e1"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "008",
+      "image_id": "WarewareHaOniDearu/008",
+      "image_ref": "WarewareHaOniDearu/008.jpg",
+      "input_image_identity": "fcc45d1e6bfbd9de604ea49bc23a8cbf360b353ce1707709e18d0fb80a0e929e"
+    },
+    {
+      "manga": "WarewareHaOniDearu",
+      "stem": "009",
+      "image_id": "WarewareHaOniDearu/009",
+      "image_ref": "WarewareHaOniDearu/009.jpg",
+      "input_image_identity": "3ff0e9503b7e539d4d3f2c085fa55233ebb49a68cdeed478ec49f74697e1e700"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "000",
+      "image_id": "YamatoNoHane/000",
+      "image_ref": "YamatoNoHane/000.jpg",
+      "input_image_identity": "a34180a46fb8d23afdf320e942d76dc46a71705e3da35193405bda13fe8b58a5"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "001",
+      "image_id": "YamatoNoHane/001",
+      "image_ref": "YamatoNoHane/001.jpg",
+      "input_image_identity": "008d5f6759aa0ef4ba746d732a99cd4bc181801c5fc6af24aeac06e49e86933d"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "002",
+      "image_id": "YamatoNoHane/002",
+      "image_ref": "YamatoNoHane/002.jpg",
+      "input_image_identity": "a0add113d01073bb7ec706b7df54d57cd7234fc8894a26a69121bf053460c4a4"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "003",
+      "image_id": "YamatoNoHane/003",
+      "image_ref": "YamatoNoHane/003.jpg",
+      "input_image_identity": "db2be3b394d847d93f0cd383635a07b7da75aaae1780b9223e19646c94957ad9"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "004",
+      "image_id": "YamatoNoHane/004",
+      "image_ref": "YamatoNoHane/004.jpg",
+      "input_image_identity": "24b529ef647a8e21bd158a8d7e362bfe4a6886ebd2c3ecb7edfa9ec549ccfbab"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "005",
+      "image_id": "YamatoNoHane/005",
+      "image_ref": "YamatoNoHane/005.jpg",
+      "input_image_identity": "8ff452ee9786e3837956aa4a6364edae23e2adeb4abef62f50f6e3c22c326de0"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "006",
+      "image_id": "YamatoNoHane/006",
+      "image_ref": "YamatoNoHane/006.jpg",
+      "input_image_identity": "8d902977d46e0be5a3640b39f9e3ffd26b7266458b83ad6a88c0e47324d01061"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "007",
+      "image_id": "YamatoNoHane/007",
+      "image_ref": "YamatoNoHane/007.jpg",
+      "input_image_identity": "66a05086768c6bdf65689aced64db9cf8f6e518f0dab909324129840916fe85b"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "008",
+      "image_id": "YamatoNoHane/008",
+      "image_ref": "YamatoNoHane/008.jpg",
+      "input_image_identity": "7af9645b0a90dfd9c79ea13779ff0da5b014598102df32bc46433e4058d4b620"
+    },
+    {
+      "manga": "YamatoNoHane",
+      "stem": "009",
+      "image_id": "YamatoNoHane/009",
+      "image_ref": "YamatoNoHane/009.jpg",
+      "input_image_identity": "78e4dfed37e28bced4082732eb2365a137e37b783faa46984e8d735c085892f0"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "000",
+      "image_id": "YasasiiAkuma/000",
+      "image_ref": "YasasiiAkuma/000.jpg",
+      "input_image_identity": "555fafe152d40e47930f922829faac4cdaa825370f3fa9a5b2a3b55583c20ebe"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "001",
+      "image_id": "YasasiiAkuma/001",
+      "image_ref": "YasasiiAkuma/001.jpg",
+      "input_image_identity": "d90ccb99b1192fff47a796f717f950aa7f7233880d21af1fcf5ab6910e57de3c"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "002",
+      "image_id": "YasasiiAkuma/002",
+      "image_ref": "YasasiiAkuma/002.jpg",
+      "input_image_identity": "7b0f3b7ad564768a75621744c338611951cb4bfda93979974ece8077328deea2"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "003",
+      "image_id": "YasasiiAkuma/003",
+      "image_ref": "YasasiiAkuma/003.jpg",
+      "input_image_identity": "a77047f0d7c8064eecba4d339f6b2351098304f9c7183f8ee4ae81e63462ed72"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "004",
+      "image_id": "YasasiiAkuma/004",
+      "image_ref": "YasasiiAkuma/004.jpg",
+      "input_image_identity": "a18db915921b566e6b8289a9a643c3e67a66ee557d2fbf5d293c99cedc57140e"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "005",
+      "image_id": "YasasiiAkuma/005",
+      "image_ref": "YasasiiAkuma/005.jpg",
+      "input_image_identity": "3a711897601b2d8aca2714ce03e843d473b80a17211f31b2876197162a6ec024"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "006",
+      "image_id": "YasasiiAkuma/006",
+      "image_ref": "YasasiiAkuma/006.jpg",
+      "input_image_identity": "e2e53bef682c75445bc4b95aa0a14fc4358ebd82a9652a4c10ddbc018ff55621"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "007",
+      "image_id": "YasasiiAkuma/007",
+      "image_ref": "YasasiiAkuma/007.jpg",
+      "input_image_identity": "0528148c8698c2a62a831c70e68fec29dcb415aa90a9eca221b4e9b5bc3c1243"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "008",
+      "image_id": "YasasiiAkuma/008",
+      "image_ref": "YasasiiAkuma/008.jpg",
+      "input_image_identity": "65a6052b850d13b478c13d5a1dbd940adb1e8212439fc41b73e674f9cc2c4a76"
+    },
+    {
+      "manga": "YasasiiAkuma",
+      "stem": "009",
+      "image_id": "YasasiiAkuma/009",
+      "image_ref": "YasasiiAkuma/009.jpg",
+      "input_image_identity": "25b8e2e7bb56262d873a83a7ff1886ac4286d6fb619f513ca6c3c94977845618"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "000",
+      "image_id": "YoumaKourin/000",
+      "image_ref": "YoumaKourin/000.jpg",
+      "input_image_identity": "a28cc6e20b73de1f45148484042279586599595b79e4e2dad2c58c05e5bcaaad"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "001",
+      "image_id": "YoumaKourin/001",
+      "image_ref": "YoumaKourin/001.jpg",
+      "input_image_identity": "5e5bf8928cd09d817c278eade2c0b6f06b2fdf280b306d8a00c32b4a114ceb77"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "002",
+      "image_id": "YoumaKourin/002",
+      "image_ref": "YoumaKourin/002.jpg",
+      "input_image_identity": "b8966d0a1e61db2c281af194869d6f20b8b19cd2c217f4001f3d746b686aeee3"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "003",
+      "image_id": "YoumaKourin/003",
+      "image_ref": "YoumaKourin/003.jpg",
+      "input_image_identity": "0549a72c86bbe1763cc2109f99b340a38bbc9d657384d7f3bb7d2861ba32a6e3"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "004",
+      "image_id": "YoumaKourin/004",
+      "image_ref": "YoumaKourin/004.jpg",
+      "input_image_identity": "123ca349acc354d2a1c5d8e91e5fcf177adf4e375f6fd93d7a3c9e2e159a46ea"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "005",
+      "image_id": "YoumaKourin/005",
+      "image_ref": "YoumaKourin/005.jpg",
+      "input_image_identity": "acf6a54f5dd6f91ad65bf53b807d1d8dce6c1e5560a52a7dc51207cecec3933a"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "006",
+      "image_id": "YoumaKourin/006",
+      "image_ref": "YoumaKourin/006.jpg",
+      "input_image_identity": "6586cfc5bfa5168659217f6e6d7fc1516d9a1e48a1f67f0718e84cb791e6b56b"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "007",
+      "image_id": "YoumaKourin/007",
+      "image_ref": "YoumaKourin/007.jpg",
+      "input_image_identity": "b1a3755c9a878f6a8964ef1f7ebd58c24c3d30aa68f13856a91d3a47002a34ad"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "008",
+      "image_id": "YoumaKourin/008",
+      "image_ref": "YoumaKourin/008.jpg",
+      "input_image_identity": "8d4e27620399d57b2bfc07afa6f83526db92452aed97b08bfc5d56c8e8a47c61"
+    },
+    {
+      "manga": "YoumaKourin",
+      "stem": "009",
+      "image_id": "YoumaKourin/009",
+      "image_ref": "YoumaKourin/009.jpg",
+      "input_image_identity": "92072c115cc005bac2ac32805508e5815be72034a921194a95c5779dd78577ed"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "000",
+      "image_id": "YukiNoFuruMachi/000",
+      "image_ref": "YukiNoFuruMachi/000.jpg",
+      "input_image_identity": "ed0fd662509b2fa2ba1aefe1dbd306a2155bdec1a0988acbaed1ddf84024dabc"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "001",
+      "image_id": "YukiNoFuruMachi/001",
+      "image_ref": "YukiNoFuruMachi/001.jpg",
+      "input_image_identity": "9f3704057eb90883df7f44cd6b21d5403c9cb047e819bb839cedece24078170c"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "002",
+      "image_id": "YukiNoFuruMachi/002",
+      "image_ref": "YukiNoFuruMachi/002.jpg",
+      "input_image_identity": "65a62e4558ffaa3a6779db4d6324b616789e3b7b7479193f47727c3714d36b62"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "003",
+      "image_id": "YukiNoFuruMachi/003",
+      "image_ref": "YukiNoFuruMachi/003.jpg",
+      "input_image_identity": "36bb246cb11af5e5ab2b40f54ed58bb80821f7c8c4d3f43db5c6192396dcefe2"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "004",
+      "image_id": "YukiNoFuruMachi/004",
+      "image_ref": "YukiNoFuruMachi/004.jpg",
+      "input_image_identity": "3df1d7dbbb3f0dd0420130b043c3d381cba8367c09ed6952754fec974febcad7"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "005",
+      "image_id": "YukiNoFuruMachi/005",
+      "image_ref": "YukiNoFuruMachi/005.jpg",
+      "input_image_identity": "0a9d38fce02f24548cb5caa1ed55c74b45e354f3cee3371699a84fb7a30f76e2"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "006",
+      "image_id": "YukiNoFuruMachi/006",
+      "image_ref": "YukiNoFuruMachi/006.jpg",
+      "input_image_identity": "97d840b6a98933d617a5960470af6b683595ca0d40ae9b94abbab9d1a6700fd8"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "007",
+      "image_id": "YukiNoFuruMachi/007",
+      "image_ref": "YukiNoFuruMachi/007.jpg",
+      "input_image_identity": "e9cf6ffc83a1afab8ab8ebcab027de1f24c5a0572340ce581bcd6dabbb1f21aa"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "008",
+      "image_id": "YukiNoFuruMachi/008",
+      "image_ref": "YukiNoFuruMachi/008.jpg",
+      "input_image_identity": "2253296289db52beffb370ddb157a02d4638bec0b8f83bf79e5877ba98dfb67a"
+    },
+    {
+      "manga": "YukiNoFuruMachi",
+      "stem": "009",
+      "image_id": "YukiNoFuruMachi/009",
+      "image_ref": "YukiNoFuruMachi/009.jpg",
+      "input_image_identity": "844dadc499353be1afe4d4766a6c7e93c29f9b9be6e81a3d9938167ffb0d68e4"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "000",
+      "image_id": "YumeNoKayoiji/000",
+      "image_ref": "YumeNoKayoiji/000.jpg",
+      "input_image_identity": "c9eb3a0f594a6b5999b6e1715466e1ca2c1dca212f3ef2fce9ebb6f19a53dac8"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "001",
+      "image_id": "YumeNoKayoiji/001",
+      "image_ref": "YumeNoKayoiji/001.jpg",
+      "input_image_identity": "6ffffdaaa35d848be723652ffff0b4859c344b7b752a1e7564549a70e47f6119"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "002",
+      "image_id": "YumeNoKayoiji/002",
+      "image_ref": "YumeNoKayoiji/002.jpg",
+      "input_image_identity": "265ec80d8adf0d482fcdd3bab4326f1a309dc9b47904067a0f863f68081f7caf"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "003",
+      "image_id": "YumeNoKayoiji/003",
+      "image_ref": "YumeNoKayoiji/003.jpg",
+      "input_image_identity": "6731cd10cd19814e0f97bce9f748f2df1f2582e3f7e7202cc2590cb852eb7f8f"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "004",
+      "image_id": "YumeNoKayoiji/004",
+      "image_ref": "YumeNoKayoiji/004.jpg",
+      "input_image_identity": "bfee400a37a51e3535fb55cffee618c89ea2173ed9ac72309a4747a809ba0615"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "005",
+      "image_id": "YumeNoKayoiji/005",
+      "image_ref": "YumeNoKayoiji/005.jpg",
+      "input_image_identity": "d2068fd551a20cda7aa634671e9a32e48ab5d8f94a5822be59bf4f66c18addfd"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "006",
+      "image_id": "YumeNoKayoiji/006",
+      "image_ref": "YumeNoKayoiji/006.jpg",
+      "input_image_identity": "4a88c29c9a5bde7188fa92eff10e9f24ba30fb50932b8c49f8d2e4f7fb67ad74"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "007",
+      "image_id": "YumeNoKayoiji/007",
+      "image_ref": "YumeNoKayoiji/007.jpg",
+      "input_image_identity": "a2bb3e24ac0a06f99db56cc36d83ed50e8a349e103d7bf80159a87912e9d80c0"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "008",
+      "image_id": "YumeNoKayoiji/008",
+      "image_ref": "YumeNoKayoiji/008.jpg",
+      "input_image_identity": "5f25eeef15edfb90cbcbd04dd25b05ec509ac2544ce7f668d5d282811afc6fed"
+    },
+    {
+      "manga": "YumeNoKayoiji",
+      "stem": "009",
+      "image_id": "YumeNoKayoiji/009",
+      "image_ref": "YumeNoKayoiji/009.jpg",
+      "input_image_identity": "3eb6ae6c4b676b678e24b3f03e5559184a9391a0dc22c8eee08c8c71c96f6278"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "000",
+      "image_id": "YumeiroCooking/000",
+      "image_ref": "YumeiroCooking/000.jpg",
+      "input_image_identity": "dd2c86a28e55e33c4588bc2a337efeb00b4ad8357268e8c405532d52c2893fc9"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "001",
+      "image_id": "YumeiroCooking/001",
+      "image_ref": "YumeiroCooking/001.jpg",
+      "input_image_identity": "1a1ea5adf94c37862d4bdbc8ab3166541e776510204664c292af63901d9c0d9c"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "002",
+      "image_id": "YumeiroCooking/002",
+      "image_ref": "YumeiroCooking/002.jpg",
+      "input_image_identity": "f37fec99bd9df5cd0b3e7e98911ad0a725acb1f46c88d993a1eb138c35767ad7"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "003",
+      "image_id": "YumeiroCooking/003",
+      "image_ref": "YumeiroCooking/003.jpg",
+      "input_image_identity": "2ee38bd15147526b15398edd9a43de8e6a39fffcb389803f0a15e33922e39948"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "004",
+      "image_id": "YumeiroCooking/004",
+      "image_ref": "YumeiroCooking/004.jpg",
+      "input_image_identity": "70b703b29ba7c16ad7a6d39b5de62b4bda3213670597243d0f2fd7cb4750065f"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "005",
+      "image_id": "YumeiroCooking/005",
+      "image_ref": "YumeiroCooking/005.jpg",
+      "input_image_identity": "7c530ec3ce3292cdf4476e3906012613f30f5754bb4ab75bd90b18076eb41a5f"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "006",
+      "image_id": "YumeiroCooking/006",
+      "image_ref": "YumeiroCooking/006.jpg",
+      "input_image_identity": "6d395ca4d2f3345b06ede29201c6749c9794d2214cb1ce2b69442a148c1fed18"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "007",
+      "image_id": "YumeiroCooking/007",
+      "image_ref": "YumeiroCooking/007.jpg",
+      "input_image_identity": "fa0e9d2d0881ee86c5242ae80f692f256d4821d3b403502d98aa51d81ab80f1c"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "008",
+      "image_id": "YumeiroCooking/008",
+      "image_ref": "YumeiroCooking/008.jpg",
+      "input_image_identity": "f1e0c5b760541f33bb8244a1e3a41dd97c393842048d64b3489f90bdf091fd78"
+    },
+    {
+      "manga": "YumeiroCooking",
+      "stem": "009",
+      "image_id": "YumeiroCooking/009",
+      "image_ref": "YumeiroCooking/009.jpg",
+      "input_image_identity": "45da0bde161ecbf94475550749dbb67beba84c8461a2b6afedee67329caf0024"
+    }
+  ],
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef"
+}

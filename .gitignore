@@ -28,11 +28,12 @@ cache/
 tmp/
 temp/
 
-# Models and checkpoints
+# Models and checkpoints (SC-013: zero weight files in the stored tree, any size, any form)
 checkpoints/
 weights/
 *.pth
 *.pt
+*.pkl
 *.ckpt
 *.onnx
 *.bin
@@ -44,6 +45,10 @@ data/
 
 # Notebook-generated files
 .ipynb_checkpoints/
+
+# The distributable image bundle: distribution, not contract (FR-054a, research.md R10).
+# The committed benchmark/image-identity.json is what makes any copy verifiable.
+benchmark/dist/
 
 .specify/
 .claude/

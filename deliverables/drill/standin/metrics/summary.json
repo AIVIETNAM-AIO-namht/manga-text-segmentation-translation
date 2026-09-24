@@ -1,0 +1,15 @@
+{
+  "run_id": "drill",
+  "summaries": [
+    {
+      "method": "standin",
+      "n_images": 390,
+      "mean_iou": 0.009160306769250346,
+      "std_iou": 0.018500720393616287,
+      "mean_precision": 0.00983247124811609,
+      "mean_recall": 0.26408379880864824,
+      "mean_f1": 0.017528562291754167,
+      "mean_time_seconds": 0.0
+    }
+  ]
+}

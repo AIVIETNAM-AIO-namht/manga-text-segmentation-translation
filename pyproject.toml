@@ -36,6 +36,9 @@ select = ["E", "F", "I", "N", "W", "UP"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov=manga_text_seg --cov-report=term-missing"
+markers = [
+    "integration: may load a real checkpoint or download a model; opt in with MANGA_TEXT_SEG_INTEGRATION=1 (FR-051)",
+]
 
 [build-system]
 requires = ["setuptools>=68.0", "wheel"]

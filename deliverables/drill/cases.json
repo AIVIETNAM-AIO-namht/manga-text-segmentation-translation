@@ -1,0 +1,254 @@
+{
+  "run_id": "drill",
+  "methods": {
+    "standin": {
+      "method": "standin",
+      "scope": "page-level",
+      "ran": true,
+      "reason": null,
+      "cases": [
+        {
+          "image_id": "YamatoNoHane/000",
+          "f1": 0.2165473807968158,
+          "case_kind": "good",
+          "composite": "visualizations/YamatoNoHane_000.png"
+        },
+        {
+          "image_id": "Akuhamu/000",
+          "f1": 0.1899436309756653,
+          "case_kind": "good",
+          "composite": "visualizations/Akuhamu_000.png"
+        },
+        {
+          "image_id": "Donburakokko/000",
+          "f1": 0.1892148178112883,
+          "case_kind": "good",
+          "composite": "visualizations/Donburakokko_000.png"
+        },
+        {
+          "image_id": "AppareKappore/000",
+          "f1": 0.1835818611905781,
+          "case_kind": "good",
+          "composite": "visualizations/AppareKappore_000.png"
+        },
+        {
+          "image_id": "ToutaMairimasu/000",
+          "f1": 0.1715718668786076,
+          "case_kind": "good",
+          "composite": "visualizations/ToutaMairimasu_000.png"
+        },
+        {
+          "image_id": "UchuKigekiM774/000",
+          "f1": 0.1652723046132043,
+          "case_kind": "good",
+          "composite": "visualizations/UchuKigekiM774_000.png"
+        },
+        {
+          "image_id": "BakuretsuKungFuGirl/000",
+          "f1": 0.1618944745077718,
+          "case_kind": "good",
+          "composite": "visualizations/BakuretsuKungFuGirl_000.png"
+        },
+        {
+          "image_id": "ARMS/000",
+          "f1": 0.1479830686650265,
+          "case_kind": "good",
+          "composite": "visualizations/ARMS_000.png"
+        },
+        {
+          "image_id": "UchuKigekiM774/002",
+          "f1": 0.1441569315418045,
+          "case_kind": "good",
+          "composite": "visualizations/UchuKigekiM774_002.png"
+        },
+        {
+          "image_id": "Arisa/000",
+          "f1": 0.14075380115205,
+          "case_kind": "good",
+          "composite": "visualizations/Arisa_000.png"
+        },
+        {
+          "image_id": "AkkeraKanjinchou/000",
+          "f1": 0.1366973577364642,
+          "case_kind": "good",
+          "composite": "visualizations/AkkeraKanjinchou_000.png"
+        },
+        {
+          "image_id": "HarukaRefrain/000",
+          "f1": 0.1312220067112941,
+          "case_kind": "good",
+          "composite": "visualizations/HarukaRefrain_000.png"
+        },
+        {
+          "image_id": "GarakutayaManta/000",
+          "f1": 0.1311057792730615,
+          "case_kind": "good",
+          "composite": "visualizations/GarakutayaManta_000.png"
+        },
+        {
+          "image_id": "AosugiruHaru/002",
+          "f1": 0.1289182801346479,
+          "case_kind": "good",
+          "composite": "visualizations/AosugiruHaru_002.png"
+        },
+        {
+          "image_id": "BakuretsuKungFuGirl/001",
+          "f1": 0.1264501690215253,
+          "case_kind": "good",
+          "composite": "visualizations/BakuretsuKungFuGirl_001.png"
+        },
+        {
+          "image_id": "YumeNoKayoiji/000",
+          "f1": 0.1251685062687949,
+          "case_kind": "good",
+          "composite": "visualizations/YumeNoKayoiji_000.png"
+        },
+        {
+          "image_id": "HaruichibanNoFukukoro/000",
+          "f1": 0.1235695061570171,
+          "case_kind": "good",
+          "composite": "visualizations/HaruichibanNoFukukoro_000.png"
+        },
+        {
+          "image_id": "Arisa/001",
+          "f1": 0.11283400377389,
+          "case_kind": "good",
+          "composite": "visualizations/Arisa_001.png"
+        },
+        {
+          "image_id": "AisazuNihaIrarenai/001",
+          "f1": 0.1123907391358177,
+          "case_kind": "good",
+          "composite": "visualizations/AisazuNihaIrarenai_001.png"
+        },
+        {
+          "image_id": "DualJustice/000",
+          "f1": 0.1108591084072573,
+          "case_kind": "good",
+          "composite": "visualizations/DualJustice_000.png"
+        },
+        {
+          "image_id": "EvaLady/002",
+          "f1": 0.0072160454281826,
+          "case_kind": "average",
+          "composite": "visualizations/EvaLady_002.png"
+        },
+        {
+          "image_id": "GarakutayaManta/002",
+          "f1": 0.0071350694335764,
+          "case_kind": "average",
+          "composite": "visualizations/GarakutayaManta_002.png"
+        },
+        {
+          "image_id": "EverydayOsakanaChan/005",
+          "f1": 0.0070795341413694,
+          "case_kind": "average",
+          "composite": "visualizations/EverydayOsakanaChan_005.png"
+        },
+        {
+          "image_id": "GinNoChimera/007",
+          "f1": 0.0070690969575161,
+          "case_kind": "average",
+          "composite": "visualizations/GinNoChimera_007.png"
+        },
+        {
+          "image_id": "BakuretsuKungFuGirl/006",
+          "f1": 0.0070597943357962,
+          "case_kind": "average",
+          "composite": "visualizations/BakuretsuKungFuGirl_006.png"
+        },
+        {
+          "image_id": "EienNoWith/009",
+          "f1": 0.0070332894408973,
+          "case_kind": "average",
+          "composite": "visualizations/EienNoWith_009.png"
+        },
+        {
+          "image_id": "UltraEleven/006",
+          "f1": 0.0070035904131952,
+          "case_kind": "average",
+          "composite": "visualizations/UltraEleven_006.png"
+        },
+        {
+          "image_id": "WarewareHaOniDearu/003",
+          "f1": 0.0070021204364715,
+          "case_kind": "average",
+          "composite": "visualizations/WarewareHaOniDearu_003.png"
+        },
+        {
+          "image_id": "Hamlet/008",
+          "f1": 0.0069524281672255,
+          "case_kind": "average",
+          "composite": "visualizations/Hamlet_008.png"
+        },
+        {
+          "image_id": "UltraEleven/008",
+          "f1": 0.0069294033801411,
+          "case_kind": "average",
+          "composite": "visualizations/UltraEleven_008.png"
+        },
+        {
+          "image_id": "Arisa/009",
+          "f1": 0.0069283854522103,
+          "case_kind": "average",
+          "composite": "visualizations/Arisa_009.png"
+        },
+        {
+          "image_id": "DollGun/006",
+          "f1": 0.0069172853817665,
+          "case_kind": "average",
+          "composite": "visualizations/DollGun_006.png"
+        },
+        {
+          "image_id": "YumeiroCooking/000",
+          "f1": 0.0068592224636153,
+          "case_kind": "average",
+          "composite": "visualizations/YumeiroCooking_000.png"
+        },
+        {
+          "image_id": "DualJustice/003",
+          "f1": 0.0068372947233372,
+          "case_kind": "average",
+          "composite": "visualizations/DualJustice_003.png"
+        },
+        {
+          "image_id": "Count3DeKimeteAgeru/004",
+          "f1": 0.0067673558775414,
+          "case_kind": "average",
+          "composite": "visualizations/Count3DeKimeteAgeru_004.png"
+        },
+        {
+          "image_id": "AppareKappore/009",
+          "f1": 0.0067307900541717,
+          "case_kind": "average",
+          "composite": "visualizations/AppareKappore_009.png"
+        },
+        {
+          "image_id": "AisazuNihaIrarenai/003",
+          "f1": 0.0067011645671128,
+          "case_kind": "average",
+          "composite": "visualizations/AisazuNihaIrarenai_003.png"
+        },
+        {
+          "image_id": "YoumaKourin/006",
+          "f1": 0.0065976272104996,
+          "case_kind": "average",
+          "composite": "visualizations/YoumaKourin_006.png"
+        },
+        {
+          "image_id": "AppareKappore/005",
+          "f1": 0.006594813800786,
+          "case_kind": "average",
+          "composite": "visualizations/AppareKappore_005.png"
+        },
+        {
+          "image_id": "AppareKappore/003",
+          "f1": 0.0065838062923563,
+          "case_kind": "average",
+          "composite": "visualizations/AppareKappore_003.png"
+        }
+      ],
+      "failures": []
+    }
+  }
+}

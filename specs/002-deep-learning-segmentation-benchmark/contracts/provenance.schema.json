@@ -1,0 +1,131 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://manga-text-seg.local/contracts/provenance.schema.json",
+  "title": "Provenance record",
+  "description": "FR-056 / FR-018a / FR-018b / FR-044 / FR-060. One record per method per hand-off, returned by the runner. Completeness is machine-checked before admission; a record missing any required field is REFUSED with the missing field named, never accepted with gaps (SC-014). Each field is attributed to the environment that produced it, because under FR-052 the three methods do not share one environment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "method",
+    "repository",
+    "checkpoint",
+    "code_license",
+    "weight_license",
+    "checkpoint_load_evidence",
+    "device",
+    "interpreter",
+    "packages",
+    "seed",
+    "run_timestamp"
+  ],
+  "properties": {
+    "method": {
+      "type": "string",
+      "description": "Method name. Matches the adapter registry key."
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "revision"],
+      "description": "The external repository this result came from. FR-055: nothing from it is vendored, copied, patched or committed in this project.",
+      "properties": {
+        "url": { "type": "string", "description": "Upstream repository URL." },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Full 40-character commit SHA. A branch name, tag or short SHA is not a revision and is refused."
+        }
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identity", "size_bytes", "sha256"],
+      "description": "FR-044. The filename alone is not identity; size_bytes alone is not enough.",
+      "properties": {
+        "identity": { "type": "string", "description": "Checkpoint filename or release artefact name." },
+        "size_bytes": { "type": "integer", "minimum": 1 },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of the checkpoint file as configured. Checked against the identity pinned in configs/dl.json at admission."
+        }
+      }
+    },
+    "code_license": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Licence of the repository's code. A: MIT. B: GPL-3.0. C: none (no licence published - default copyright, a recorded position, not a missing field)."
+    },
+    "weight_license": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Licence of the checkpoint weights, recorded separately from the code licence. The two may differ."
+    },
+    "checkpoint_load_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenced", "method", "detail"],
+      "description": "FR-018a / FR-018b. POSITIVE evidence that the configured checkpoint was the one loaded - the loaded state's tensor keys and their checksum matched against the configured file. A plausible mask, a correct shape, a correct value range, or 'the code ran without error' is NOT evidence. Method C's upstream code catches the missing-checkpoint error, prints a warning and continues with a randomly initialised decoder producing plausible output, which is exactly what this field exists to catch.",
+      "properties": {
+        "evidenced": {
+          "type": "boolean",
+          "description": "true only when positive identity evidence was produced and is described in detail. false means the run is inadmissible for this method."
+        },
+        "method": {
+          "type": "string",
+          "description": "How the evidence was obtained (e.g. state_dict key set plus checksum comparison)."
+        },
+        "detail": {
+          "type": "string",
+          "description": "The evidence itself: the observed keys/hash, or the reason evidence could not be produced."
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "name"],
+      "description": "FR-060. Every timing figure is attributed to its producing device. 'cuda' alone is not sufficient - the specific accelerator name is required, because three methods run on three different machines and their timings are not comparable.",
+      "properties": {
+        "type": { "type": "string", "enum": ["cpu", "cuda"] },
+        "name": { "type": "string", "minLength": 1, "examples": ["Tesla T4", "NVIDIA A100-SXM4-40GB"] }
+      }
+    },
+    "interpreter": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Interpreter version of the environment that ran this method, recorded per method (FR-044). Method A's pinned fastai 1.0.60 / torch 1.4.0 stack caps at Python 3.7, so the three may legitimately differ."
+    },
+    "packages": {
+      "type": "object",
+      "description": "The REAL versions of the environment that ran, not the versions listed in requirements.txt (FR-044).",
+      "minProperties": 1,
+      "additionalProperties": { "type": "string" }
+    },
+    "seed": {
+      "type": "integer",
+      "description": "Seed used. Recorded because a method whose preprocessing or inference is stochastic is not reproducible without it."
+    },
+    "run_timestamp": {
+      "type": "string",
+      "description": "ISO-8601 timestamp of the run, with offset."
+    },
+    "deviation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["applied"],
+      "description": "FR-055. A workaround for an upstream defect applied in the runner's OWN environment, recorded as a deviation from the pinned revision. Nothing is patched in this project's tree. A workaround that changes the model's output makes the result a DIFFERENT method, not the pinned one, and is inadmissible as that method.",
+      "properties": {
+        "applied": { "type": "boolean" },
+        "what": { "type": ["string", "null"], "description": "What was changed, relative to the pinned revision." },
+        "why": { "type": ["string", "null"], "description": "The upstream defect it works around." },
+        "changes_output": {
+          "type": "boolean",
+          "default": false,
+          "description": "true when the workaround alters the produced mask (a different threshold, a different preprocessing constant, a re-exported checkpoint). Such a result MUST NOT be reported as the pinned method."
+        }
+      }
+    }
+  }
+}

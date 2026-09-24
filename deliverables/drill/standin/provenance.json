@@ -1,0 +1,29 @@
+{
+  "method": "standin",
+  "repository": {
+    "url": "https://example.invalid/standin",
+    "revision": "0000000000000000000000000000000000000000"
+  },
+  "checkpoint": {
+    "identity": "standin.none",
+    "size_bytes": 1,
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "code_license": "none",
+  "weight_license": "none",
+  "checkpoint_load_evidence": {
+    "evidenced": true,
+    "method": "no checkpoint is loaded; the adapter is a fixed threshold",
+    "detail": "synthetic hand-off for the CLI drill"
+  },
+  "device": {
+    "type": "cpu",
+    "name": "12th Gen Intel(R) Core(TM) i5-12500H"
+  },
+  "interpreter": "3.10.1",
+  "packages": {
+    "numpy": "2.2.6"
+  },
+  "seed": 0,
+  "run_timestamp": "2026-09-20T00:00:00Z"
+}

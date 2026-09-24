@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://manga-text-seg.local/contracts/page-list.schema.json",
+  "title": "Distributable page list",
+  "description": "FR-054 / FR-054a. The artefact the project hands to a runner. Self-contained: consumable without the project's data tree, and carrying no ground-truth reference and no ground-truth pixel data. Derived from the internal manifest (Spec 1's manifest.schema.json, FR-001), which it is NOT: the manifest emits gt_root, raw_root and per-page mask_path, all forbidden here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "page_list_identity",
+    "generated_at_run",
+    "aligned_size",
+    "alignment",
+    "mask_convention",
+    "image_bundle",
+    "pages"
+  ],
+  "properties": {
+    "page_list_identity": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 over this document's own canonical serialisation with this field omitted, computed by the project. A runner quotes it verbatim into every sidecar's page_list_identity; a runner MUST NOT recompute it by their own method. A result whose quoted identity differs from the current export's is refused (FR-058, research.md R8)."
+    },
+    "generated_at_run": {
+      "type": "string",
+      "description": "The run_id of the manifest instance this export was derived from."
+    },
+    "aligned_size": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "Aligned page size as [width, height]. Every returned mask MUST have exactly this size (FR-058 check 3). 1654x1170 for the current dataset.",
+      "examples": [[1654, 1170]]
+    },
+    "alignment": {
+      "type": "string",
+      "enum": ["crop-topleft"],
+      "description": "The alignment convention every method shares (FR-053c). Raw pages are 1654x1170; ground truth masks are 1656x1176. crop-topleft is lossless by construction because the delta is pad-to-multiple-of-8."
+    },
+    "mask_convention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dtype", "channels", "values", "text", "background"],
+      "description": "The FR-004 prediction-mask convention, restated here so a runner with no access to this repository can produce an admissible mask (FR-042).",
+      "properties": {
+        "dtype": { "type": "string", "enum": ["uint8"] },
+        "channels": { "type": "integer", "enum": [1] },
+        "values": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "enum": [[0, 255]]
+        },
+        "text": { "type": "integer", "enum": [255] },
+        "background": { "type": "integer", "enum": [0] }
+      }
+    },
+    "image_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root", "identity_record"],
+      "description": "Where the input images travel and where their identity record lives (FR-054a). The bundle itself is distribution, not contract; the per-page sha256 is the contract.",
+      "properties": {
+        "root": {
+          "type": "string",
+          "pattern": "^(?![A-Za-z]:)(?![\\\\/])",
+          "description": "Path to the image bundle, relative to the page list. Gitignored (matches the existing *.zip rule); the committed identity record makes any copy verifiable."
+        },
+        "identity_record": {
+          "type": "string",
+          "pattern": "^(?![A-Za-z]:)(?![\\\\/])",
+          "description": "Committed path to the per-page sha256 record, relative to the page list so the pair relocates together. The receipt recomputes each image's hash against this record (FR-058 check 2)."
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Sorted by (manga, stem). The complete set of pages every method runs on; a runner MUST run all of them and MUST NOT add or drop pages.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["manga", "stem", "image_id", "image_ref", "input_image_identity"],
+        "properties": {
+          "manga": { "type": "string", "description": "Book name." },
+          "stem": { "type": "string", "description": "Page filename stem, without extension." },
+          "image_id": {
+            "type": "string",
+            "description": "manga/stem. Preserved verbatim through the whole pipeline (ONBOARDING checklist)."
+          },
+          "image_ref": {
+            "type": "string",
+            "description": "Relative path to this page's input image inside the bundle. Relative, so the bundle can be relocated."
+          },
+          "input_image_identity": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "sha256 of the input image bytes. Quoted verbatim into the sidecar; verified on receipt (FR-054a, FR-058 check 2). The images are the question and the masks are the answer."
+          }
+        }
+      }
+    }
+  }
+}

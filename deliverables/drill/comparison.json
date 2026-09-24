@@ -1,0 +1,244 @@
+{
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
+  "rows": [
+    {
+      "device": {
+        "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+        "type": "cpu"
+      },
+      "disclosure": "no overlap: this method is the classical baseline and learns no parameters from any dataset, so it has no training data that could overlap with the evaluation set",
+      "failed_pages": 0,
+      "method": "adaptive",
+      "metrics": {
+        "f1": {
+          "mean": 0.12608804702780746,
+          "std": 0.10386162554142715
+        },
+        "iou": {
+          "mean": 0.07108198733507957,
+          "std": 0.06926944170971523
+        },
+        "precision": {
+          "mean": 0.07534895800204718,
+          "std": 0.07943466504385353
+        },
+        "recall": {
+          "mean": 0.874448211488544,
+          "std": 0.18599024557593113
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 0.008955496663782843,
+        "total_seconds": 3.492643698875309
+      }
+    },
+    {
+      "device": {
+        "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+        "type": "cpu"
+      },
+      "disclosure": "no overlap: this method is the classical baseline and learns no parameters from any dataset, so it has no training data that could overlap with the evaluation set",
+      "failed_pages": 0,
+      "method": "components",
+      "metrics": {
+        "f1": {
+          "mean": 0.10011439507174708,
+          "std": 0.10225845736163128
+        },
+        "iou": {
+          "mean": 0.05632031177737591,
+          "std": 0.06814858015132016
+        },
+        "precision": {
+          "mean": 0.05993852234604125,
+          "std": 0.07744190481755117
+        },
+        "recall": {
+          "mean": 0.6401639781875578,
+          "std": 0.1680508238658642
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 0.4172793012807886,
+        "total_seconds": 162.73892749950755
+      }
+    },
+    {
+      "device": {
+        "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+        "type": "cpu"
+      },
+      "disclosure": "no overlap: this method is the classical baseline and learns no parameters from any dataset, so it has no training data that could overlap with the evaluation set",
+      "failed_pages": 0,
+      "method": "edges",
+      "metrics": {
+        "f1": {
+          "mean": 0.06297415472687705,
+          "std": 0.08686689666271855
+        },
+        "iou": {
+          "mean": 0.03499158972706132,
+          "std": 0.05563947130262095
+        },
+        "precision": {
+          "mean": 0.03564076488604764,
+          "std": 0.05664115170058888
+        },
+        "recall": {
+          "mean": 0.9857270514807879,
+          "std": 0.10391274278444738
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 0.024843518462223074,
+        "total_seconds": 9.688972200267
+      }
+    },
+    {
+      "device": {
+        "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+        "type": "cpu"
+      },
+      "disclosure": "no overlap: this method is the classical baseline and learns no parameters from any dataset, so it has no training data that could overlap with the evaluation set",
+      "failed_pages": 0,
+      "method": "morphology",
+      "metrics": {
+        "f1": {
+          "mean": 0.0887661701107292,
+          "std": 0.10576292951542285
+        },
+        "iou": {
+          "mean": 0.050247386887844275,
+          "std": 0.0694925221534751
+        },
+        "precision": {
+          "mean": 0.05532282712984861,
+          "std": 0.08022847071251578
+        },
+        "recall": {
+          "mean": 0.4357689986173962,
+          "std": 0.23721214118425077
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 0.00542270282077455,
+        "total_seconds": 2.1148541001020744
+      }
+    },
+    {
+      "device": {
+        "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+        "type": "cpu"
+      },
+      "disclosure": "no overlap: this method is the classical baseline and learns no parameters from any dataset, so it has no training data that could overlap with the evaluation set",
+      "failed_pages": 0,
+      "method": "mser",
+      "metrics": {
+        "f1": {
+          "mean": 0.07611862873408272,
+          "std": 0.10646797741214693
+        },
+        "iou": {
+          "mean": 0.04345180584899729,
+          "std": 0.070698215619934
+        },
+        "precision": {
+          "mean": 0.04517786294236944,
+          "std": 0.07752648139587993
+        },
+        "recall": {
+          "mean": 0.9548577476753944,
+          "std": 0.10194932952706706
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 1.267564725898242,
+        "total_seconds": 494.3502431003144
+      }
+    },
+    {
+      "device": {
+        "name": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+        "type": "cpu"
+      },
+      "disclosure": "no overlap: this method is the classical baseline and learns no parameters from any dataset, so it has no training data that could overlap with the evaluation set",
+      "failed_pages": 0,
+      "method": "otsu",
+      "metrics": {
+        "f1": {
+          "mean": 0.01544759701106777,
+          "std": 0.035905679300116115
+        },
+        "iou": {
+          "mean": 0.008136597004732007,
+          "std": 0.019499269112559836
+        },
+        "precision": {
+          "mean": 0.008821745805771733,
+          "std": 0.021774981324138444
+        },
+        "recall": {
+          "mean": 0.18482795024352958,
+          "std": 0.17025715870523242
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 0.0022238992311310675,
+        "total_seconds": 0.8673207001411163
+      }
+    },
+    {
+      "device": {
+        "name": "12th Gen Intel(R) Core(TM) i5-12500H",
+        "type": "cpu"
+      },
+      "disclosure": "contamination extent unknown: this method's training data was not identified, so no overlap with the evaluation dataset could be established",
+      "failed_pages": 0,
+      "method": "standin",
+      "metrics": {
+        "f1": {
+          "mean": 0.01752856229175412,
+          "std": 0.034143944029791394
+        },
+        "iou": {
+          "mean": 0.009160306769250297,
+          "std": 0.018500720393616287
+        },
+        "precision": {
+          "mean": 0.009832471248116044,
+          "std": 0.020654763592191767
+        },
+        "recall": {
+          "mean": 0.2640837988086482,
+          "std": 0.13885201133528075
+        }
+      },
+      "reason": null,
+      "status": "scored",
+      "successful_pages": 390,
+      "timing": {
+        "mean_seconds": 0.0,
+        "total_seconds": 0.0
+      }
+    }
+  ],
+  "run_id": "drill"
+}

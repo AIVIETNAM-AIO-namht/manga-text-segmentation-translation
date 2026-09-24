@@ -86,20 +86,29 @@ input** (kèm record identity để project verify khi nhận). Runner **không 
 cách giao tên file giữa `images/` và `post-processed/` — làm vậy vi phạm FR-001/002/054/054a và kết
 quả bị từ chối, kể cả khi ra đúng 390 page.
 
-> ⚠️ Artefact phân phối này **chưa tồn tại** — nó là output của `/speckit-plan` cho spec 002.
->
-> **Bạn vẫn nên chạy full 390 page ngay** để de-risk môi trường và model. Chạy thử vài page **không**
-> phát hiện được lỗi chỉ xuất hiện ở page khác (page hỏng, OOM ở page lớn, hết quota giữa chừng).
-> Suy luận rẻ (Method A: ~0.6 s/page → vài phút GPU); cái đắt là setup — dependency, checkpoint,
-> version — và đó chính là thứ chỉ chạy full mới lộ ra.
->
-> Nhưng kết quả đó là **exploratory, KHÔNG admissible**: thiếu identity thì FR-058 từ chối khi nhận.
-> Vì vậy: dán nhãn rõ trong README, **không** ghi headline metric, **không** nộp `metrics_*.csv`.
-> Khi project phát export, chạy lại (rẻ) và điền 2 field identity — **không cần chờ mới bắt đầu**.
->
-> Việc nên làm **sớm**, vì không phụ thuộc export: repo + commit SHA đầy đủ, license code **và**
-> license weights, checkpoint sha256, và — riêng Method A — mapping book→fold của FR-013a (§4 Bước 3).
-> Mapping đó không reproduce được thì cả 390 page vô hiệu, bất kể identity.
+### Artefact phân phối — lấy ở đâu
+
+Export **đã có**, commit trong repo. Chi tiết đầy đủ và các rule: [`benchmark/README.md`](benchmark/README.md).
+
+| Thứ | Ở đâu | Ghi chú |
+|---|---|---|
+| Page list | `benchmark/page-list.json` | 390 page sắp theo `(manga, stem)`; mỗi page có `image_id`, `image_ref`, `input_image_identity`; toàn list có `page_list_identity` |
+| Ảnh input | `benchmark/dist/images/<manga>/<page_id>.jpg` | ~138 MiB, **không** commit — lấy từ project. Đối chiếu `benchmark/image-identity.json` (390 sha256) để chắc bản copy không hỏng |
+| Aligned size | trong page list | 1654×1170, `alignment: crop-topleft` — crop góc trên-trái, **không** resize (Spec 001). Mask trả về phải đúng kích thước này |
+| Mask convention | trong page list | `uint8`, 1 channel, giá trị `{0, 255}`, text = 255 |
+
+**Chép nguyên văn** `page_list_identity` và từng `input_image_identity` vào sidecar. **Không** tự tính
+lại bằng cách hash ảnh bạn nhận: hai bên hash khác nhau thì FR-058 từ chối ngay (check 1 và check 2),
+và cả hand-off bị từ chối chứ không phải chỉ page đó.
+
+**Vẫn nên chạy full 390 page ngay** để de-risk môi trường và model. Chạy thử vài page **không**
+phát hiện được lỗi chỉ xuất hiện ở page khác (page hỏng, OOM ở page lớn, hết quota giữa chừng).
+Suy luận rẻ (Method A: ~0.6 s/page → vài phút GPU); cái đắt là setup — dependency, checkpoint,
+version — và đó chính là thứ chỉ chạy full mới lộ ra.
+
+Việc nên làm **sớm**, vì không phụ thuộc gì thêm: repo + commit SHA đầy đủ, license code **và**
+license weights, checkpoint sha256, và — riêng Method A — mapping book→fold của FR-013a (§4 Bước 3).
+Mapping đó không reproduce được thì cả 390 page vô hiệu, bất kể identity.
 
 ### Ground-truth — runner KHÔNG được nhận
 

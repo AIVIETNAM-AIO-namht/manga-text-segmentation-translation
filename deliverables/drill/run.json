@@ -1,0 +1,57 @@
+{
+  "admission_timestamps": {
+    "standin": "2026-09-20T15:36:45.052819+00:00"
+  },
+  "ended_at": "2026-09-20T15:36:45.052819+00:00",
+  "method_configuration": {
+    "standin": {}
+  },
+  "method_device": {
+    "standin": {
+      "name": "12th Gen Intel(R) Core(TM) i5-12500H",
+      "type": "cpu"
+    }
+  },
+  "method_provenance": {
+    "standin": {
+      "checkpoint": {
+        "identity": "standin.none",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "size_bytes": 1
+      },
+      "checkpoint_load_evidence": {
+        "detail": "synthetic hand-off for the CLI drill",
+        "evidenced": true,
+        "method": "no checkpoint is loaded; the adapter is a fixed threshold"
+      },
+      "code_license": "none",
+      "device": {
+        "name": "12th Gen Intel(R) Core(TM) i5-12500H",
+        "type": "cpu"
+      },
+      "interpreter": "3.10.1",
+      "method": "standin",
+      "packages": {
+        "numpy": "2.2.6"
+      },
+      "repository": {
+        "revision": "0000000000000000000000000000000000000000",
+        "url": "https://example.invalid/standin"
+      },
+      "run_timestamp": "2026-09-20T00:00:00Z",
+      "seed": 0,
+      "weight_license": "none"
+    }
+  },
+  "methods_admitted": [
+    "standin"
+  ],
+  "methods_awaited": [],
+  "nondeterminism_sources": [
+    "each method's environment: interpreter, package versions, device and thread scheduling are recorded per method, never once for the run (FR-044, FR-052), so the same method re-run elsewhere may return different masks",
+    "Method A's leave-one-fold-out attribution: five checkpoints are released, so which one scores a page follows from the page's book rather than from anything this run fixes (FR-013a)"
+  ],
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
+  "run_id": "drill",
+  "started_at": "2026-09-20T15:36:45.052819+00:00"
+}
