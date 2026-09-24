@@ -1,0 +1,162 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dipr.local/specs/003/sample-metadata.schema.json",
+  "title": "SampleMetadata",
+  "description": "The per-sample JSON sidecar written beside one processed sample's artifacts (FR-025). The field list is the union of FR-025's required fields and FR-018's mask-processing record. processing_time_seconds is required by FR-022/FR-025 but is excluded from the byte-wise determinism comparison (research R3).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "image_id",
+    "method",
+    "algorithm",
+    "model_repository",
+    "experiment_id",
+    "input_image_path",
+    "prediction_mask_path",
+    "mask_size",
+    "alignment",
+    "dilation",
+    "inpaint_algorithm",
+    "inpaint_radius",
+    "output_format",
+    "processing_time_seconds",
+    "status"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string",
+      "pattern": "^[^/]+/[0-9]{3}$",
+      "description": "<manga>/<NNN>, quoted from the manifest. Never renumbered (FR-008)."
+    },
+    "method": {
+      "type": "string",
+      "enum": [
+        "classical_baseline",
+        "manga_text_segmentation",
+        "comic_text_detector",
+        "unetpp_efficientnetv2"
+      ],
+      "description": "The four FR-026 identities. Fixed names."
+    },
+    "algorithm": {
+      "type": "string",
+      "enum": ["telea", "ns"],
+      "description": "Directory form of the inpaint algorithm."
+    },
+    "model_repository": {
+      "type": ["string", "null"],
+      "description": "Model/repository identity of the segmentation method that produced the mask. null for classical_baseline, which has no upstream repository."
+    },
+    "experiment_id": {
+      "type": "string",
+      "description": "The segmentation experiment or run ID the mask came from: the admitted run_id under deliverables/ for the DL identities, or Spec 1's run ID for classical_baseline."
+    },
+    "input_image_path": {
+      "type": "string",
+      "description": "The original page image this sample was inpainted from."
+    },
+    "prediction_mask_path": {
+      "type": "string",
+      "description": "The prediction mask this sample was inpainted from."
+    },
+    "mask_size": {
+      "type": "array",
+      "items": { "type": "integer", "minimum": 1 },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[width, height] as read, before alignment."
+    },
+    "alignment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule", "pre_size", "post_size"],
+      "properties": {
+        "rule": {
+          "type": "string",
+          "enum": ["pass-through", "crop-topleft"],
+          "description": "pass-through at the aligned size; crop-topleft from the known GT padded canvas; any other size is a validation error (FR-015)."
+        },
+        "pre_size": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "[width, height] before alignment."
+        },
+        "post_size": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 1 },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "[width, height] after alignment. Must be [1654, 1170] (SC-002)."
+        }
+      }
+    },
+    "dilation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "kernel_shape": {
+          "type": ["string", "null"],
+          "enum": ["rect", "ellipse", "cross", null],
+          "description": "Required when enabled (FR-016)."
+        },
+        "kernel_size": {
+          "type": ["array", "null"],
+          "items": { "type": "integer", "minimum": 1 },
+          "minItems": 2,
+          "maxItems": 2,
+          "description": "[width, height]. Required when enabled."
+        },
+        "iterations": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Required when enabled."
+        }
+      }
+    },
+    "inpaint_algorithm": {
+      "type": "string",
+      "enum": ["INPAINT_TELEA", "INPAINT_NS"],
+      "description": "The OpenCV constant used (FR-019)."
+    },
+    "inpaint_radius": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Identical across all four methods in the main benchmark (FR-021)."
+    },
+    "output_format": {
+      "type": "string",
+      "enum": ["png", "webp", "bmp", "tiff"],
+      "description": "Default png, lossless (FR-028)."
+    },
+    "processing_time_seconds": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Required by FR-022/FR-025. Excluded from the byte-wise determinism comparison (research R3)."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "failed"]
+    },
+    "error_message": {
+      "type": ["string", "null"],
+      "description": "Populated only when status is failed; the FR-012 category and reason."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "failed" } }, "required": ["status"] },
+      "then": { "required": ["error_message"] }
+    },
+    {
+      "if": {
+        "properties": { "dilation": { "properties": { "enabled": { "const": true } }, "required": ["enabled"] } },
+        "required": ["dilation"]
+      },
+      "then": { "properties": { "dilation": { "required": ["kernel_shape", "kernel_size", "iterations"] } } }
+    }
+  ]
+}

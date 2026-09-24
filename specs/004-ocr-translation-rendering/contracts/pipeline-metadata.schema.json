@@ -1,0 +1,239 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://dipr.local/specs/004/pipeline-metadata.schema.json",
+  "title": "PipelineMetadata",
+  "description": "The per-page JSON record written beside one rendered page's artifacts (FR-047). The field list is the union of FR-047's minimum fields, FR-047's required run provenance, and the per-region entry FR-047 defines. Every field is deterministic across runs given identical inputs and configuration, except stage_timings and the per-region elapsed fields, which are excluded from the byte-wise determinism comparison (research R8). No field may ever hold an API key or any secret material (FR-035).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "image_id",
+    "run_id",
+    "segmentation_method",
+    "inpainting_method",
+    "target_language",
+    "ocr_engine",
+    "translation_provider",
+    "rendering_config",
+    "regions",
+    "stage_timings",
+    "status"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string",
+      "pattern": "^[^/]+/[0-9]{3}$",
+      "description": "<manga>/<NNN>, quoted from the Spec 1 manifest. Never constructed and never renumbered (FR-001)."
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The run this page belongs to. The run's only time-identifying value; no wall-clock timestamp appears anywhere else in this file (research R8)."
+    },
+    "segmentation_method": {
+      "type": "string",
+      "enum": [
+        "classical_baseline",
+        "manga_text_segmentation",
+        "comic_text_detector",
+        "unetpp_efficientnetv2"
+      ],
+      "description": "The four FR-009 identities. Fixed for the whole run; never mixed within one run's per-page results (FR-011)."
+    },
+    "inpainting_method": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["run_id", "algorithm"],
+      "description": "The Spec 3 inpainting source this page was rendered onto (FR-004, FR-012).",
+      "properties": {
+        "run_id": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The Spec 3 run ID. Fixed for the whole run (FR-049)."
+        },
+        "algorithm": {
+          "type": "string",
+          "enum": ["telea", "ns"],
+          "description": "The Spec 3 algorithm directory name. Fixed for the whole run."
+        },
+        "radius": {
+          "type": ["number", "null"],
+          "description": "Quoted from Spec 3's sidecar, not recomputed (FR-004)."
+        },
+        "dilation_enabled": {
+          "type": ["boolean", "null"],
+          "description": "Quoted from Spec 3's sidecar, not recomputed."
+        }
+      }
+    },
+    "target_language": {
+      "type": "string",
+      "enum": ["vi", "en"],
+      "description": "At minimum Vietnamese and English (FR-030). Fixed for the whole run (FR-049)."
+    },
+    "ocr_engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "version": { "type": ["string", "null"] },
+        "deterministic": { "type": "boolean" }
+      },
+      "description": "Engine identity and version, recorded per run as well as per result (FR-022)."
+    },
+    "translation_provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "model"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "model": { "type": "string", "minLength": 1 },
+        "version": { "type": ["string", "null"] },
+        "deterministic": {
+          "type": "boolean",
+          "description": "The provider's determinism, recorded as a provider property (FR-058). False keeps the determinism comparison from spanning the translation stage."
+        },
+        "secret_env_var": {
+          "type": ["string", "null"],
+          "description": "The NAME of the environment variable the provider needs, never its value (FR-034, FR-035)."
+        }
+      },
+      "description": "Provider/model/version, recorded for every run (FR-035, SC-004)."
+    },
+    "rendering_config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["font_path", "font_size", "min_font_size", "text_direction"],
+      "properties": {
+        "font_path": {
+          "type": "string",
+          "description": "Resolved by file path from configuration, never by system font lookup (FR-039, research R6)."
+        },
+        "font_size": { "type": "integer", "minimum": 1 },
+        "min_font_size": { "type": "integer", "minimum": 1 },
+        "text_direction": { "type": "string", "enum": ["auto", "horizontal", "vertical"] },
+        "expansion_allowance": { "type": "integer", "minimum": 0 },
+        "color": { "type": ["array", "null"], "items": { "type": "integer" }, "minItems": 3, "maxItems": 4 },
+        "stroke_width": { "type": ["integer", "null"], "minimum": 0 },
+        "background": { "type": ["array", "null"], "items": { "type": "integer" }, "minItems": 3, "maxItems": 4 },
+        "wrap": { "type": ["boolean", "null"] },
+        "line_spacing": { "type": ["number", "null"] },
+        "align_h": { "type": ["string", "null"], "enum": ["left", "center", "right", null] },
+        "align_v": { "type": ["string", "null"], "enum": ["top", "middle", "bottom", null] }
+      },
+      "description": "The rendering configuration actually used, recorded per run (FR-039, FR-047)."
+    },
+    "regions": {
+      "type": "array",
+      "description": "One entry per extracted region, including failed ones (FR-031). Empty when the page yielded no regions, which is a recorded outcome and not a run failure (FR-021).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "region_id",
+          "bbox",
+          "ocr_text",
+          "translation",
+          "ocr_status",
+          "translation_status",
+          "render_status"
+        ],
+        "properties": {
+          "region_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "1-based index in the run's total reading order under the active configuration (FR-019). Stable and deterministic for the same mask and configuration (SC-002)."
+          },
+          "bbox": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[x, y, w, h] in aligned page space (FR-018)."
+          },
+          "polygon": {
+            "type": ["array", "null"],
+            "description": "The text area's outline in the same space. Both bbox and polygon are stored (FR-018).",
+            "items": { "type": "array", "items": { "type": "integer" }, "minItems": 2, "maxItems": 2 }
+          },
+          "orientation": { "type": ["string", "null"], "enum": ["horizontal", "vertical", null] },
+          "reading_order_index": { "type": ["integer", "null"], "minimum": 0 },
+          "merged_from": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "description": "Components merged into this region; 1 when nothing merged (FR-015)."
+          },
+          "crop_path": { "type": ["string", "null"] },
+          "clipped": {
+            "type": ["boolean", "null"],
+            "description": "True when the padded crop exceeded the page bounds and was clipped to them. Recorded, never silent (FR-017)."
+          },
+          "ocr_text": { "type": "string" },
+          "ocr_confidence": { "type": ["number", "null"] },
+          "ocr_status": { "type": "string", "enum": ["ok", "empty", "failed"] },
+          "ocr_error": { "type": ["string", "null"] },
+          "manually_edited": {
+            "type": "boolean",
+            "description": "Set when a human edited this region's OCR text before translation (FR-027)."
+          },
+          "translation": { "type": "string" },
+          "translation_status": { "type": "string", "enum": ["ok", "failed", "skipped"] },
+          "translation_error": { "type": ["string", "null"] },
+          "cache_status": {
+            "type": ["string", "null"],
+            "enum": ["hit", "miss", null],
+            "description": "Whether this region's translation was served from the shared cache or fetched live (FR-029)."
+          },
+          "failure_policy": {
+            "type": ["string", "null"],
+            "enum": ["keep_ocr_text", "exclude_from_rendering", null],
+            "description": "The FR-033 branch applied on translation failure, recorded even on success."
+          },
+          "render_status": {
+            "type": "string",
+            "enum": ["rendered", "overflow_warning", "skipped"],
+            "description": "skipped when the region was excluded by the failure policy. Silent clipping is prohibited, so a region that does not fit is overflow_warning, never a clipped render (FR-041)."
+          },
+          "render_warning": { "type": ["string", "null"] },
+          "font_size_used": { "type": ["integer", "null"], "minimum": 1 },
+          "line_count": { "type": ["integer", "null"], "minimum": 0 },
+          "display_box": {
+            "type": ["array", "null"],
+            "items": { "type": "integer" },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "The box actually painted into, including any FR-041 expansion."
+          },
+          "direction_used": {
+            "type": ["string", "null"],
+            "enum": ["horizontal", "vertical", null],
+            "description": "The effective text direction for this region (FR-043)."
+          },
+          "ocr_time_seconds": { "type": ["number", "null"], "minimum": 0 },
+          "translation_time_seconds": { "type": ["number", "null"], "minimum": 0 },
+          "render_time_seconds": { "type": ["number", "null"], "minimum": 0 }
+        }
+      }
+    },
+    "stage_timings": {
+      "type": "object",
+      "additionalProperties": { "type": "number", "minimum": 0 },
+      "description": "Per-stage elapsed seconds. The only non-deterministic fields in this file; excluded from the byte-wise determinism comparison (research R8)."
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "no_regions", "failed"],
+      "description": "no_regions is FR-021's recorded outcome: the page was processed and yielded zero regions. It is not a run failure."
+    },
+    "error_message": {
+      "type": ["string", "null"],
+      "description": "Populated only when status is failed; the FR-051 category and the specific reason (FR-055)."
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "failed" } }, "required": ["status"] },
+      "then": { "required": ["error_message"] }
+    }
+  ]
+}
