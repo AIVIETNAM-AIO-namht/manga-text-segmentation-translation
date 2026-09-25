@@ -1,10 +1,10 @@
 {
   "image_id": "AppareKappore/000",
-  "page_list_identity": "spec-002-canonical-manifest-v1",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "81f054e6bfb5f042db9faabca902c4337e69f2b6ee8d9f6c69d2c8aa3994a2ac",
   "method": "comic-text-detector",
-  "repository": "https://github.com/Ajatt-Tools/comic_text_detector",
-  "commit": "e958d8b4a7461528e8df8aa8156e3928b57b2fc6",
+  "repository": "https://github.com/dmMaze/comic-text-detector",
+  "commit": "440b978563c71b758e31aaa315d100faba1efa2f",
   "code_license": "GPL-3.0",
   "checkpoint": {
     "name": "comictextdetector.pt",
@@ -37,16 +37,16 @@
     "type": "cuda",
     "name": "Tesla T4"
   },
-  "interpreter": "Python 3.10",
+  "interpreter": "Python 3.13.15",
   "packages": {
     "torch": "2.11.0+cu128",
-    "torchvision": "default",
+    "torchvision": "0.26.0+cu128",
     "opencv-python": "5.0.0"
   },
   "seed": 42,
-  "run_timestamp": "2026-09-19T01:49:22.770440+07:00",
-  "inference_time_seconds": 0.3774,
-  "preprocessing_time_seconds": 0.0125,
+  "run_timestamp": "2026-09-25T21:50:55.319518+07:00",
+  "inference_time_seconds": 0.3528,
+  "preprocessing_time_seconds": 0.0131,
   "postprocessing_time_seconds": 0.0003,
   "status": "success",
   "error": null

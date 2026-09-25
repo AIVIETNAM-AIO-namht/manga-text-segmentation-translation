@@ -1,10 +1,10 @@
 {
   "image_id": "AisazuNihaIrarenai/004",
-  "page_list_identity": "spec-002-canonical-manifest-v1",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "70d880a23fbb9aabf3b2ae0ca3d4084209b315c41242c5d99f333c42284b6ff1",
   "method": "comic-text-detector",
-  "repository": "https://github.com/Ajatt-Tools/comic_text_detector",
-  "commit": "e958d8b4a7461528e8df8aa8156e3928b57b2fc6",
+  "repository": "https://github.com/dmMaze/comic-text-detector",
+  "commit": "440b978563c71b758e31aaa315d100faba1efa2f",
   "code_license": "GPL-3.0",
   "checkpoint": {
     "name": "comictextdetector.pt",
@@ -12,7 +12,7 @@
     "size_bytes": 79948869,
     "sha256": "1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb",
     "weight_license": "GPL-3.0",
-    "loaded_evidence": "verified size=79948869 sha256=1f90fa60aeeb1eb8..."
+    "loaded_evidence": "model weights verified by file size and sha256 checksum at runtime"
   },
   "input_size": [
     1654,
@@ -44,10 +44,10 @@
     "opencv-python": "5.0.0"
   },
   "seed": 42,
-  "run_timestamp": "2026-09-19T01:07:22.971119+07:00",
-  "inference_time_seconds": 0.38,
-  "preprocessing_time_seconds": 0.012,
-  "postprocessing_time_seconds": 0.008,
+  "run_timestamp": "2026-09-25T21:50:40.973681+07:00",
+  "inference_time_seconds": 0.4333,
+  "preprocessing_time_seconds": 0.0115,
+  "postprocessing_time_seconds": 0.0003,
   "status": "success",
   "error": null
 }

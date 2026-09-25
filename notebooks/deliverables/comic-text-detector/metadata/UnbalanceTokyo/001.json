@@ -1,10 +1,10 @@
 {
   "image_id": "UnbalanceTokyo/001",
-  "page_list_identity": "spec-002-canonical-manifest-v1",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "4c4f368478197c57cae4718752d9fb2fc6e02b43c8215150754d88d93c2a17a2",
   "method": "comic-text-detector",
-  "repository": "https://github.com/Ajatt-Tools/comic_text_detector",
-  "commit": "e958d8b4a7461528e8df8aa8156e3928b57b2fc6",
+  "repository": "https://github.com/dmMaze/comic-text-detector",
+  "commit": "440b978563c71b758e31aaa315d100faba1efa2f",
   "code_license": "GPL-3.0",
   "checkpoint": {
     "name": "comictextdetector.pt",
@@ -37,17 +37,17 @@
     "type": "cuda",
     "name": "Tesla T4"
   },
-  "interpreter": "Python 3.10",
+  "interpreter": "Python 3.13.15",
   "packages": {
     "torch": "2.11.0+cu128",
-    "torchvision": "default",
+    "torchvision": "0.26.0+cu128",
     "opencv-python": "5.0.0"
   },
   "seed": 42,
-  "run_timestamp": "2026-09-19T02:11:50.032698+07:00",
-  "inference_time_seconds": 0.2906,
-  "preprocessing_time_seconds": 0.0107,
-  "postprocessing_time_seconds": 0.0004,
+  "run_timestamp": "2026-09-25T21:52:43.961842+07:00",
+  "inference_time_seconds": 0.221,
+  "preprocessing_time_seconds": 0.0122,
+  "postprocessing_time_seconds": 0.0002,
   "status": "success",
   "error": null
 }

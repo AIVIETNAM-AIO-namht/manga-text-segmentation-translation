@@ -1,0 +1,31 @@
+{
+  "method": "comic-text-detector",
+  "repository": {
+    "url": "https://github.com/dmMaze/comic-text-detector",
+    "revision": "440b978563c71b758e31aaa315d100faba1efa2f"
+  },
+  "checkpoint": {
+    "identity": "comictextdetector.pt",
+    "size_bytes": 79948869,
+    "sha256": "1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb"
+  },
+  "code_license": "GPL-3.0",
+  "weight_license": "GPL-3.0",
+  "checkpoint_load_evidence": {
+    "evidenced": true,
+    "method": "size_and_sha256_verification_before_load",
+    "detail": "size=79948869 bytes; sha256=1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb; verified against pinned checksum before TextDetector() construction; no fallback/warning path triggered during load"
+  },
+  "device": {
+    "type": "cuda",
+    "name": "Tesla T4"
+  },
+  "interpreter": "Python 3.13.15",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "opencv-python": "5.0.0"
+  },
+  "seed": 42,
+  "run_timestamp": "2026-09-25T22:13:51.696578+07:00"
+}

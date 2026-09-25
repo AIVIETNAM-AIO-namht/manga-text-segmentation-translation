@@ -2,8 +2,8 @@
 
 ## Model & Provenance
 - **Kiến trúc:** Pipeline tích hợp YOLOv5s backbone, U-Net segmentation head và DBNet text-line detection.
-- **Repository:** https://github.com/Ajatt-Tools/comic_text_detector
-- **Commit:** e958d8b4a7461528e8df8aa8156e3928b57b2fc6
+- **Repository:** https://github.com/dmMaze/comic-text-detector 
+- **Commit:** 440b978563c71b758e31aaa315d100faba1efa2f
 - **Code License:** GPL-3.0
 - **Checkpoint:** `comictextdetector.pt`
   - Source: https://github.com/zyddnys/manga-image-translator/releases/download/beta-0.2.1/comictextdetector.pt
@@ -36,6 +36,7 @@ Tập dữ liệu huấn luyện công bố của `comic-text-detector` có trí
 deliverables/comic-text-detector/
 ├── README.md
 ├── requirements.txt
+├── provenance.json
 ├── errors.json                 # Rỗng [] — không có trang lỗi
 ├── masks/                      # 390 masks PNG 1654x1170 {0, 255}
 │   └── <manga>/<page_id>.png
