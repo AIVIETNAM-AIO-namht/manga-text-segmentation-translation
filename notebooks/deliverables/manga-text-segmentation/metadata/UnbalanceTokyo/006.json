@@ -1,6 +1,6 @@
 {
   "image_id": "UnbalanceTokyo/006",
-  "page_list_identity": "39a6a4f8c365ccda47804233309f072ea01d5d5a571aa7f1c7c2235f4fdf3e6a",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "dca2e633b3ff780a2c783d4f7cc00c2a036c6a186b1bb3d5428dfd51f09a6a66",
   "method": "manga-text-segmentation",
   "repository": "https://github.com/juvian/Manga-Text-Segmentation",

@@ -1,6 +1,6 @@
 {
   "image_id": "EienNoWith/001",
-  "page_list_identity": "39a6a4f8c365ccda47804233309f072ea01d5d5a571aa7f1c7c2235f4fdf3e6a",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "a2a26e47756b9891a70d692774f71782cf298d6ea3a4d6be5e4c07575bcf8d7e",
   "method": "manga-text-segmentation",
   "repository": "https://github.com/juvian/Manga-Text-Segmentation",

@@ -1,6 +1,6 @@
 {
   "image_id": "ToutaMairimasu/004",
-  "page_list_identity": "39a6a4f8c365ccda47804233309f072ea01d5d5a571aa7f1c7c2235f4fdf3e6a",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "3ee53947c51e5788a8beb2956f40dce324420f2cfd477bf1cd70b6b36ba5ef32",
   "method": "manga-text-segmentation",
   "repository": "https://github.com/juvian/Manga-Text-Segmentation",

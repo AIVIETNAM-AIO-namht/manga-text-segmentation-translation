@@ -1,0 +1,30 @@
+{
+  "method": "manga-text-segmentation",
+  "repository": {
+    "url": "https://github.com/juvian/Manga-Text-Segmentation",
+    "revision": "de8f148c78978d70ad0e0ae3242566da6d70f3a5"
+  },
+  "checkpoint": {
+    "identity": "fold.0.-.final.refined.model.2.pkl",
+    "size_bytes": 344290372,
+    "sha256": "fa1d074002955c66f7df32ff60f6602d4aa21f1e1c1ca158dcb852b7e9eeb623"
+  },
+  "code_license": "MIT",
+  "weight_license": "MIT (suy luận: repo license MIT, không có license riêng công bố cho release assets — chưa có xác nhận tường minh từ tác giả cho riêng weights)",
+  "checkpoint_load_evidence": {
+    "evidenced": true,
+    "method": "first-layer-weight-hash + total-param-count",
+    "detail": "sha256(first_layer_weights)=e372494cb16df1fd...; total_params=41221068"
+  },
+  "device": {
+    "type": "cuda",
+    "name": "Tesla T4"
+  },
+  "interpreter": "Python 3.8.20",
+  "packages": {
+    "torch": "1.4.0",
+    "fastai": "1.0.60"
+  },
+  "seed": 42,
+  "run_timestamp": "2026-09-16T10:04:27.352660+00:00"
+}

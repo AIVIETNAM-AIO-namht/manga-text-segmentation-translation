@@ -1,6 +1,6 @@
 {
   "image_id": "AosugiruHaru/004",
-  "page_list_identity": "39a6a4f8c365ccda47804233309f072ea01d5d5a571aa7f1c7c2235f4fdf3e6a",
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
   "input_image_identity": "0d3df6630c416bcfdb901291b43a09ed7e49e89a7487328b79ba94b86eae997c",
   "method": "manga-text-segmentation",
   "repository": "https://github.com/juvian/Manga-Text-Segmentation",
