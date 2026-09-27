@@ -1,0 +1,138 @@
+{
+  "admission_timestamps": {
+    "comic-text-detector": "2026-09-27T13:49:09.965269+00:00",
+    "unetpp-efficientnetv2": "2026-09-27T13:52:50.115460+00:00"
+  },
+  "ended_at": null,
+  "method_configuration": {
+    "comic-text-detector": {
+      "input_size": [
+        1654,
+        1170
+      ],
+      "postprocessing": [
+        "sigmoid_threshold_0.235",
+        "unpad_and_crop",
+        "resize_nearest_to_aligned_space"
+      ],
+      "preprocessing": [
+        "letterbox_1024x1024_stride64",
+        "scale_1_div_255"
+      ],
+      "threshold": 0.235
+    },
+    "unetpp-efficientnetv2": {
+      "input_size": [
+        1654,
+        1170
+      ],
+      "postprocessing": [
+        "sigmoid-threshold-0.5"
+      ],
+      "preprocessing": [
+        "crop-topleft-1654x1170",
+        "ImageNet-norm",
+        "pad-multiple-32"
+      ],
+      "threshold": 0.5
+    }
+  },
+  "method_device": {
+    "comic-text-detector": {
+      "name": "Tesla T4",
+      "type": "cuda"
+    },
+    "unetpp-efficientnetv2": {
+      "name": "Tesla T4",
+      "type": "cuda"
+    }
+  },
+  "method_provenance": {
+    "comic-text-detector": {
+      "checkpoint": {
+        "identity": "comictextdetector.pt",
+        "sha256": "1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb",
+        "size_bytes": 79948869
+      },
+      "checkpoint_load_evidence": {
+        "detail": "size=79948869 bytes; sha256=1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb; verified against pinned checksum before TextDetector() construction; no fallback/warning path triggered during load",
+        "evidenced": true,
+        "method": "size_and_sha256_verification_before_load"
+      },
+      "code_license": "GPL-3.0",
+      "device": {
+        "name": "Tesla T4",
+        "type": "cuda"
+      },
+      "interpreter": "Python 3.13.15",
+      "method": "comic-text-detector",
+      "packages": {
+        "opencv-python": "5.0.0",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128"
+      },
+      "repository": {
+        "revision": "440b978563c71b758e31aaa315d100faba1efa2f",
+        "url": "https://github.com/dmMaze/comic-text-detector"
+      },
+      "run_timestamp": "2026-09-25T22:13:51.696578+07:00",
+      "seed": 42,
+      "weight_license": "GPL-3.0"
+    },
+    "unetpp-efficientnetv2": {
+      "checkpoint": {
+        "identity": "model.pth",
+        "sha256": "a0a895dc385608554a81ca765b0c62d654462c2bac661abdff63634985ab37fc",
+        "size_bytes": 216911417
+      },
+      "checkpoint_load_evidence": {
+        "detail": "1396/1396 tensor keys bitwise identical. Fingerprint: 2b6cd2ab7d986f130c005ae13bff03c8f7fe7ebc2e20140a3e80404611142e20, Probe checksum: e6066f2991db6510c3e31fc1de8393dac643be6630faf433edbf4c6e7c8cf1dc",
+        "evidenced": true,
+        "method": "strict_load_and_state_dict_bitwise_comparison"
+      },
+      "code_license": "none",
+      "device": {
+        "name": "Tesla T4",
+        "type": "cuda"
+      },
+      "interpreter": "3.13.15",
+      "method": "unetpp-efficientnetv2",
+      "packages": {
+        "Pillow": "11.3.0",
+        "albumentations": "2.0.8",
+        "huggingface-hub": "1.29.0",
+        "matplotlib": "3.10.0",
+        "numpy": "2.1.3",
+        "opencv-python": "5.0.0.93",
+        "pandas": "2.2.3",
+        "scipy": "1.16.3",
+        "segmentation-models-pytorch": "0.5.0",
+        "timm": "1.0.29",
+        "torch": "2.11.0+cu128",
+        "torchvision": "0.26.0+cu128"
+      },
+      "repository": {
+        "revision": "6cfa907b0721faa398054be527de98171746ef1b",
+        "url": "https://github.com/ContemporaryCat/Manga-Text-Segmentation"
+      },
+      "run_timestamp": "2026-09-25T10:47:17.051221+00:00",
+      "seed": 42,
+      "weight_license": "none"
+    }
+  },
+  "methods_admitted": [
+    "comic-text-detector",
+    "unetpp-efficientnetv2"
+  ],
+  "methods_awaited": [
+    "manga-text-segmentation",
+    "standin"
+  ],
+  "nondeterminism_sources": [
+    "each method's environment: interpreter, package versions, device and thread scheduling are recorded per method, never once for the run (FR-044, FR-052), so the same method re-run elsewhere may return different masks",
+    "Method A's leave-one-fold-out attribution: five checkpoints are released, so which one scores a page follows from the page's book rather than from anything this run fixes (FR-013a)"
+  ],
+  "page_list_identity": "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef",
+  "run_id": "spec002",
+  "started_at": "2026-09-27T13:49:09.965269+00:00"
+}

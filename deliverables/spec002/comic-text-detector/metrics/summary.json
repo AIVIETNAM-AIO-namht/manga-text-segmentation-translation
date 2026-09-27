@@ -1,0 +1,15 @@
+{
+  "run_id": "spec002",
+  "summaries": [
+    {
+      "method": "comic-text-detector",
+      "n_images": 390,
+      "mean_iou": 0.03715370086607536,
+      "std_iou": 0.06842596573891017,
+      "mean_precision": 0.11419359799737054,
+      "mean_recall": 0.06032919394786472,
+      "mean_f1": 0.06459049516154337,
+      "mean_time_seconds": 0.3814382051282051
+    }
+  ]
+}

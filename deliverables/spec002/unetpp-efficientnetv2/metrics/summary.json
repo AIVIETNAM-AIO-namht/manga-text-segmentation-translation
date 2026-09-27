@@ -1,0 +1,15 @@
+{
+  "run_id": "spec002",
+  "summaries": [
+    {
+      "method": "unetpp-efficientnetv2",
+      "n_images": 390,
+      "mean_iou": 0.13746514651161984,
+      "std_iou": 0.12193757727392344,
+      "mean_precision": 0.1582338259668245,
+      "mean_recall": 0.6943827372803731,
+      "mean_f1": 0.22398384314452227,
+      "mean_time_seconds": 0.2789886959871824
+    }
+  ]
+}

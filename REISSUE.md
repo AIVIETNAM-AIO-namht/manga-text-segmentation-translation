@@ -9,10 +9,10 @@ với đúng cửa mà project dùng khi nhận bài (`receipt.validate_handoff`
 |---|---|---|
 | B — `comic-text-detector` | **0 vấn đề** | ✅ sẵn sàng admit |
 | C — `unetpp-efficientnetv2` | **0 vấn đề** | ✅ sẵn sàng admit |
-| A — `manga-text-segmentation` | **320 vấn đề** (toàn bộ là `fold_attribution`) | ❌ còn chặn |
+| A — `manga-text-segmentation` | **320 vấn đề** (toàn bộ là `fold_attribution`) | ⚠️ **A tự chọn 1 trong 2 đường** — xem mục 1 |
 
-Mọi lỗi ở mục 0 và mục 2–3 của bản re-issue trước **đã được sửa hết**. Method A giờ chỉ còn **một**
-việc: FR-013a. Xem mục 1.
+Mọi lỗi ở mục 0 và mục 2–3 của bản re-issue trước **đã được sửa hết**. Method A còn FR-013a — và
+**A tự chọn một trong hai đường** ở mục 1, cả hai đều hợp lệ. Xem mục 1.
 
 Đây không phải đánh giá chất lượng model. Mask của cả ba **đúng convention**: single-channel `uint8`,
 shape `(1170, 1654)`, giá trị `{0, 255}` — check 3 và check 4 pass toàn bộ 390 page ở cả ba hand-off.
@@ -40,11 +40,58 @@ committed export (b52aa60d…); a result produced against another list is refuse
 
 ---
 
-## 1. Method A — `manga-text-segmentation` — **VIỆC DUY NHẤT CÒN LẠI**
+## 1. Method A — `manga-text-segmentation` — A **tự chọn** một trong hai đường
 
-**Phải chạy lại inference.** Mọi thứ khác đã đúng; chỉ FR-013a chưa.
+Method A hiện chỉ còn **một** điểm chưa đạt: FR-013a. Mọi thứ khác đã đúng. Từ đây có **hai đường**,
+**cả hai đều hợp lệ**, và **A là người quyết định** — project không ép đường nào, chỉ ghi rõ cái được
+và cái mất của từng đường để A chọn.
 
-### Đã đúng (giữ nguyên)
+### Đường 1 — để A là `unavailable`, không chấm
+
+Nghĩa là A **không được admit** và **không có số IoU/F1 nào** trong run `spec002`. Đây không phải
+"bỏ bài" — FR-013a tự nó viết ra kết cục này:
+
+> *"a mapping that cannot be reproduced and verified makes method A's result inadmissible — reported
+> unavailable with the reason (FR-018) — not approximated."*
+
+- `benchmark/availability.json` **đã ghi đúng vậy rồi** — verdict `unavailable` kèm lý do đầy đủ (5
+  checkpoint thiếu, revision không xác nhận được). **Không phải sửa file đó.**
+- **Không phải tải checkpoint nào** — không cần ~1.7 GB.
+- **Không phải chạy lại inference.**
+- Run `spec002` khép lại với **B, C** (đã chấm) cộng baseline classical của Spec 1. A nằm trong
+  `methods_awaited` kèm lý do — đó là trạng thái hợp lệ (FR-047/FR-049), không phải lỗ hổng.
+- **Mất:** A không xuất hiện trong bảng so sánh. Bảng chỉ có baseline + B + C.
+
+### Đường 2 — làm LOFO 5-checkpoint, A được chấm
+
+- Tải đủ **5 checkpoint** từ release v1.0 của upstream (~344 MB mỗi cái, **~1.7 GB**).
+- Chạy cả 5, ghi `fold_attribution` **theo từng sách** đúng bảng ở dưới.
+- Khi đó A được admit và chấm — và là **method deep-learning duy nhất có số bảo vệ được như ước lượng
+  generalisation** (Spec 002, mục "Training-data contamination": B không biết mức nhiễm, C nhiễm toàn
+  bộ nên chỉ được kèm disclosure).
+- **Mất:** công chạy lại inference, ~1.7 GB dung lượng.
+
+### Bắt buộc ở **cả hai** đường: xoá 3 cell ground-truth
+
+Việc này **độc lập với FR-013a** — chọn đường nào cũng phải làm. Notebook đã nộp còn 3 cell vi phạm
+ONBOARDING §8 / FR-057:
+
+| cell | nội dung | vấn đề |
+|---|---|---|
+| 3 | `%%writefile test_predict_iou.py` | đọc `groundtruth/post-processed`, tự tính IoU/P/R/F1, vẽ overlay FP/FN/TP |
+| 4 | chạy `test_predict_iou.py` | sinh ra chính các số liệu đó |
+| 5 | hiện `/content/output_viz/…png` | ảnh prediction-vs-ground-truth |
+
+`returned-result.md` yêu cầu phần bàn giao phải *"Deliberately absent: any ground-truth mask, any
+prediction-vs-ground-truth overlay, any metric"*. Mask + metadata + `provenance.json` đã bàn giao
+**không** bị ảnh hưởng — 3 cell này chạy rời, không ghi vào `masks/` hay `metadata/`. Nhưng chúng vẫn
+phải bị xoá **trước khi tính là hợp lệ**. Cell 6 (`run_benchmark.py`) thì **đúng** — đọc
+`benchmark/page-list.json` chính thức, không đọc GT; giữ nguyên.
+
+Sau khi xoá: `git add` notebook, commit, push. Handoff của A **đã ở trên `origin/main`** rồi, nên chỉ
+cần push phần sửa này — không phải gửi lại mask.
+
+### Đã đúng (giữ nguyên, cả hai đường)
 
 - `repository` = `https://github.com/juvian/Manga-Text-Segmentation` — khớp `configs/dl.json`
 - `commit` = `de8f148c78978d70ad0e0ae3242566da6d70f3a5` — khớp
@@ -56,7 +103,7 @@ committed export (b52aa60d…); a result produced against another list is refuse
 - Mask: 390 file, `L`, `(1170, 1654)`, `{0, 255}` — đúng
 - Check 1, 2, 3, 4, 5 **pass 390/390**. Tắt `check_folds` thì self-check báo **0 vấn đề**.
 
-### Phải sửa: FR-013a — `fold_attribution` sai 320/390 page
+### Chi tiết Đường 2: vì sao `fold_attribution` hiện sai 320/390 page
 
 Sidecar đang ghi `"fold_attribution": "fold_0"` cho **cả 390 page**, kèm dòng tự khai:
 
@@ -97,11 +144,12 @@ Cả 39 sách đều có fold xác định được, nên không page nào phả
 > ByebyeC-BOY, GOOD_KISS_Ver2, YouchienBoueigumi, TotteokiNoABC) nên bị lọc ra. Đó là lý do bảng có
 > 39 dòng chứ không phải 45.
 
-**Nếu không lấy được đủ 5 checkpoint:** báo lại project. FR-013a nói rõ một mapping không reproduce
-được thì Method A **inadmissible** — báo là unavailable kèm lý do, **không** được lấy fold 0 chấm
-thay. Đây là kết cục hợp lệ; ghi `fold_0` cho tất cả thì không.
+**Nếu chọn Đường 2 nhưng không lấy được đủ 5 checkpoint:** báo lại project. FR-013a nói rõ một mapping
+không reproduce được thì Method A **inadmissible** — báo là unavailable kèm lý do, **không** được lấy
+fold 0 chấm thay. Lúc đó quay về Đường 1; ghi `fold_0` cho tất cả 390 page thì **không** hợp lệ ở bất
+kỳ đường nào.
 
-### Ghi chú nhỏ — không chặn admit, nhưng nên sửa cùng lượt
+### Ghi chú nhỏ — không chặn admit, sửa thì tốt
 
 - `metadata/<manga>/<stem>.json` → `checkpoint.name` vẫn là `"model.pkl"` (tên file local). Nên ghi
   đúng tên asset đã pin: `fold.<n>.-.final.refined.model.2.pkl` — FR-044 nói tên file *là* identity.
@@ -112,11 +160,6 @@ thay. Đây là kết cục hợp lệ; ghi `fold_0` cho tất cả thì không.
   Ghi checkpoint của fold được dùng nhiều nhất, và mô tả đủ 5 trong `checkpoint_load_evidence.detail`
   (kèm sha256 của từng cái bạn đã hash được). Project chỉ pin sẵn sha256 của fold 0; bốn cái còn lại
   ghi giá trị **quan sát được**, không đoán.
-- **3 cell ground-truth trong notebook đã nộp** (xem mục 6). Mask + metadata + `provenance.json` đã
-  bàn giao **không** bị ảnh hưởng — 3 cell này chạy rời, không ghi vào `masks/` hay `metadata/`. Nhưng
-  chúng vẫn phải bị xoá khỏi notebook trước khi tính là hợp lệ, vì `returned-result.md` ghi rõ phần
-  bàn giao phải *"Deliberately absent: any ground-truth mask, any prediction-vs-ground-truth overlay,
-  any metric"*.
 - File `outputs-20260915T160219Z-1-001.zip` đã được chuyển khỏi thư mục A (nay nằm trong `tmp/`,
   gitignored). Không cần làm gì thêm — mask đã nằm rời trong `masks/` và đã được track.
 
@@ -196,7 +239,8 @@ in warning rồi chạy tiếp với decoder khởi tạo ngẫu nhiên**, vẫn
 | 1 | Sửa `page_list_identity` thành `b52aa60d…` | ✅ xong | ✅ xong | ✅ xong |
 | 2 | Thêm `provenance.json` ở gốc hand-off | ✅ xong | ✅ xong | ✅ xong |
 | 3 | Đổi `UchiNoNyan_sDiary` → `UchiNoNyan'sDiary` | ✅ xong | ✅ xong | ✅ xong |
-| 4 | Sửa `fold_attribution` theo sách (FR-013a) | ❌ **CÒN** | — | — |
+| 4 | `fold_attribution` theo sách (FR-013a) | ⚠️ **chỉ nếu A chọn Đường 2** | — | — |
+| 4b | Xoá 3 cell ground-truth khỏi notebook (mục 1) | ❌ **CÒN — bắt buộc ở cả hai đường** | — | — |
 | 5 | Dùng repo/commit đã pin | ✅ xong | ✅ xong | ✅ xong |
 | 6 | Cắt về đúng 390 page | ✅ xong | ✅ xong | ✅ xong |
 | 7 | Sửa `input_size`/`output_size` thành `[1654, 1170]` | ✅ xong | ✅ xong | ✅ xong |
@@ -321,8 +365,9 @@ Project sẽ chạy `manga-text-seg admit --run <run_id> --method <method> <hand
 check, mask được copy vào `deliverables/<run_id>/<method>/` và **chỉ khi đó** mới chấm điểm — trên
 máy project, bằng quy trình dùng chung.
 
-Hiện tại **chưa method nào được admit**, và cả bốn method trong `benchmark/availability.json` đang là
-`unavailable` vì máy project không có checkpoint nào.
+Hiện tại **B và C đã được admit** vào run `spec002` (`methods_admitted`), A còn trong
+`methods_awaited`. Cả bốn method trong `benchmark/availability.json` vẫn là `unavailable` vì máy
+project không có checkpoint nào — nhưng xem đoạn dưới, đó không phải điều kiện để được chấm.
 
 **Nhưng đó không phải điều kiện để được chấm.** `availability.json` là pre-flight cho `run`/`sweep`
 — nó trả lời "máy này có chạy được model không". Còn `admit` chỉ đọc page list, identity record,
@@ -332,5 +377,8 @@ manifest và mask bạn trả về; nó không import `availability` và không 
 Hệ quả cụ thể:
 
 - **B và C chấm được ngay** — hand-off đã hợp lệ, không phải tải weight nào cả.
-- **A** vẫn cần đủ 5 checkpoint, nhưng chỉ vì phải **chạy lại inference**. Riêng check
-  `fold_attribution` thì không mở checkpoint — nó suy bảng fold từ seed công bố rồi so với sidecar.
+- **A** chọn một trong hai đường ở mục 1. Cả hai đều hợp lệ và **không** đường nào làm B/C chờ. Nếu A
+  chọn Đường 1 thì run `spec002` khép lại ngay với baseline + B + C, và A được ghi là unavailable kèm
+  lý do — việc duy nhất còn lại là xoá 3 cell ground-truth. Nếu A chọn Đường 2 thì cần đủ 5 checkpoint,
+  nhưng chỉ vì phải **chạy lại inference**. Riêng check `fold_attribution` thì không mở checkpoint —
+  nó suy bảng fold từ seed công bố rồi so với sidecar.
