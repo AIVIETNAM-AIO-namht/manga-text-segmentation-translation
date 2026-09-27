@@ -43,6 +43,21 @@ deliverables/comic-text-detector/
 ├── metadata/                   # 390 metadata JSON sidecar
 │   └── <manga>/<page_id>.json
 └── visualizations/             # Ảnh minh họa không dùng GT
-    ├── representative_cases.png
-    └── <manga>/<page_id>_overlay.png
+    └── representative_cases.png
 ```
+
+## Ghi chú: page list trong notebook chưa lấy từ manifest chính thức
+
+Cell 4 của notebook nộp kèm **suy ra page list từ thư mục ground-truth** (liệt kê tên file mask,
+giao với ảnh gốc) thay vì đọc `benchmark/page-list.json`. Kết quả ra **đúng 390 trang** và
+`page_list_identity` trong sidecar là giá trị chính thức — nhưng cách suy ra thì không đúng hợp
+đồng: page list phải được **đọc nguyên văn** từ manifest, không được dựng lại. Đây là lỗi phương
+pháp, không phải lỗi kết quả (mask bàn giao vẫn hợp lệ và không cần chạy lại).
+
+Ngoài ra cell 5 patch sidecar sau khi chạy (`page_list_identity`, `repository`, `commit`,
+`packages.torchvision`, `interpreter`) — giá trị ghi vào là hằng số đã pin, khớp với giá trị quan
+sát được, nên không có gì bị sửa lặng lẽ; nhưng một lần chạy mới nên đúng ngay từ cell 2 mà không
+cần bước patch.
+
+`Aligned Space` ghi là resize nearest-neighbor; trên tập dữ liệu này toàn bộ ảnh raw đã đúng
+1654×1170 nên nhánh resize không bao giờ chạy.

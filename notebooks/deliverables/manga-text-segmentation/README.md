@@ -38,7 +38,7 @@ metadata/<manga>/<page_id>.json      # provenance record — xem schema đầy �
 visualizations/<manga>_<page_id>.png # 6 case: 2 tỉ lệ text thấp nhất / trung bình / cao nhất
 errors.json                          # rỗng — không có page lỗi trong 390 page
 requirements.txt
-notebook.ipynb
+manga_text_segmentation_colab_Nguyen-Quang-Huy.ipynb
 ```
 
 Chọn case visualization theo tỉ lệ pixel-được-dự-đoán-là-text thay vì theo IoU (vì không có
@@ -50,15 +50,15 @@ ground-truth để tính IoU ở đây) — chỉ nhằm mục đích chọn đa
 ```json
 {
   "image_id": "manga/page_id",
-  "page_list_identity": "sha256 của manifest.csv đang dùng (bản tự suy, xem cảnh báo EXPLORATORY)",
+  "page_list_identity": "sha256 của benchmark/page-list.json chính thức (b52aa60d…)",
   "input_image_identity": "sha256 của đúng file ảnh .jpg đã đọc cho page này",
   "method": "manga-text-segmentation",
   "repository": "...", "commit": "full 40-char SHA",
   "code_license": "MIT",
   "checkpoint": {"name": "...", "source": "...", "size_bytes": 0, "sha256": "...",
                  "weight_license": "...", "loaded_evidence": "..."},
-  "fold_attribution": "fold_0",
-  "checkpoint_strategy": "single-fold-fallback (fold.0 only) — xem cảnh báo LOFO",
+  "fold_attribution": "fold_0 — KHÔNG ĐẠT check 6 (FR-013a): đây là 1 fold duy nhất, không phải LOFO 5-checkpoint",
+  "checkpoint_strategy": "single-fold-fallback (fold.0 only)",
   "input_size": [w, h], "model_raw_output_size": [w, h], "output_size": [1654, 1170],
   "preprocessing": [...], "postprocessing": [...], "threshold": 0.5,
   "alignment": "spec-001-aligned-space",
@@ -78,6 +78,25 @@ ground-truth để tính IoU ở đây) — chỉ nhằm mục đích chọn đa
 
 ## Việc còn tồn đọng cho người kế thừa
 
-- [ ] Chạy lại với page list chính thức khi project phát hành, điền đúng `page_list_identity`.
+- [ ] Xoá 3 cell đọc ground-truth khỏi notebook đã nộp (cell `test_predict_iou.py`, cell chạy nó, và
+      cell hiển thị overlay GT) — xem ghi chú bên dưới.
 - [ ] Triển khai LOFO 5-checkpoint (FR-013a) để kết quả method A hợp lệ theo chuẩn hiện tại.
 - [ ] Xác nhận tường minh `weight_license` với tác giả repo nếu cần độ chắc chắn cao hơn suy luận hiện tại.
+
+## Ghi chú: 3 cell ground-truth trong notebook đã nộp
+
+Notebook nộp kèm còn 3 cell vi phạm ONBOARDING §8 / FR-057 và **không** được phép có mặt trong
+bản bàn giao:
+
+| cell | nội dung | vấn đề |
+|---|---|---|
+| 3 | `%%writefile test_predict_iou.py` | đọc `groundtruth/post-processed`, tự tính IoU/Precision/Recall/F1, vẽ overlay FP/FN/TP so với GT |
+| 4 | chạy `test_predict_iou.py` | sinh ra chính các số liệu đó |
+| 5 | hiển thị overlay GT | ảnh prediction-vs-ground-truth |
+
+Mask + metadata + `provenance.json` đã bàn giao **không** bị ảnh hưởng — 3 cell này chỉ là bước
+kiểm tra thăm dò chạy rời, không ghi vào `masks/` hay `metadata/`. Nhưng chúng vẫn phải bị xoá khỏi
+notebook trước khi tính là hợp lệ, vì `returned-result.md` ghi rõ phần bàn giao phải
+*"Deliberately absent: any ground-truth mask, any prediction-vs-ground-truth overlay, any metric"*.
+
+`run_benchmark.py` (cell 6) thì **đúng** — đọc `benchmark/page-list.json` chính thức, không đọc GT.
