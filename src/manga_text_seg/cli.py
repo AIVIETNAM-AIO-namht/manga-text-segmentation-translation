@@ -10,7 +10,9 @@ Subcommands (FR-036: all paths come from a single JSON config file):
   export    — write the distributable page list and the input images (FR-054)
   admit     — validate and admit a returned hand-off (FR-058, FR-059)
   status    — pre-flight availability verdicts, and admitted vs awaited (FR-016, FR-049)
+  inpaint   — remove text from pages with TELEA / NS, from admitted masks (Spec 003)
 """
+
 from __future__ import annotations
 
 import argparse
@@ -34,10 +36,14 @@ DEFAULT_MANIFEST = "outputs/segmentation/default/manifest.json"
 #: later without redoing the work that produced it (FR-022).
 AVAILABILITY_RECORD = "availability.json"
 
+#: ``inpaint`` reads Spec 003's own config, not Spec 1's ``config.json``.
+DEFAULT_INPAINT_CONFIG = "configs/inpainting.json"
+
 
 def _common_parser(sub: argparse.ArgumentParser) -> None:
     sub.add_argument(
-        "-c", "--config",
+        "-c",
+        "--config",
         default="config.json",
         help="Path to JSON config (default: config.json)",
     )
@@ -61,7 +67,9 @@ def cmd_discover(config_path: str) -> int:
     out = cfg.output_dir / "manifest.json"
     save_manifest(manifest, out)
     orphan_count = len(manifest.orphans)
-    print(f"Discovered {manifest.total} valid pairs across {len(manifest.manga_names)} manga.")
+    print(
+        f"Discovered {manifest.total} valid pairs across {len(manifest.manga_names)} manga."
+    )
     print(f"Wrote manifest: {out}")
     if orphan_count:
         print(f"Warning: {orphan_count} GT masks have no matching raw page.")
@@ -111,8 +119,10 @@ def cmd_sweep(config_path: str) -> int:
     cfg = load_config(config_path)
     manifest = load_manifest(cfg.output_dir / "manifest.json")
     summary = sweep_all_methods(cfg, manifest)
-    print(f"Sweep complete: {summary['total_rows']} rows for "
-          f"{len(summary['methods'])} method(s) across {summary['total_pairs']} pairs.")
+    print(
+        f"Sweep complete: {summary['total_rows']} rows for "
+        f"{len(summary['methods'])} method(s) across {summary['total_pairs']} pairs."
+    )
     for method_name, totals in summary["methods"].items():
         print(f"  {method_name}: {totals['ok']} ok, {totals['failed']} failed")
     return 0
@@ -152,10 +162,12 @@ def cmd_report(config_path: str, run_id: str | None = None) -> int:
             continue
         metrics = row["metrics"]
         device = (row.get("device") or {}).get("name", "unknown device")
-        print(f"  {row['method']}: IoU {metrics['iou']['mean']:.3f} "
-              f"P {metrics['precision']['mean']:.3f} "
-              f"R {metrics['recall']['mean']:.3f} "
-              f"F1 {metrics['f1']['mean']:.3f} — on {device}")
+        print(
+            f"  {row['method']}: IoU {metrics['iou']['mean']:.3f} "
+            f"P {metrics['precision']['mean']:.3f} "
+            f"R {metrics['recall']['mean']:.3f} "
+            f"F1 {metrics['f1']['mean']:.3f} — on {device}"
+        )
     print(f"Table: {table}")
     for path in charts:
         print(f"Chart: {path}")
@@ -293,8 +305,10 @@ def cmd_status(config_path: str, run_id: str | None = None) -> int:
             environment = verdict["environment"]
             device = environment["device"]
             print(f"{verdict['method']}: {verdict['verdict'].upper()}")
-            print(f"  checked in: Python {environment['interpreter']} on "
-                  f"{device['type']} ({device['name']})")
+            print(
+                f"  checked in: Python {environment['interpreter']} on "
+                f"{device['type']} ({device['name']})"
+            )
             if verdict["reason"]:
                 print(f"  reason: {verdict['reason']}")
             for step in verdict["remediation"]:
@@ -312,7 +326,10 @@ def cmd_status(config_path: str, run_id: str | None = None) -> int:
     try:
         record_doc = json.loads(run_file.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
-        print(f"Run '{run_id}' has no readable record at {run_file}: {exc}", file=sys.stderr)
+        print(
+            f"Run '{run_id}' has no readable record at {run_file}: {exc}",
+            file=sys.stderr,
+        )
         return 2
 
     admitted = list(record_doc.get("methods_admitted", []))
@@ -330,6 +347,123 @@ def cmd_status(config_path: str, run_id: str | None = None) -> int:
     return 0
 
 
+def _mask_origin(method: str, source_root: Path, manifest) -> tuple[str, str | None]:
+    """``(experiment_id, model_repository)`` for a method's masks (sample metadata).
+
+    ``classical_baseline`` comes from Spec 1: its experiment is the manifest's own
+    run and it has no upstream repository. The deep-learning identities come from
+    their admitted run: the run id is the directory above the method's root and
+    the repository is read from the ``provenance.json`` recorded with the masks.
+    """
+    from .runs import RunError
+
+    if method == "classical_baseline":
+        return manifest.run_id, None
+    provenance_file = source_root / "provenance.json"
+    try:
+        provenance = json.loads(provenance_file.read_text(encoding="utf-8"))
+        repository = provenance["repository"]["url"]
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        raise RunError(
+            f"cannot tell which repository produced the '{method}' masks: "
+            f"no readable provenance at {provenance_file} ({exc})"
+        ) from exc
+    return source_root.parent.name, repository
+
+
+def cmd_inpaint(
+    config_path: str,
+    run_id: str,
+    method: str,
+    image_id: str | None = None,
+    algorithm: str | None = None,
+    overwrite: bool = False,
+) -> int:
+    """Remove text from pages using one method's admitted masks (Spec 003, US2).
+
+    ``--image-id`` processes a single prediction mask; without it every page of
+    Spec 1's manifest is processed for ``method``. ``--algorithm`` restricts the
+    run to TELEA or NS; without it both run (FR-019). A sample that fails is
+    recorded in ``errors.json`` and printed, and the run carries on (FR-011); a
+    run that completes exits 0 whatever it recorded. Exit 2 is a refusal: an
+    existing run id without ``--overwrite``, a method with no admitted masks, or
+    an invalid argument.
+    """
+    from .config import load_inpaint_config
+    from .inpaint import process_sample
+    from .intake import source_available
+    from .runs import ErrorReport, MaskRejection, RunError, create_run
+
+    repo_root = _repo_root(config_path)
+    config = load_inpaint_config(config_path, repo_root=repo_root)
+    manifest = load_manifest(repo_root / DEFAULT_MANIFEST)
+
+    if method not in config.methods:
+        print(f"Refused: unknown method '{method}'.", file=sys.stderr)
+        return 2
+    source_root = config.methods[method].source_root
+    if not source_available(source_root):
+        print(
+            f"Refused: '{method}' has no admitted masks at {source_root}.",
+            file=sys.stderr,
+        )
+        return 2
+
+    if image_id is None:
+        pages = sorted((pair.manga, pair.stem) for pair in manifest.pairs)
+    else:
+        parts = image_id.split("/")
+        if len(parts) != 2 or not all(parts):
+            print(
+                f"Refused: --image-id '{image_id}' must look like <manga>/<page_id>.",
+                file=sys.stderr,
+            )
+            return 2
+        pages = [(parts[0], parts[1])]
+
+    try:
+        experiment_id, model_repository = _mask_origin(method, source_root, manifest)
+        run_dir = create_run(config.output_root, run_id, overwrite=overwrite)
+    except RunError as exc:
+        print(f"Refused: {exc}", file=sys.stderr)
+        return 2
+
+    report = ErrorReport()
+    processed = 0
+    for manga, stem in pages:
+        try:
+            process_sample(
+                manifest,
+                manga,
+                stem,
+                method=method,
+                run_id=run_id,
+                config=config,
+                experiment_id=experiment_id,
+                model_repository=model_repository,
+                algorithms=(algorithm,) if algorithm else None,
+            )
+        except MaskRejection as rejection:
+            report.add_rejection(rejection, method=method)
+            print(
+                f"Rejected [{rejection.category}] {rejection.image_id}: "
+                f"{rejection.reason}",
+                file=sys.stderr,
+            )
+        else:
+            processed += 1
+
+    errors_file = run_dir / "errors.json"
+    report.write(errors_file)
+    print(
+        f"Run '{run_id}', method '{method}': {processed} processed, "
+        f"{len(report)} rejected."
+    )
+    print(f"Output: {run_dir}")
+    print(f"Errors: {errors_file}")
+    return 0
+
+
 def main() -> None:
     """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(
@@ -338,12 +472,18 @@ def main() -> None:
     )
     subparsers = parser.add_subparsers(dest="command")
 
-    discover = subparsers.add_parser("discover", help="Build the (manga, stem) manifest")
+    discover = subparsers.add_parser(
+        "discover", help="Build the (manga, stem) manifest"
+    )
     _common_parser(discover)
 
-    validate = subparsers.add_parser("validate", help="Validate manifest and report orphans")
+    validate = subparsers.add_parser(
+        "validate", help="Validate manifest and report orphans"
+    )
     _common_parser(validate)
-    validate.add_argument("--manifest", default=None, help="Manifest path (default: from config)")
+    validate.add_argument(
+        "--manifest", default=None, help="Manifest path (default: from config)"
+    )
 
     run = subparsers.add_parser("run", help="Run one segmentation method on all pairs")
     _common_parser(run)
@@ -364,7 +504,9 @@ def main() -> None:
         "--run", default=None, help="Render the four-panel cases of this run"
     )
 
-    scorecard = subparsers.add_parser("scorecard", help="Export per-method scorecard CSV")
+    scorecard = subparsers.add_parser(
+        "scorecard", help="Export per-method scorecard CSV"
+    )
     _common_parser(scorecard)
 
     export_cmd = subparsers.add_parser(
@@ -377,11 +519,15 @@ def main() -> None:
     )
     _common_parser(admit_cmd)
     admit_cmd.add_argument("--run", required=True, help="Run id to admit into")
-    admit_cmd.add_argument("--method", required=True, help="Method the hand-off declares")
+    admit_cmd.add_argument(
+        "--method", required=True, help="Method the hand-off declares"
+    )
     admit_cmd.add_argument(
         "--manifest", default=None, help="Manifest path (default: Spec 1's default run)"
     )
-    admit_cmd.add_argument("handoff", help="Directory holding masks/, metadata/, provenance.json")
+    admit_cmd.add_argument(
+        "handoff", help="Directory holding masks/, metadata/, provenance.json"
+    )
 
     status_cmd = subparsers.add_parser(
         "status", help="Pre-flight availability verdicts, and admitted vs awaited"
@@ -389,6 +535,28 @@ def main() -> None:
     _common_parser(status_cmd)
     status_cmd.add_argument(
         "--run", default=None, help="Report admitted vs awaited for this run id"
+    )
+
+    inpaint_cmd = subparsers.add_parser(
+        "inpaint", help="Remove text from pages using a method's admitted masks"
+    )
+    _common_parser(inpaint_cmd)
+    inpaint_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
+    inpaint_cmd.add_argument("--run", required=True, help="Run id to write into")
+    inpaint_cmd.add_argument(
+        "--method", required=True, help="Segmentation method whose masks to use"
+    )
+    inpaint_cmd.add_argument(
+        "--image-id", default=None, help="Process only this page (<manga>/<page_id>)"
+    )
+    inpaint_cmd.add_argument(
+        "--algorithm",
+        choices=["telea", "ns"],
+        default=None,
+        help="Run only this algorithm (default: both)",
+    )
+    inpaint_cmd.add_argument(
+        "--overwrite", action="store_true", help="Replace an existing run with this id"
     )
 
     args = parser.parse_args()
@@ -415,9 +583,20 @@ def main() -> None:
         elif args.command == "export":
             code = cmd_export(args.config)
         elif args.command == "admit":
-            code = cmd_admit(args.config, args.run, args.method, args.handoff, args.manifest)
+            code = cmd_admit(
+                args.config, args.run, args.method, args.handoff, args.manifest
+            )
         elif args.command == "status":
             code = cmd_status(args.config, args.run)
+        elif args.command == "inpaint":
+            code = cmd_inpaint(
+                args.config,
+                args.run,
+                args.method,
+                args.image_id,
+                args.algorithm,
+                args.overwrite,
+            )
         else:  # pragma: no cover - argparse prevents unknown commands
             parser.error(f"Unknown command: {args.command}")
             return

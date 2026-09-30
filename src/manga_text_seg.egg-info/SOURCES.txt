@@ -2,6 +2,8 @@ README.md
 pyproject.toml
 src/manga_text_seg/__init__.py
 src/manga_text_seg/align.py
+src/manga_text_seg/availability.py
+src/manga_text_seg/benchmark.py
 src/manga_text_seg/cli.py
 src/manga_text_seg/config.py
 src/manga_text_seg/discovery.py
@@ -9,7 +11,10 @@ src/manga_text_seg/imaging.py
 src/manga_text_seg/manifest.py
 src/manga_text_seg/metrics.py
 src/manga_text_seg/normalize.py
+src/manga_text_seg/pagelist.py
 src/manga_text_seg/preprocess.py
+src/manga_text_seg/provenance.py
+src/manga_text_seg/receipt.py
 src/manga_text_seg/report.py
 src/manga_text_seg/run.py
 src/manga_text_seg/validation.py
@@ -20,6 +25,12 @@ src/manga_text_seg.egg-info/dependency_links.txt
 src/manga_text_seg.egg-info/entry_points.txt
 src/manga_text_seg.egg-info/requires.txt
 src/manga_text_seg.egg-info/top_level.txt
+src/manga_text_seg/adapters/__init__.py
+src/manga_text_seg/adapters/base.py
+src/manga_text_seg/adapters/comic_text_detector.py
+src/manga_text_seg/adapters/manga_text_segmentation.py
+src/manga_text_seg/adapters/standin.py
+src/manga_text_seg/adapters/unetpp_efficientnetv2.py
 src/manga_text_seg/methods/__init__.py
 src/manga_text_seg/methods/adaptive.py
 src/manga_text_seg/methods/components.py
