@@ -30,6 +30,7 @@ from manga_text_seg.runs import (
     SampleCounts,
     create_run,
     sample_paths,
+    write_performance_summary,
     write_run_record,
 )
 
@@ -214,6 +215,11 @@ def _complete_run(inpaint_fixture, synthetic_manifest, inpaint_config):
     )
     write_run_record(run_dir, run)
     ErrorReport().write(run_dir / "errors.json")
+    write_performance_summary(
+        run_dir,
+        {METHOD: {a: [0.01] for a in ALGORITHMS}},
+        {METHOD: {a: SampleCounts(1, 1, 0) for a in ALGORITHMS}},
+    )
     return run_dir
 
 
@@ -231,7 +237,4 @@ def test_run_root_holds_performance_json(
 ):
     run_dir = _complete_run(inpaint_fixture, synthetic_manifest, inpaint_config)
 
-    assert (run_dir / "performance.json").is_file(), (
-        "no writer exists for performance.json until T037; it cannot be "
-        "produced by anything this test calls yet"
-    )
+    assert (run_dir / "performance.json").is_file()

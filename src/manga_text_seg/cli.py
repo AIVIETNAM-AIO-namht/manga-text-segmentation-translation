@@ -374,10 +374,11 @@ def _mask_origin(method: str, source_root: Path, manifest) -> tuple[str, str | N
 def cmd_inpaint(
     config_path: str,
     run_id: str,
-    method: str,
+    method: str | None,
     image_id: str | None = None,
     algorithm: str | None = None,
     overwrite: bool = False,
+    all_methods: bool = False,
 ) -> int:
     """Remove text from pages using one method's admitted masks (Spec 003, US2).
 
@@ -390,23 +391,34 @@ def cmd_inpaint(
     an invalid argument.
     """
     from .config import load_inpaint_config
-    from .inpaint import process_sample
+    from .inpaint import process_batch
     from .intake import source_available
-    from .runs import ErrorReport, MaskRejection, RunError, create_run
+    from .runs import (
+        INPAINT_METHOD_ORDER, InpaintRun, MethodSource, RunError, create_run,
+        write_performance_summary, write_run_record,
+    )
+    from .pagelist import load_identity_record, load_page_list
 
     repo_root = _repo_root(config_path)
     config = load_inpaint_config(config_path, repo_root=repo_root)
     manifest = load_manifest(repo_root / DEFAULT_MANIFEST)
 
-    if method not in config.methods:
-        print(f"Refused: unknown method '{method}'.", file=sys.stderr)
+    if all_methods:
+        methods = tuple(m for m in INPAINT_METHOD_ORDER if m in config.methods
+                        and source_available(config.methods[m].source_root))
+    elif method in config.methods:
+        methods = (method,)
+    else:
+        print(f"Refused: unknown or missing method '{method}'.", file=sys.stderr)
         return 2
-    source_root = config.methods[method].source_root
-    if not source_available(source_root):
+    if not methods:
         print(
-            f"Refused: '{method}' has no admitted masks at {source_root}.",
+            "Refused: no configured method has admitted masks.",
             file=sys.stderr,
         )
+        return 2
+    if not all_methods and not source_available(config.methods[methods[0]].source_root):
+        print(f"Refused: '{methods[0]}' has no admitted masks.", file=sys.stderr)
         return 2
 
     if image_id is None:
@@ -422,45 +434,147 @@ def cmd_inpaint(
         pages = [(parts[0], parts[1])]
 
     try:
-        experiment_id, model_repository = _mask_origin(method, source_root, manifest)
+        origins = {
+            name: _mask_origin(name, config.methods[name].source_root, manifest)
+            for name in methods
+        }
+        benchmark_dir = repo_root / BENCHMARK_DIR
+        page_identity = load_page_list(benchmark_dir)["page_list_identity"]
+        image_identities = load_identity_record(benchmark_dir)
         run_dir = create_run(config.output_root, run_id, overwrite=overwrite)
     except RunError as exc:
         print(f"Refused: {exc}", file=sys.stderr)
         return 2
 
-    report = ErrorReport()
-    processed = 0
-    for manga, stem in pages:
-        try:
-            process_sample(
-                manifest,
-                manga,
-                stem,
-                method=method,
-                run_id=run_id,
-                config=config,
-                experiment_id=experiment_id,
-                model_repository=model_repository,
-                algorithms=(algorithm,) if algorithm else None,
+    try:
+        method_sources = {
+            name: MethodSource(
+                str(config.methods[name].source_root),
+                origins[name][0],
+                "highest IoU of the six Spec 1 methods (research R1)"
+                if name == "classical_baseline" else None,
             )
-        except MaskRejection as rejection:
-            report.add_rejection(rejection, method=method)
-            print(
-                f"Rejected [{rejection.category}] {rejection.image_id}: "
-                f"{rejection.reason}",
-                file=sys.stderr,
-            )
-        else:
-            processed += 1
-
-    errors_file = run_dir / "errors.json"
-    report.write(errors_file)
+            for name in methods
+        }
+        batch = process_batch(
+            manifest, pages, methods=methods, run_id=run_id, config=config,
+            origins=origins, algorithms=(algorithm,) if algorithm else None,
+        )
+        batch["errors"].write(run_dir / "errors.json")
+        write_performance_summary(run_dir, batch["timings"], batch["counts"])
+        page_ids = {f"{manga}/{stem}" for manga, stem in pages}
+        selected_identities = {
+            image_id: image_identities[image_id]
+            for image_id in sorted(page_ids) if image_id in image_identities
+        }
+        write_run_record(run_dir, InpaintRun(
+            run_id=run_id, method_sources=method_sources,
+            mask_processing_config=config.mask_processing,
+            inpainting_config=config.inpainting,
+            page_list_identity=page_identity,
+            input_image_identity=selected_identities,
+            counts=batch["counts"],
+        ))
+    except RunError as exc:
+        print(f"Refused: {exc}", file=sys.stderr)
+        return 2
+    processed = sum(next(iter(v.values())).succeeded for v in batch["counts"].values())
+    rejected = sum(next(iter(v.values())).failed for v in batch["counts"].values())
     print(
-        f"Run '{run_id}', method '{method}': {processed} processed, "
-        f"{len(report)} rejected."
+        f"Run '{run_id}', methods {', '.join(methods)}: "
+        f"{processed} method-pages processed, {rejected} rejected."
     )
     print(f"Output: {run_dir}")
-    print(f"Errors: {errors_file}")
+    print(f"Errors: {run_dir / 'errors.json'}")
+    return 0
+
+
+def cmd_boards(config_path: str, run_id: str, method: str) -> int:
+    """Select representative pages from persisted metrics and render boards."""
+    import csv
+    import json
+
+    import cv2
+
+    from .boards import write_board
+    from .config import load_inpaint_config
+    from .runs import INPAINT_ALGORITHMS, artifact_paths, sample_paths
+    from .selection import SELECTION_RULES, select_samples, write_selection
+
+    repo_root = _repo_root(config_path)
+    config = load_inpaint_config(config_path, repo_root=repo_root)
+    if method not in config.methods:
+        raise ValueError(f"Unknown inpainting method {method!r}")
+    run_dir = config.output_root / run_id
+    run_record = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    if method not in run_record.get("methods", []):
+        raise ValueError(f"Run {run_id!r} contains no outputs for {method!r}")
+
+    if method == "classical_baseline":
+        metric_path = repo_root / "outputs" / "segmentation" / "default" / "metrics.csv"
+        rows = list(csv.DictReader(metric_path.open(encoding="utf-8", newline="")))
+        resolved = run_record["method_sources"][method]["resolved_identity"]
+        rows = [row for row in rows if row.get("method") == resolved]
+    else:
+        source_root = Path(run_record["method_sources"][method]["source_root"])
+        metric_path = source_root.parent / "metrics" / "per-page.csv"
+        rows = list(csv.DictReader(metric_path.open(encoding="utf-8", newline="")))
+
+    metrics = []
+    for row in rows:
+        image_id = row.get("image_id") or f"{row['manga']}/{row['stem']}"
+        metrics.append({
+            "image_id": image_id,
+            "iou": float(row["iou"]),
+            "f1": float(row["f1"]),
+            "fp": int(float(row["fp"])),
+            "fn": int(float(row["fn"])),
+        })
+    config_record = {
+        "dilation": run_record["mask_processing_config"]["dilation"],
+        "inpaint_radius": run_record["inpainting_config"]["radius"],
+    }
+    selections: dict[str, dict[str, dict]] = {}
+    board_count = 0
+    for rule in SELECTION_RULES:
+        result = select_samples(
+            {method: metrics}, rule, config.selection_n,
+            manual_flags=config.manual_artifact_flags,
+        )
+        selections[rule] = result
+        for entry in result[method]["selected"]:
+            image_id = entry["image_id"]
+            panel_paths = {}
+            for algorithm in INPAINT_ALGORITHMS:
+                paths = artifact_paths(sample_paths(
+                    config.output_root, run_id, method, algorithm, image_id
+                ))
+                panel_paths[algorithm] = paths
+            def load(path):
+                image = cv2.imread(str(path), cv2.IMREAD_UNCHANGED)
+                if image is None:
+                    raise FileNotFoundError(f"Required board input is missing or unreadable: {path}")
+                return image
+            sample = {
+                "image_id": image_id,
+                "method": method,
+                "algorithm": "telea+ns",
+                "mask_proc_config": config_record,
+                "panels": {
+                    "original_page": load(panel_paths["telea"].page),
+                    "raw_prediction_mask": load(panel_paths["telea"].raw_mask),
+                    "dilated_mask": load(panel_paths["telea"].processed_mask),
+                    "telea_result": load(panel_paths["telea"].inpainted),
+                    "ns_result": load(panel_paths["ns"].inpainted),
+                },
+            }
+            manga, stem = image_id.split("/", 1)
+            destination = run_dir / "boards" / method / rule / f"{manga}_{stem}.png"
+            write_board(sample, destination)
+            board_count += 1
+    write_selection(run_dir / "selection.json", selections)
+    print(f"Wrote {board_count} boards for '{method}' in run '{run_id}'.")
+    print(f"Selection: {run_dir / 'selection.json'}")
     return 0
 
 
@@ -544,8 +658,9 @@ def main() -> None:
     inpaint_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
     inpaint_cmd.add_argument("--run", required=True, help="Run id to write into")
     inpaint_cmd.add_argument(
-        "--method", required=True, help="Segmentation method whose masks to use"
+        "--method", default=None, help="Segmentation method whose masks to use"
     )
+    inpaint_cmd.add_argument("--all-methods", action="store_true", help="Process every configured method with admitted masks")
     inpaint_cmd.add_argument(
         "--image-id", default=None, help="Process only this page (<manga>/<page_id>)"
     )
@@ -558,6 +673,12 @@ def main() -> None:
     inpaint_cmd.add_argument(
         "--overwrite", action="store_true", help="Replace an existing run with this id"
     )
+
+    boards_cmd = subparsers.add_parser("boards", help="Select samples and render comparison boards")
+    _common_parser(boards_cmd)
+    boards_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
+    boards_cmd.add_argument("--run", required=True, help="Inpainting run id")
+    boards_cmd.add_argument("--method", required=True, help="Segmentation method to render")
 
     args = parser.parse_args()
 
@@ -596,7 +717,10 @@ def main() -> None:
                 args.image_id,
                 args.algorithm,
                 args.overwrite,
+                args.all_methods,
             )
+        elif args.command == "boards":
+            code = cmd_boards(args.config, args.run, args.method)
         else:  # pragma: no cover - argparse prevents unknown commands
             parser.error(f"Unknown command: {args.command}")
             return

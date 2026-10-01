@@ -132,17 +132,17 @@ existing run-record module** and must not be touched. This feature's new module 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T032 [P] [US3] Write `tests/integration/test_batch_isolation.py` (FR-011, FR-012, SC-005): induce each of the nine categories — the perturbation table in quickstart.md §3 — assert the batch exits 0, every other sample completes, `errors.json` records every induced failure with category, sample identifier and reason, and zero failures go unrecorded.
-- [ ] T033 [P] [US3] Write `tests/integration/test_run_separation.py` (FR-027, SC-006): two run IDs both remain on disk byte-identical to their completed state; a repeated run ID refuses without `--overwrite` and proceeds with it; a refused run writes nothing.
-- [ ] T034 [P] [US3] Write `tests/unit/test_performance_summary.py` (FR-022): `performance.json` groups by method × algorithm and reports, per group, mean processing time per image, sample count, failure count and runtime/device metadata.
+- [x] T032 [P] [US3] Write `tests/integration/test_batch_isolation.py` (FR-011, FR-012, SC-005): induce each of the nine categories — the perturbation table in quickstart.md §3 — assert the batch exits 0, every other sample completes, `errors.json` records every induced failure with category, sample identifier and reason, and zero failures go unrecorded.
+- [x] T033 [P] [US3] Write `tests/integration/test_run_separation.py` (FR-027, SC-006): two run IDs both remain on disk byte-identical to their completed state; a repeated run ID refuses without `--overwrite` and proceeds with it; a refused run writes nothing.
+- [x] T034 [P] [US3] Write `tests/unit/test_performance_summary.py` (FR-022): `performance.json` groups by method × algorithm and reports, per group, mean processing time per image, sample count, failure count and runtime/device metadata.
 
 ### Implementation for User Story 3
 
-- [ ] T035 [US3] Implement batch orchestration in `src/manga_text_seg/inpaint.py` (FR-011, FR-036): iterate the manifest's page list in its `(manga, stem)` order for one method, or all four identities, isolating each sample's failure so the batch always runs to completion.
-- [ ] T036 [US3] Implement the overwrite request path in `src/manga_text_seg/runs.py` and `src/manga_text_seg/cli.py` (FR-027, SC-006): the default refuses a repeated run ID, `--overwrite` is the only way past it, and a refusal leaves the prior run untouched.
-- [ ] T037 [US3] Implement the performance summary in `src/manga_text_seg/runs.py` (FR-022): aggregate the recorded per-sample timings into `performance.json` grouped by segmentation method × inpainting algorithm, with mean processing time per image, sample count, failure count and the runtime/device metadata.
-- [ ] T038 [US3] Record run counts in `run.json` in `src/manga_text_seg/runs.py`: pages attempted, succeeded and failed per method × algorithm (quickstart.md §2).
-- [ ] T039 [US3] Extend the `inpaint` subcommand in `src/manga_text_seg/cli.py` (FR-036) with the all-methods form ("processing all prediction masks") and ensure a run with failures still exits 0.
+- [x] T035 [US3] Implement batch orchestration in `src/manga_text_seg/inpaint.py` (FR-011, FR-036): iterate the manifest's page list in its `(manga, stem)` order for one method, or all four identities, isolating each sample's failure so the batch always runs to completion.
+- [x] T036 [US3] Implement the overwrite request path in `src/manga_text_seg/runs.py` and `src/manga_text_seg/cli.py` (FR-027, SC-006): the default refuses a repeated run ID, `--overwrite` is the only way past it, and a refusal leaves the prior run untouched.
+- [x] T037 [US3] Implement the performance summary in `src/manga_text_seg/runs.py` (FR-022): aggregate the recorded per-sample timings into `performance.json` grouped by segmentation method × inpainting algorithm, with mean processing time per image, sample count, failure count and the runtime/device metadata.
+- [x] T038 [US3] Record run counts in `run.json` in `src/manga_text_seg/runs.py`: pages attempted, succeeded and failed per method × algorithm (quickstart.md §2).
+- [x] T039 [US3] Extend the `inpaint` subcommand in `src/manga_text_seg/cli.py` (FR-036) with the all-methods form ("processing all prediction masks") and ensure a run with failures still exits 0.
 
 **Checkpoint**: User Stories 1, 2 and 3 all work independently — a full method runs to completion over real failures and its outputs persist.
 
@@ -158,14 +158,14 @@ existing run-record module** and must not be touched. This feature's new module 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T040 [P] [US4] Write `tests/unit/test_selection.py` (FR-034, SC-007, research R2): each of the five rules selects at most N = 5 samples **per segmentation method**; a rule with fewer than N candidates records the shortfall and never pads; `manual_artifact_flags` selects at most N from the configured list and records the shortfall rather than inventing flags; `classical_baseline`'s metrics come from Spec 1's `metrics.csv` for the method it resolved to (research R1).
-- [ ] T041 [P] [US4] Write `tests/unit/test_boards.py` (FR-033, SC-007): a board carries exactly five panels — original page, raw prediction mask, mask after dilation, TELEA result, NS result — each labeled with the segmentation method, inpainting algorithm, mask-processing configuration and `image_id`; no panel is a ground-truth mask and no panel is a prediction-vs-GT overlay.
+- [x] T040 [P] [US4] Write `tests/unit/test_selection.py` (FR-034, SC-007, research R2): each of the five rules selects at most N = 5 samples **per segmentation method**; a rule with fewer than N candidates records the shortfall and never pads; `manual_artifact_flags` selects at most N from the configured list and records the shortfall rather than inventing flags; `classical_baseline`'s metrics come from Spec 1's `metrics.csv` for the method it resolved to (research R1).
+- [x] T041 [P] [US4] Write `tests/unit/test_boards.py` (FR-033, SC-007): a board carries exactly five panels — original page, raw prediction mask, mask after dilation, TELEA result, NS result — each labeled with the segmentation method, inpainting algorithm, mask-processing configuration and `image_id`; no panel is a ground-truth mask and no panel is a prediction-vs-GT overlay.
 
 ### Implementation for User Story 4
 
-- [ ] T042 [US4] Implement the five selection rules in `src/manga_text_seg/selection.py` (FR-034): highest IoU/F1, lowest IoU/F1, most false positives, most false negatives, and manually flagged artifact cases — N per rule per method, shortfalls recorded, and the result written to `selection.json`.
-- [ ] T043 [US4] Implement board rendering in `src/manga_text_seg/boards.py` (FR-033) at `boards/<method>/<rule>/<manga>_<stem>.png`, reading only this feature's own artifacts. Do **not** reuse `src/manga_text_seg/visualize.py`'s GT-overlay colours — no ground truth appears in a board.
-- [ ] T044 [US4] Add the `boards` subcommand to `src/manga_text_seg/cli.py` (FR-036) with `--config`, `--run` and `--method`.
+- [x] T042 [US4] Implement the five selection rules in `src/manga_text_seg/selection.py` (FR-034): highest IoU/F1, lowest IoU/F1, most false positives, most false negatives, and manually flagged artifact cases — N per rule per method, shortfalls recorded, and the result written to `selection.json`.
+- [x] T043 [US4] Implement board rendering in `src/manga_text_seg/boards.py` (FR-033) at `boards/<method>/<rule>/<manga>_<stem>.png`, reading only this feature's own artifacts. Do **not** reuse `src/manga_text_seg/visualize.py`'s GT-overlay colours — no ground truth appears in a board.
+- [x] T044 [US4] Add the `boards` subcommand to `src/manga_text_seg/cli.py` (FR-036) with `--config`, `--run` and `--method`.
 
 **Checkpoint**: User Story 4 delivers reviewable boards without depending on US5 or US6.
 

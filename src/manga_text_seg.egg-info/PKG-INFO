@@ -9,6 +9,7 @@ Requires-Dist: opencv-python>=4.8.0
 Requires-Dist: numpy>=1.24.0
 Requires-Dist: pandas>=2.0.0
 Requires-Dist: matplotlib>=3.7.0
+Requires-Dist: pytest>=9.1.1
 Provides-Extra: dev
 Requires-Dist: pytest>=7.4.0; extra == "dev"
 Requires-Dist: pytest-cov>=4.1.0; extra == "dev"

@@ -28,6 +28,7 @@ from manga_text_seg.maskproc import dilate_mask
 from manga_text_seg.runs import (
     MaskRejection,
     RunError,
+    SampleCounts,
     SampleMetadata,
     artifact_paths,
     sample_paths,
@@ -201,3 +202,52 @@ def process_sample(
             "output_write_failure", f"writing the sample's files: {error}", image_id
         ) from error
     return metadata
+
+
+def process_batch(
+    manifest: Manifest,
+    pages: list[tuple[str, str]],
+    *,
+    methods: tuple[str, ...],
+    run_id: str,
+    config: InpaintConfig,
+    origins: dict[str, tuple[str, str | None]],
+    algorithms: tuple[str, ...] | None = None,
+) -> dict:
+    """Process a page batch while isolating each page's intake/inpaint failure.
+
+    Returns the error report, method × algorithm counters and successful
+    per-algorithm timings for run-level writers. Page order is preserved from
+    the caller, which supplies the manifest's stable manga/stem ordering.
+    """
+    from manga_text_seg.runs import ErrorReport
+
+    chosen_algorithms = _resolve_algorithms(config, algorithms)
+    report = ErrorReport()
+    counts: dict[str, dict[str, SampleCounts]] = {}
+    timings: dict[str, dict[str, list[float]]] = {}
+    for method in methods:
+        attempted = succeeded = failed = 0
+        method_timings = {algorithm: [] for algorithm in chosen_algorithms}
+        for manga, stem in pages:
+            attempted += 1
+            experiment_id, model_repository = origins[method]
+            try:
+                outcome = process_sample(
+                    manifest, manga, stem, method=method, run_id=run_id,
+                    config=config, experiment_id=experiment_id,
+                    model_repository=model_repository, algorithms=chosen_algorithms,
+                )
+            except MaskRejection as rejection:
+                failed += 1
+                report.add_rejection(rejection, method=method)
+            else:
+                succeeded += 1
+                for algorithm, metadata in outcome.items():
+                    method_timings[algorithm].append(metadata.processing_time_seconds)
+        counts[method] = {
+            algorithm: SampleCounts(attempted, succeeded, failed)
+            for algorithm in chosen_algorithms
+        }
+        timings[method] = method_timings
+    return {"errors": report, "counts": counts, "timings": timings}

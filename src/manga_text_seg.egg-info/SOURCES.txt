@@ -8,7 +8,10 @@ src/manga_text_seg/cli.py
 src/manga_text_seg/config.py
 src/manga_text_seg/discovery.py
 src/manga_text_seg/imaging.py
+src/manga_text_seg/inpaint.py
+src/manga_text_seg/intake.py
 src/manga_text_seg/manifest.py
+src/manga_text_seg/maskproc.py
 src/manga_text_seg/metrics.py
 src/manga_text_seg/normalize.py
 src/manga_text_seg/pagelist.py
@@ -17,6 +20,7 @@ src/manga_text_seg/provenance.py
 src/manga_text_seg/receipt.py
 src/manga_text_seg/report.py
 src/manga_text_seg/run.py
+src/manga_text_seg/runs.py
 src/manga_text_seg/validation.py
 src/manga_text_seg/visualize.py
 src/manga_text_seg.egg-info/PKG-INFO

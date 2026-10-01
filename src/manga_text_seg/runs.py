@@ -12,6 +12,7 @@ Later tasks (T009-T011, T021, T027) append writers to this module.
 from __future__ import annotations
 
 import json
+import platform
 import re
 import shutil
 from dataclasses import asdict, dataclass
@@ -430,6 +431,52 @@ def write_run_record(run_dir: Path, run: InpaintRun) -> Path:
         json.dumps(run.to_dict(), indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
+    return path
+
+
+PERFORMANCE_FILENAME = "performance.json"
+
+
+def write_performance_summary(
+    run_dir: Path,
+    timings: dict[str, dict[str, list[float]]],
+    counts: dict[str, dict[str, SampleCounts]],
+    *,
+    runtime: dict[str, Any] | None = None,
+) -> Path:
+    """Write deterministic method × algorithm timing and count aggregates.
+
+    Timings contain successful per-sample algorithm durations. Failed counts
+    come from the batch counters, so rejected inputs remain visible even though
+    they never produced a metadata sidecar.
+    """
+    from .availability import probe_device
+
+    groups: dict[str, dict[str, Any]] = {}
+    for method in INPAINT_METHOD_ORDER:
+        if method not in counts:
+            continue
+        groups[method] = {}
+        for algorithm in sorted(counts[method]):
+            values = timings.get(method, {}).get(algorithm, [])
+            count = counts[method][algorithm]
+            groups[method][algorithm] = {
+                "mean_processing_time_seconds": (
+                    sum(values) / len(values) if values else None
+                ),
+                "sample_count": len(values),
+                "failure_count": count.failed,
+            }
+    document = {
+        "groups": groups,
+        "runtime": runtime or {
+            "python": platform.python_version(),
+            "device": probe_device(),
+        },
+    }
+    path = Path(run_dir) / PERFORMANCE_FILENAME
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(document, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     return path
 
 
