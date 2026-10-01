@@ -15,6 +15,7 @@ Two configuration documents, two loaders:
 Relative paths are resolved against the repository root (the config file's
 parent parent).
 """
+
 from __future__ import annotations
 
 import json
@@ -51,7 +52,9 @@ class Config:
     alignment_strategy: str = "crop-topleft"
     denoise: str = "none"
     methods: list[dict[str, Any]] = field(default_factory=lambda: list(DEFAULT_METHODS))
-    metrics: list[str] = field(default_factory=lambda: ["iou", "precision", "recall", "f1"])
+    metrics: list[str] = field(
+        default_factory=lambda: ["iou", "precision", "recall", "f1"]
+    )
     viz_mode: str = "first-N"
     viz_n: int = 20
 
@@ -66,7 +69,9 @@ def _require_mapping(data: dict[str, Any], key: str) -> dict[str, Any]:
         raise ConfigError(f"Missing required configuration key: '{key}'")
     value = data[key]
     if not isinstance(value, dict):
-        raise ConfigError(f"Configuration key '{key}' must be an object, got {type(value).__name__}")
+        raise ConfigError(
+            f"Configuration key '{key}' must be an object, got {type(value).__name__}"
+        )
     return value
 
 
@@ -96,10 +101,14 @@ def load_config(path: str | Path, repo_root: Path | None = None) -> Config:
     alignment = _require_mapping(data, "alignment") if "alignment" in data else {}
     strategy = alignment.get("strategy", "crop-topleft")
     if strategy not in ALIGNMENT_STRATEGIES:
-        raise ConfigError(f"Unsupported alignment strategy '{strategy}'; "
-                          f"expected one of {sorted(ALIGNMENT_STRATEGIES)}")
+        raise ConfigError(
+            f"Unsupported alignment strategy '{strategy}'; "
+            f"expected one of {sorted(ALIGNMENT_STRATEGIES)}"
+        )
 
-    preprocessing = _require_mapping(data, "preprocessing") if "preprocessing" in data else {}
+    preprocessing = (
+        _require_mapping(data, "preprocessing") if "preprocessing" in data else {}
+    )
     denoise = preprocessing.get("denoise", "none")
 
     methods = data.get("methods", DEFAULT_METHODS)
@@ -200,7 +209,9 @@ def _parse_checkpoint(raw: Any, where: str, repo_root: Path) -> Checkpoint:
 
     size = raw["size_bytes"]
     if not isinstance(size, int) or isinstance(size, bool) or size < 1:
-        raise ConfigError(f"{where}/{identity}: 'size_bytes' must be a positive integer")
+        raise ConfigError(
+            f"{where}/{identity}: 'size_bytes' must be a positive integer"
+        )
 
     sha = raw["sha256"]
     if sha is not None and not (isinstance(sha, str) and len(sha) == 64):
@@ -305,7 +316,210 @@ def load_dl_config(path: str | Path, repo_root: Path | None = None) -> DLConfig:
 
     root = (repo_root or config_path.resolve().parent.parent).resolve()
     methods = {
-        name: _parse_dl_method(name, raw, root)
-        for name, raw in methods_raw.items()
+        name: _parse_dl_method(name, raw, root) for name, raw in methods_raw.items()
     }
     return DLConfig(methods=methods)
+
+
+# --------------------------------------------------------------------------- #
+# Inpainting configuration (configs/inpainting.json) — Spec 003 (FR-038)
+# --------------------------------------------------------------------------- #
+
+#: The four FR-026 identities. Fixed names — never derived, never guessed.
+INPAINT_METHOD_IDENTITIES = {
+    "classical_baseline",
+    "manga_text_segmentation",
+    "comic_text_detector",
+    "unetpp_efficientnetv2",
+}
+DILATION_KERNEL_SHAPES = {"rect", "ellipse", "cross"}
+INPAINT_ALGORITHMS = {"telea", "ns"}
+INPAINT_OUTPUT_FORMATS = {"png", "webp", "bmp", "tiff"}
+
+
+@dataclass(frozen=True)
+class DilationConfig:
+    """One dilation setting. Required fields are only meaningful when enabled."""
+
+    enabled: bool
+    kernel_shape: str | None = None
+    kernel_size: tuple[int, int] | None = None
+    iterations: int | None = None
+
+
+@dataclass(frozen=True)
+class MaskProcessingConfig:
+    """The shared preprocessing configuration (FR-014-FR-018), identical for
+    every page and every method in the main benchmark (FR-017)."""
+
+    dilation: DilationConfig
+
+
+@dataclass(frozen=True)
+class InpaintingConfig:
+    """FR-019-FR-021. No per-method override exists — the main benchmark uses
+    one radius, one algorithm set and one output format for all four methods."""
+
+    radius: float
+    algorithms: tuple[str, ...]
+    output_format: str = "png"
+
+
+@dataclass(frozen=True)
+class InpaintMethodConfig:
+    """One FR-026 identity's resolved mask source (research R1, R5)."""
+
+    source_root: Path
+
+
+@dataclass(frozen=True)
+class InpaintConfig:
+    """Validated runtime configuration for Spec 003."""
+
+    methods: dict[str, InpaintMethodConfig]
+    mask_processing: MaskProcessingConfig
+    inpainting: InpaintingConfig
+    selection_n: int
+    output_root: Path
+    manual_artifact_flags: list[str] = field(default_factory=list)
+
+
+def _parse_inpaint_method(name: str, raw: Any, repo_root: Path) -> InpaintMethodConfig:
+    where = f"inpaint method '{name}'"
+    if not isinstance(raw, dict):
+        raise ConfigError(f"{where}: definition must be an object")
+    if "source_root" not in raw:
+        raise ConfigError(f"{where}: missing required key 'source_root'")
+    return InpaintMethodConfig(
+        source_root=_resolve(Path(str(raw["source_root"])), repo_root)
+    )
+
+
+def _parse_mask_processing(raw: dict[str, Any]) -> MaskProcessingConfig:
+    dilation_raw = _require_mapping(raw, "dilation")
+    if "enabled" not in dilation_raw:
+        raise ConfigError("mask_processing.dilation: missing required key 'enabled'")
+    enabled = bool(dilation_raw["enabled"])
+
+    kernel_shape: str | None = None
+    kernel_size: tuple[int, int] | None = None
+    iterations: int | None = None
+
+    if enabled:
+        kernel_shape = dilation_raw.get("kernel_shape")
+        if kernel_shape not in DILATION_KERNEL_SHAPES:
+            raise ConfigError(
+                f"mask_processing.dilation: 'kernel_shape' must be one of "
+                f"{sorted(DILATION_KERNEL_SHAPES)} when enabled, got {kernel_shape!r}"
+            )
+        raw_size = dilation_raw.get("kernel_size")
+        if not (isinstance(raw_size, list) and len(raw_size) == 2):
+            raise ConfigError(
+                "mask_processing.dilation: 'kernel_size' must be a [width, height] "
+                "pair when enabled"
+            )
+        kernel_size = (int(raw_size[0]), int(raw_size[1]))
+        iterations = dilation_raw.get("iterations")
+        if (
+            not isinstance(iterations, int)
+            or isinstance(iterations, bool)
+            or iterations < 1
+        ):
+            raise ConfigError(
+                "mask_processing.dilation: 'iterations' must be a positive integer "
+                "when enabled"
+            )
+
+    return MaskProcessingConfig(
+        dilation=DilationConfig(
+            enabled=enabled,
+            kernel_shape=kernel_shape,
+            kernel_size=kernel_size,
+            iterations=iterations,
+        )
+    )
+
+
+def _parse_inpainting_config(raw: dict[str, Any]) -> InpaintingConfig:
+    if "radius" not in raw:
+        raise ConfigError("'inpaint': missing required key 'radius'")
+    radius = raw["radius"]
+    if not isinstance(radius, (int, float)) or isinstance(radius, bool) or radius <= 0:
+        raise ConfigError("'inpaint.radius' must be a positive number")
+
+    algorithms = raw.get("algorithms")
+    if not isinstance(algorithms, list) or not algorithms:
+        raise ConfigError("'inpaint.algorithms' must be a non-empty list")
+    for algo in algorithms:
+        if algo not in INPAINT_ALGORITHMS:
+            raise ConfigError(
+                f"'inpaint.algorithms' contains {algo!r}; expected one of "
+                f"{sorted(INPAINT_ALGORITHMS)}"
+            )
+
+    output_format = raw.get("output_format", "png")
+    if output_format not in INPAINT_OUTPUT_FORMATS:
+        raise ConfigError(
+            f"'inpaint.output_format' must be one of {sorted(INPAINT_OUTPUT_FORMATS)}, "
+            f"got {output_format!r}"
+        )
+
+    return InpaintingConfig(
+        radius=float(radius),
+        algorithms=tuple(algorithms),
+        output_format=str(output_format),
+    )
+
+
+def load_inpaint_config(
+    path: str | Path, repo_root: Path | None = None
+) -> InpaintConfig:
+    """Load and validate ``configs/inpainting.json`` (FR-038).
+
+    Every path and parameter for Spec 003 lives here; nothing may be
+    hard-coded in the processing logic that consumes this config.
+    """
+    config_path = Path(path)
+    with open(config_path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+
+    if not isinstance(data, dict):
+        raise ConfigError("Configuration root must be a JSON object")
+
+    required_top = {"methods", "mask_processing", "inpaint", "selection", "output_root"}
+    missing = required_top - set(data)
+    if missing:
+        raise ConfigError(f"Missing required configuration key(s): {sorted(missing)}")
+
+    root = (repo_root or config_path.resolve().parent.parent).resolve()
+
+    methods_raw = _require_mapping(data, "methods")
+    missing_identities = INPAINT_METHOD_IDENTITIES - set(methods_raw)
+    if missing_identities:
+        raise ConfigError(
+            f"'methods' is missing required identity(ies): {sorted(missing_identities)}"
+        )
+    methods = {
+        name: _parse_inpaint_method(name, methods_raw[name], root)
+        for name in INPAINT_METHOD_IDENTITIES
+    }
+
+    mask_processing = _parse_mask_processing(_require_mapping(data, "mask_processing"))
+    inpainting = _parse_inpainting_config(_require_mapping(data, "inpaint"))
+
+    selection_raw = _require_mapping(data, "selection")
+    if "n" not in selection_raw:
+        raise ConfigError("'selection' must define 'n'")
+    selection_n = int(selection_raw["n"])
+    manual_artifact_flags = list(selection_raw.get("manual_artifact_flags", []))
+
+    output_root = _resolve(Path(str(data["output_root"])), root)
+
+    return InpaintConfig(
+        methods=methods,
+        mask_processing=mask_processing,
+        inpainting=inpainting,
+        selection_n=selection_n,
+        output_root=output_root,
+        manual_artifact_flags=manual_artifact_flags,
+    )
