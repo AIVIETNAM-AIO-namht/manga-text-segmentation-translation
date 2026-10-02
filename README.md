@@ -152,6 +152,32 @@ Không commit các file sau lên repository:
 
 API key translation/summary phải được cung cấp qua environment variable hoặc secret configuration bên ngoài repository.
 
+## Spec 003: Text removal and inpainting
+
+The inpainting pipeline consumes admitted prediction masks and applies OpenCV TELEA or
+Navier–Stokes inpainting. It does not run segmentation models. Read
+[`specs/003-text-removal-inpainting/quickstart.md`](specs/003-text-removal-inpainting/quickstart.md)
+for the fixture-scale workflow and prerequisites.
+
+The runtime configuration is [`configs/inpainting.json`](configs/inpainting.json). It defines
+the four fixed method identities and mask source roots, shared dilation settings, inpaint radius,
+algorithms, output format, qualitative-selection count and output root. Configure the three
+external model source roots to point at admitted handoffs before running those methods.
+
+```bash
+manga-text-seg inpaint --config configs/inpainting.json --run RUN_ID --method classical_baseline
+manga-text-seg inpaint --config configs/inpainting.json --run RUN_ID --method METHOD --image-id MANGA/001
+manga-text-seg inpaint --config configs/inpainting.json --run RUN_ID --all-methods
+manga-text-seg boards --config configs/inpainting.json --run RUN_ID --method METHOD
+manga-text-seg qualitative --config configs/inpainting.json --run RUN_ID
+manga-text-seg ablate --config configs/inpainting.json --run ABLATION_ID --vary dilation.kernel_size --values 3,5,7
+```
+
+Generated artifacts live under `outputs/inpainting/`, with supplementary sweeps isolated at
+`outputs/inpainting/ablation/`. These paths are gitignored because they contain dataset-derived
+images, per-run metadata and potentially large generated outputs. Keep them local; commit source,
+configuration and reviewable documentation instead.
+
 ## Dataset acknowledgement
 
 Khi công bố kết quả, cần ghi rõ việc sử dụng Manga109-s, tuân thủ điều kiện sử dụng dataset và trích dẫn tài liệu liên quan. Không phân phối lại dataset hoặc công khai số lượng whole pages vượt quá giới hạn được quy định bởi dataset.

@@ -489,6 +489,169 @@ def cmd_inpaint(
     return 0
 
 
+def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
+    """Run a dilation/radius sweep in its isolated ablation namespace."""
+    from dataclasses import asdict, replace
+    import json
+
+    from .ablation import run_ablation
+    from .config import (
+        DILATION_KERNEL_SHAPES, DilationConfig, MaskProcessingConfig,
+        load_inpaint_config,
+    )
+    from .inpaint import process_batch
+    from .intake import source_available
+    from .pagelist import load_identity_record, load_page_list
+    from .runs import (
+        INPAINT_METHOD_ORDER, InpaintRun, MethodSource, RunError,
+        write_performance_summary, write_run_record,
+    )
+
+    supported = {
+        "dilation.kernel_size", "dilation.iterations", "dilation.kernel_shape",
+        "inpaint.radius",
+    }
+    if vary not in supported:
+        print(f"Refused: --vary must be one of {sorted(supported)}.", file=sys.stderr)
+        return 2
+    raw_values = [part.strip() for part in values.split(",") if part.strip()]
+    if not raw_values:
+        print("Refused: --values must contain at least one value.", file=sys.stderr)
+        return 2
+    try:
+        if vary in {"dilation.kernel_size", "dilation.iterations"}:
+            parsed_values = [int(value) for value in raw_values]
+        elif vary == "inpaint.radius":
+            parsed_values = [float(value) for value in raw_values]
+        else:
+            parsed_values = raw_values
+        repo_root = _repo_root(config_path)
+        config = load_inpaint_config(config_path, repo_root=repo_root)
+        baseline = {
+            "dilation": asdict(config.mask_processing.dilation),
+            "inpaint_radius": config.inpainting.radius,
+        }
+        configs = []
+        for value in parsed_values:
+            dilation = dict(baseline["dilation"])
+            radius = baseline["inpaint_radius"]
+            if vary == "dilation.kernel_size":
+                if not dilation["enabled"]:
+                    raise ValueError("cannot vary kernel size while dilation is disabled")
+                if value < 1:
+                    raise ValueError("dilation kernel sizes must be positive")
+                dilation["kernel_size"] = [value, value]
+            elif vary == "dilation.iterations":
+                if not dilation["enabled"]:
+                    raise ValueError("cannot vary iterations while dilation is disabled")
+                if value < 1:
+                    raise ValueError("dilation iterations must be positive")
+                dilation["iterations"] = value
+            elif vary == "dilation.kernel_shape":
+                if not dilation["enabled"]:
+                    raise ValueError("cannot vary kernel shape while dilation is disabled")
+                if value not in DILATION_KERNEL_SHAPES:
+                    raise ValueError(
+                        f"kernel shape must be one of {sorted(DILATION_KERNEL_SHAPES)}"
+                    )
+                dilation["kernel_shape"] = value
+            else:
+                if value <= 0:
+                    raise ValueError("inpaint radii must be positive")
+                radius = value
+            configs.append({"dilation": dilation, "inpaint_radius": radius})
+    except (ValueError, OSError, json.JSONDecodeError) as exc:
+        print(f"Refused: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        manifest = load_manifest(repo_root / DEFAULT_MANIFEST)
+        methods = tuple(
+            method for method in INPAINT_METHOD_ORDER
+            if method in config.methods and source_available(config.methods[method].source_root)
+        )
+        if not methods:
+            print("Refused: no configured method has admitted masks.", file=sys.stderr)
+            return 2
+        origins = {
+            name: _mask_origin(name, config.methods[name].source_root, manifest)
+            for name in methods
+        }
+        benchmark_dir = repo_root / BENCHMARK_DIR
+        page_identity = load_page_list(benchmark_dir)["page_list_identity"]
+        image_identities = load_identity_record(benchmark_dir)
+    except (RunError, FileNotFoundError, KeyError, ValueError) as exc:
+        print(f"Refused: {exc}", file=sys.stderr)
+        return 2
+
+    pages = sorted((pair.manga, pair.stem) for pair in manifest.pairs)
+    page_ids = {f"{manga}/{stem}" for manga, stem in pages}
+    selected_identities = {
+        image_id: image_identities[image_id]
+        for image_id in sorted(page_ids) if image_id in image_identities
+    }
+    method_sources = {
+        name: MethodSource(
+            str(config.methods[name].source_root), origins[name][0],
+            "highest IoU of the six Spec 1 methods (research R1)"
+            if name == "classical_baseline" else None,
+        )
+        for name in methods
+    }
+    try:
+        result = run_ablation(
+            output_root=config.output_root, run_id=run_id, configs=configs,
+            baseline_config=baseline,
+        )
+    except (ValueError, OSError) as exc:
+        print(f"Refused: {exc}", file=sys.stderr)
+        return 2
+    ablation_dir = Path(result["ablation_dir"])
+    for config_dir, variant in zip(result["config_dirs"], configs):
+        dilation_raw = variant["dilation"]
+        kernel_size = dilation_raw["kernel_size"]
+        dilation_config = DilationConfig(
+            enabled=dilation_raw["enabled"],
+            kernel_shape=dilation_raw["kernel_shape"],
+            kernel_size=tuple(kernel_size) if kernel_size is not None else None,
+            iterations=dilation_raw["iterations"],
+        )
+        variant_config = replace(
+            config,
+            mask_processing=MaskProcessingConfig(dilation=dilation_config),
+            inpainting=replace(config.inpainting, radius=variant["inpaint_radius"]),
+            output_root=ablation_dir,
+        )
+        variant_run_id = config_dir.name
+        batch = process_batch(
+            manifest, pages, methods=methods, run_id=variant_run_id,
+            config=variant_config, origins=origins,
+        )
+        batch["errors"].write(config_dir / "errors.json")
+        write_performance_summary(config_dir, batch["timings"], batch["counts"])
+        write_run_record(config_dir, InpaintRun(
+            run_id=variant_run_id, method_sources=method_sources,
+            mask_processing_config=variant_config.mask_processing,
+            inpainting_config=variant_config.inpainting,
+            page_list_identity=page_identity,
+            input_image_identity=selected_identities,
+            counts=batch["counts"], ablation=True,
+        ))
+        record_path = config_dir / "run.json"
+        record = json.loads(record_path.read_text(encoding="utf-8"))
+        record.update({
+            "parent_run_id": run_id,
+            "varied": result["varied"],
+            "baseline_config": baseline,
+            "configuration": variant,
+        })
+        record_path.write_text(
+            json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
+    print(f"Completed {len(configs)} ablation configurations in '{ablation_dir}'.")
+    return 0
+
+
 def cmd_boards(config_path: str, run_id: str, method: str) -> int:
     """Select representative pages from persisted metrics and render boards."""
     import csv
@@ -499,7 +662,9 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
     from .boards import write_board
     from .config import load_inpaint_config
     from .runs import INPAINT_ALGORITHMS, artifact_paths, sample_paths
-    from .selection import SELECTION_RULES, select_samples, write_selection
+    from .selection import (
+        SELECTION_RULES, require_main_run, select_samples, write_selection,
+    )
 
     repo_root = _repo_root(config_path)
     config = load_inpaint_config(config_path, repo_root=repo_root)
@@ -507,6 +672,7 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
         raise ValueError(f"Unknown inpainting method {method!r}")
     run_dir = config.output_root / run_id
     run_record = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    require_main_run(run_record, run_id)
     if method not in run_record.get("methods", []):
         raise ValueError(f"Run {run_id!r} contains no outputs for {method!r}")
 
@@ -575,6 +741,25 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
     write_selection(run_dir / "selection.json", selections)
     print(f"Wrote {board_count} boards for '{method}' in run '{run_id}'.")
     print(f"Selection: {run_dir / 'selection.json'}")
+    return 0
+
+
+def cmd_qualitative(config_path: str, run_id: str) -> int:
+    """Create the reviewer scaffold from successful metadata in an inpaint run."""
+    from .config import load_inpaint_config
+    from .qualitative import generate_run_scaffold
+
+    repo_root = _repo_root(config_path)
+    config = load_inpaint_config(config_path, repo_root=repo_root)
+    run_dir = config.output_root / run_id
+    if not run_dir.is_dir():
+        raise FileNotFoundError(f"Inpainting run does not exist: {run_dir}")
+    if not (run_dir / "run.json").is_file():
+        raise FileNotFoundError(f"Inpainting run record is missing: {run_dir / 'run.json'}")
+    json_path, md_path, count = generate_run_scaffold(run_dir)
+    print(f"Wrote qualitative scaffold for {count} samples in run '{run_id}'.")
+    print(f"JSON: {json_path}")
+    print(f"Markdown: {md_path}")
     return 0
 
 
@@ -680,6 +865,27 @@ def main() -> None:
     boards_cmd.add_argument("--run", required=True, help="Inpainting run id")
     boards_cmd.add_argument("--method", required=True, help="Segmentation method to render")
 
+    qualitative_cmd = subparsers.add_parser(
+        "qualitative", help="Create a blank human qualitative review scaffold"
+    )
+    _common_parser(qualitative_cmd)
+    qualitative_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
+    qualitative_cmd.add_argument("--run", required=True, help="Inpainting run id")
+
+    ablate_cmd = subparsers.add_parser(
+        "ablate", help="Run a dilation or inpainting-radius ablation sweep"
+    )
+    _common_parser(ablate_cmd)
+    ablate_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
+    ablate_cmd.add_argument("--run", required=True, help="Ablation run id")
+    ablate_cmd.add_argument(
+        "--vary", required=True,
+        help="Configuration key: dilation.kernel_size, dilation.iterations, dilation.kernel_shape or inpaint.radius",
+    )
+    ablate_cmd.add_argument(
+        "--values", required=True, help="Comma-separated sweep values, e.g. 3,5,7"
+    )
+
     args = parser.parse_args()
 
     if not args.command:
@@ -721,6 +927,10 @@ def main() -> None:
             )
         elif args.command == "boards":
             code = cmd_boards(args.config, args.run, args.method)
+        elif args.command == "qualitative":
+            code = cmd_qualitative(args.config, args.run)
+        elif args.command == "ablate":
+            code = cmd_ablate(args.config, args.run, args.vary, args.values)
         else:  # pragma: no cover - argparse prevents unknown commands
             parser.error(f"Unknown command: {args.command}")
             return
@@ -729,6 +939,9 @@ def main() -> None:
         sys.exit(2)
     except FileNotFoundError as exc:
         print(f"Missing file: {exc}", file=sys.stderr)
+        sys.exit(2)
+    except FileExistsError as exc:
+        print(f"Refusing to overwrite: {exc}", file=sys.stderr)
         sys.exit(2)
 
     sys.exit(code)

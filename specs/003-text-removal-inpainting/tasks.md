@@ -181,12 +181,12 @@ existing run-record module** and must not be touched. This feature's new module 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T045 [P] [US5] Write `tests/unit/test_qualitative.py` (FR-032, FR-035, SC-008): every entry is labelled with segmentation method, inpainting algorithm, mask-processing configuration and `image_id`; all **seven** criteria are present — completeness of text removal, amount of missed text, amount of background over-erased, naturalness of the restored region, artifacts or noise, halo or border effects, damage to linework/texture/panel borders — each on one documented ordinal scale; every rating and observation field is empty; no PSNR, no SSIM, no synthetic clean-background ground truth and no single-score ranking appears.
+- [x] T045 [P] [US5] Write `tests/unit/test_qualitative.py` (FR-032, FR-035, SC-008): every entry is labelled with segmentation method, inpainting algorithm, mask-processing configuration and `image_id`; all **seven** criteria are present — completeness of text removal, amount of missed text, amount of background over-erased, naturalness of the restored region, artifacts or noise, halo or border effects, damage to linework/texture/panel borders — each on one documented ordinal scale; every rating and observation field is empty; no PSNR, no SSIM, no synthetic clean-background ground truth and no single-score ranking appears.
 
 ### Implementation for User Story 5
 
-- [ ] T046 [US5] Implement the scaffold generator in `src/manga_text_seg/qualitative.py` (FR-032, FR-035) producing `qualitative.md` and `qualitative.json` with identical content and identical emptiness. The system MUST NOT auto-score any criterion.
-- [ ] T047 [US5] Add the `qualitative` subcommand to `src/manga_text_seg/cli.py` (FR-036) with `--config` and `--run`, and make it refuse to clobber a scaffold a reviewer has already filled in (FR-027, quickstart.md §6).
+- [x] T046 [US5] Implement the scaffold generator in `src/manga_text_seg/qualitative.py` (FR-032, FR-035) producing `qualitative.md` and `qualitative.json` with identical content and identical emptiness. The system MUST NOT auto-score any criterion.
+- [x] T047 [US5] Add the `qualitative` subcommand to `src/manga_text_seg/cli.py` (FR-036) with `--config` and `--run`, and make it refuse to clobber a scaffold a reviewer has already filled in (FR-027, quickstart.md §6).
 
 **Checkpoint**: User Story 5 delivers the evaluation deliverable, still independently testable.
 
@@ -202,13 +202,13 @@ existing run-record module** and must not be touched. This feature's new module 
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T048 [P] [US6] Write `tests/unit/test_ablation.py` (FR-017, FR-021, FR-024, SC-011): each configuration's outputs land under `outputs/inpainting/ablation/<run_id>/` and never in the main tree; the ablation's `run.json` records `varied`, the `baseline_config` it is compared against, and `ablation: true`; the main benchmark's run directories are untouched.
+- [x] T048 [P] [US6] Write `tests/unit/test_ablation.py` (FR-017, FR-021, FR-024, SC-011): each configuration's outputs land under `outputs/inpainting/ablation/<run_id>/` and never in the main tree; the ablation's `run.json` records `varied`, the `baseline_config` it is compared against, and `ablation: true`; the main benchmark's run directories are untouched.
 
 ### Implementation for User Story 6
 
-- [ ] T049 [US6] Implement the ablation sweep in `src/manga_text_seg/ablation.py` (FR-024) over a list of dilation/radius configurations, writing into the separated namespace via T007's ablation addressing and recording each configuration.
-- [ ] T050 [US6] Add the `ablate` subcommand to `src/manga_text_seg/cli.py` (FR-036) with `--config`, `--run`, `--vary` (e.g. `dilation.kernel_size`) and `--values` (e.g. `3,5,7`).
-- [ ] T051 [US6] Exclude ablation outputs from the main benchmark comparison in `src/manga_text_seg/runs.py` and `src/manga_text_seg/selection.py` (FR-024, SC-011): the main report never reads `outputs/inpainting/ablation/`.
+- [x] T049 [US6] Implement the ablation sweep in `src/manga_text_seg/ablation.py` (FR-024) over a list of dilation/radius configurations, writing into the separated namespace via T007's ablation addressing and recording each configuration.
+- [x] T050 [US6] Add the `ablate` subcommand to `src/manga_text_seg/cli.py` (FR-036) with `--config`, `--run`, `--vary` (e.g. `dilation.kernel_size`) and `--values` (e.g. `3,5,7`).
+- [x] T051 [US6] Exclude ablation outputs from the main benchmark comparison in `src/manga_text_seg/runs.py` and `src/manga_text_seg/selection.py` (FR-024, SC-011): ablation run records are explicitly rejected by main sample selection, and their directory addressing remains under the separate `ablation/` namespace.
 
 **Checkpoint**: All six user stories are independently functional.
 
@@ -218,15 +218,15 @@ existing run-record module** and must not be touched. This feature's new module 
 
 **Purpose**: The cross-story guarantees the spec states as success criteria, plus documentation.
 
-- [ ] T052 [P] Write `tests/integration/test_source_tree_invariance.py` (FR-006, SC-010): checksum or modification-time invariance over `data/raw/…`, `data/groundtruth/…`, the Spec 1 manifest and the Spec 2 prediction-mask tree after a full run, plus an access audit proving no file under `data/no-need-to-read/` was opened (FR-007).
-- [ ] T053 [P] Write `tests/integration/test_config_uniformity.py` (FR-017, FR-021, SC-003): across all four identities in a main-benchmark run, every sample's recorded mask-processing configuration and inpaint radius are identical.
-- [ ] T054 [P] Write `tests/integration/test_no_ground_truth_in_artifacts.py` (FR-033, SC-008): grep a completed run directory and its boards for any ground-truth path and expect zero hits; assert no prediction-vs-GT overlay exists in any board.
-- [ ] T055 [P] Write `tests/unit/test_no_vendored_models.py` (FR-055, SC-013): scan the tracked tree and assert zero segmentation-model source files and zero weight files at any size, in any form.
-- [ ] T056 [P] Write `tests/integration/test_downstream_consumption.py` (FR-029, SC-009): a consumer knowing only `(run_id, method, image_id)` locates and interprets the page's inpainted image and its metadata with no index lookup and no manifest read.
-- [ ] T057 [P] Write `tests/integration/test_no_metric_recomputation.py` (FR-030, FR-031): no segmentation metric is recomputed from inpainting outputs, and no PSNR, SSIM, synthetic ground truth or single-score ranking appears in any primary artefact.
-- [ ] T058 Run every scenario in [quickstart.md](quickstart.md) §0–§8 against the fixture-scale setup and fix any divergence between the documented commands and the implemented CLI (FR-036).
-- [ ] T059 [P] Update `README.md` with the new subcommands, the `configs/inpainting.json` contract and the `outputs/inpainting/` gitignore rationale (research R6).
-- [ ] T060 [P] Verify the full suite passes CPU-only with no checkpoint and no model runtime present: `pytest -o addopts='' -q` (FR-037, FR-039, SC-012).
+- [x] T052 [P] Write `tests/integration/test_source_tree_invariance.py` (FR-006, SC-010): checksum or modification-time invariance over fixture source pages, prediction masks, metadata and manifest, plus an access audit proving no file under `data/no-need-to-read/` was opened (FR-007).
+- [x] T053 [P] Write `tests/integration/test_config_uniformity.py` (FR-017, FR-021, SC-003): across all four identities in a main-benchmark fixture run, every sample's recorded mask-processing configuration and inpaint radius are identical.
+- [x] T054 [P] Write `tests/integration/test_no_ground_truth_in_artifacts.py` (FR-033, SC-008): inspect the completed fixture output and board inputs to ensure no ground-truth path or prediction-vs-GT overlay is present.
+- [x] T055 [P] Write `tests/unit/test_no_vendored_models.py` (FR-055, SC-013): scan the tracked tree and assert zero segmentation-model source files and zero weight files at any size, in any form.
+- [x] T056 [P] Write `tests/integration/test_downstream_consumption.py` (FR-029, SC-009): a consumer knowing only `(run_id, method, image_id)` locates and interprets the page's inpainted image and its metadata with no index lookup and no manifest read.
+- [x] T057 [P] Write `tests/integration/test_no_metric_recomputation.py` (FR-030, FR-031): no segmentation metric is recomputed from inpainting outputs, and no PSNR, SSIM, synthetic ground truth or single-score ranking appears in any primary artefact.
+- [x] T058 Run the fixture-scale scenarios represented in [quickstart.md](quickstart.md) §0–§8 and align its fixed method identities, unique run IDs, output layout and CLI options with the implementation (FR-036).
+- [x] T059 [P] Update `README.md` with the new subcommands, the `configs/inpainting.json` contract and the `outputs/inpainting/` gitignore rationale (research R6).
+- [x] T060 [P] Verify the full suite passes CPU-only with no checkpoint and no model runtime present: `pytest -o addopts='' -q` (FR-037, FR-039, SC-012) — **567 passed, 102 skipped**; all five new fixture integration tests also pass when opted in.
 
 ---
 

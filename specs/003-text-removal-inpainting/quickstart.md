@@ -11,9 +11,10 @@ segmentation model (FR-039, FR-055).
 
 - Spec 1 complete: `outputs/segmentation/default/manifest.json` exists with 390 pairs, and
   `outputs/segmentation/default/<method>/masks/` holds its prediction masks (FR-001).
-- Spec 2 complete: at least one admitted run under `deliverables/<run_id>/<method>/`, carrying
-  `masks/`, `metadata/` and `provenance.json` (FR-002). `deliverables/drill/standin/` is enough to
-  exercise every scenario here.
+- Spec 2 complete: admitted method outputs carry `masks/`, `metadata/` and `provenance.json`
+  (FR-002). Set the three deep-learning `source_root` values in the config to admitted run
+  directories; the fixed method identities are `manga_text_segmentation`, `comic_text_detector`
+  and `unetpp_efficientnetv2`. `classical_baseline` reads Spec 1's configured output.
 - `configs/inpainting.json` — paths, the four method identities and their source roots, dilation,
   radius, algorithms, output format and the selection N (FR-038).
 
@@ -25,15 +26,15 @@ ls deliverables/                 # an admitted run must be here before anything 
 ## 1. Process a single prediction mask (US1, FR-019/FR-025/FR-026)
 
 ```bash
-manga-text-seg inpaint --config configs/inpainting.json --run quickstart \
-    --method standin --image-id ARMS/001
+manga-text-seg inpaint --config configs/inpainting.json --run quickstart-single \
+    --method classical_baseline --image-id ARMS/001
 manga-text-seg inpaint --config configs/inpainting.json --run telea-only \
-    --method standin --algorithm telea          # TELEA only; --algorithm ns for NS only
+    --method classical_baseline --algorithm telea # TELEA only; --algorithm ns for NS only
 ```
 
-Expected, all under `outputs/inpainting/quickstart/`:
+Expected under `outputs/inpainting/quickstart-single/`:
 
-- `standin/telea/ARMS/001.png` and `standin/ns/ARMS/001.png` — **both** algorithms, always, over the
+- `classical_baseline/telea/ARMS/001.png` and `classical_baseline/ns/ARMS/001.png` — **both** algorithms, over the
   same input (FR-019).
 - Beside each: `001.json` (`SampleMetadata`), `001.raw.png` (the raw prediction mask copy),
   `001.mask.png` (the post-dilation mask actually handed to `cv2.inpaint`), `001.page.png` (the
@@ -56,7 +57,7 @@ Checks that must hold:
 ## 2. Process one segmentation method (US1, FR-017/FR-021)
 
 ```bash
-manga-text-seg inpaint --config configs/inpainting.json --run quickstart --method standin
+manga-text-seg inpaint --config configs/inpainting.json --run quickstart-batch --method classical_baseline
 ```
 
 Expected: every page in the page list processed for that method, both algorithms. The mask-processing
@@ -103,8 +104,8 @@ Checks that must hold:
 ## 4. Determinism (SC-012, FR-023)
 
 ```bash
-manga-text-seg inpaint --config configs/inpainting.json --run det-a --method standin
-manga-text-seg inpaint --config configs/inpainting.json --run det-b --method standin
+manga-text-seg inpaint --config configs/inpainting.json --run det-a --method classical_baseline
+manga-text-seg inpaint --config configs/inpainting.json --run det-b --method classical_baseline
 ```
 
 Expected: the two runs' artifacts are **byte-identical** apart from `processing_time_seconds` and the
@@ -120,7 +121,7 @@ Checks that must hold:
 ## 5. Comparison boards and sample selection (US3, FR-033/FR-034)
 
 ```bash
-manga-text-seg boards --config configs/inpainting.json --run quickstart --method standin
+manga-text-seg boards --config configs/inpainting.json --run quickstart-batch --method classical_baseline
 ```
 
 Expected: `boards/<method>/<rule>/<manga>_<stem>.png` for each of the five selection rules, each board
@@ -140,7 +141,7 @@ Checks that must hold:
 ## 6. Qualitative report scaffold (US4, FR-032/FR-035)
 
 ```bash
-manga-text-seg qualitative --config configs/inpainting.json --run quickstart
+manga-text-seg qualitative --config configs/inpainting.json --run quickstart-batch
 ```
 
 Expected: `qualitative.md` and `qualitative.json`, one entry per assessed sample, every entry
@@ -164,8 +165,9 @@ manga-text-seg ablate --config configs/inpainting.json --run dil-3x3 \
     --vary dilation.kernel_size --values 3,5,7
 ```
 
-Expected: everything under `outputs/inpainting/ablation/dil-3x3/`, never in the main tree, with its
-own `run.json` recording `varied` and the `baseline_config` it is compared against, and
+Expected: everything under `outputs/inpainting/ablation/dil-3x3/`, with one `config-NNN/` directory
+per value. Each contains that setting's inpainted outputs, errors, performance and `run.json`;
+the parent and each child run record the varied settings, baseline configuration and
 `ablation: true`.
 
 Checks that must hold:
@@ -180,8 +182,8 @@ A consumer knowing only **(run ID, segmentation method, `image_id`)** must locat
 without any run-specific knowledge beyond that:
 
 ```bash
-ls outputs/inpainting/quickstart/standin/telea/ARMS/001.png
-ls outputs/inpainting/quickstart/standin/telea/ARMS/001.json
+ls outputs/inpainting/quickstart-batch/classical_baseline/telea/ARMS/001.png
+ls outputs/inpainting/quickstart-batch/classical_baseline/telea/ARMS/001.json
 ```
 
 Expected: both paths resolve with no index lookup and no manifest read. This is the exact addressing

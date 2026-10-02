@@ -17,6 +17,14 @@ SELECTION_RULES = (
 )
 
 
+def require_main_run(run_record: dict[str, Any], run_id: str) -> None:
+    """Reject ablation records before a main comparison selects samples."""
+    if run_record.get("ablation") is True:
+        raise ValueError(
+            f"Run {run_id!r} is an ablation run and is excluded from main comparisons"
+        )
+
+
 def select_samples(
     metrics: dict[str, list[dict[str, Any]]],
     rule: str,
