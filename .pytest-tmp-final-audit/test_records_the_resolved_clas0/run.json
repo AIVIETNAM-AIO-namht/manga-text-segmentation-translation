@@ -1,0 +1,61 @@
+{
+  "run_id": "run-A",
+  "methods": [
+    "classical_baseline",
+    "comic_text_detector"
+  ],
+  "method_sources": {
+    "classical_baseline": {
+      "source_root": "outputs/segmentation/default/adaptive/",
+      "resolved_identity": "adaptive",
+      "reason": "highest IoU of the six Spec 1 methods (research R1)"
+    },
+    "comic_text_detector": {
+      "source_root": "deliverables/drill/comic_text_detector/",
+      "resolved_identity": "drill",
+      "reason": null
+    }
+  },
+  "mask_processing_config": {
+    "dilation": {
+      "enabled": true,
+      "kernel_shape": "ellipse",
+      "kernel_size": [
+        3,
+        3
+      ],
+      "iterations": 1
+    }
+  },
+  "inpainting_config": {
+    "radius": 3.0,
+    "algorithms": [
+      "telea",
+      "ns"
+    ],
+    "output_format": "png"
+  },
+  "page_list_identity": {
+    "sha256": "abc123",
+    "pages": 390
+  },
+  "input_image_identity": {
+    "ARMS/000": {
+      "sha256": "def456",
+      "size": [
+        1654,
+        1170
+      ]
+    }
+  },
+  "counts": {
+    "classical_baseline": {
+      "telea": {
+        "attempted": 2,
+        "succeeded": 1,
+        "failed": 1
+      }
+    }
+  },
+  "ablation": false
+}

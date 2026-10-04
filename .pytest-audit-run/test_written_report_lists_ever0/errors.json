@@ -1,0 +1,52 @@
+{
+  "total": 1,
+  "by_category": {
+    "missing_source_image": {
+      "count": 0,
+      "entries": []
+    },
+    "missing_prediction_mask": {
+      "count": 0,
+      "entries": []
+    },
+    "image_id_mismatch": {
+      "count": 0,
+      "entries": []
+    },
+    "wrong_size": {
+      "count": 0,
+      "entries": []
+    },
+    "empty_mask": {
+      "count": 1,
+      "entries": [
+        {
+          "image_id": "ARMS/000",
+          "category": "empty_mask",
+          "reason": "no text pixel",
+          "method": null
+        }
+      ]
+    },
+    "non_binary_mask": {
+      "count": 0,
+      "entries": []
+    },
+    "corrupt_image": {
+      "count": 0,
+      "entries": []
+    },
+    "inpainting_failure": {
+      "count": 0,
+      "entries": []
+    },
+    "output_write_failure": {
+      "count": 0,
+      "entries": []
+    },
+    "missing_metadata": {
+      "count": 0,
+      "entries": []
+    }
+  }
+}

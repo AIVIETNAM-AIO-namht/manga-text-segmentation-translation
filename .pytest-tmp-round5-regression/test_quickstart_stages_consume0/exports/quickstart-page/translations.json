@@ -1,0 +1,16 @@
+[
+  {
+    "region_id": 1,
+    "source_text": "quickstart OCR",
+    "translated_text": "quickstart translation",
+    "target_language": "vi",
+    "provider": "fixture",
+    "model": "fixture",
+    "version": "1",
+    "cache_status": "miss",
+    "processing_time_seconds": 3.7999998312443495e-06,
+    "status": "ok",
+    "error": null,
+    "failure_policy": "keep_ocr_text"
+  }
+]

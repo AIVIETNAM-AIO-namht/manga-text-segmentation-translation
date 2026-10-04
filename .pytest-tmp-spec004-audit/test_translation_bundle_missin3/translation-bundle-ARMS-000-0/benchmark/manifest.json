@@ -1,0 +1,18 @@
+{
+  "run_id": "translation-fixture",
+  "gt_root": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-spec004-audit\\test_translation_bundle_missin3\\translation-bundle-ARMS-000-0\\gt-never-created",
+  "raw_root": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-spec004-audit\\test_translation_bundle_missin3\\translation-bundle-ARMS-000-0\\raw",
+  "total": 1,
+  "manga_names": [
+    "ARMS"
+  ],
+  "pairs": [
+    {
+      "manga": "ARMS",
+      "stem": "000",
+      "raw_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-spec004-audit\\test_translation_bundle_missin3\\translation-bundle-ARMS-000-0\\raw\\ARMS\\000.png",
+      "mask_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-spec004-audit\\test_translation_bundle_missin3\\translation-bundle-ARMS-000-0\\gt-never-created\\ARMS\\000.png",
+      "mask_encoding": "magenta-black"
+    }
+  ]
+}

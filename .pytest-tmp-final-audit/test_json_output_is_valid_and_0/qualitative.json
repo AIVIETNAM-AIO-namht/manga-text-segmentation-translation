@@ -1,0 +1,418 @@
+[
+  {
+    "image_id": "ARMS/000",
+    "method": "manga_text_segmentation",
+    "algorithm": "telea",
+    "mask_proc_config": {
+      "dilation": {
+        "enabled": true,
+        "kernel_shape": "ellipse",
+        "kernel_size": [
+          3,
+          3
+        ],
+        "iterations": 1
+      },
+      "inpaint_radius": 3
+    },
+    "board_reference": "",
+    "criteria": {
+      "completeness_of_text_removal": {
+        "label": "Completeness of text removal",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_missed_text": {
+        "label": "Amount of missed text",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_background_over_erased": {
+        "label": "Amount of background over-erased",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "naturalness_of_restored_region": {
+        "label": "Naturalness of the restored region",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "artifacts_or_noise": {
+        "label": "Artifacts or noise",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "halo_or_border_effects": {
+        "label": "Halo or border effects",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "damage_to_linework_texture_panel_borders": {
+        "label": "Damage to linework, texture and panel borders",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      }
+    }
+  },
+  {
+    "image_id": "ARMS/001",
+    "method": "comic_text_detector",
+    "algorithm": "ns",
+    "mask_proc_config": {
+      "dilation": {
+        "enabled": true,
+        "kernel_shape": "ellipse",
+        "kernel_size": [
+          3,
+          3
+        ],
+        "iterations": 1
+      },
+      "inpaint_radius": 3
+    },
+    "board_reference": "",
+    "criteria": {
+      "completeness_of_text_removal": {
+        "label": "Completeness of text removal",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_missed_text": {
+        "label": "Amount of missed text",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_background_over_erased": {
+        "label": "Amount of background over-erased",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "naturalness_of_restored_region": {
+        "label": "Naturalness of the restored region",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "artifacts_or_noise": {
+        "label": "Artifacts or noise",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "halo_or_border_effects": {
+        "label": "Halo or border effects",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "damage_to_linework_texture_panel_borders": {
+        "label": "Damage to linework, texture and panel borders",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      }
+    }
+  },
+  {
+    "image_id": "Arisa/003",
+    "method": "unetpp_efficientnetv2",
+    "algorithm": "telea",
+    "mask_proc_config": {
+      "dilation": {
+        "enabled": true,
+        "kernel_shape": "ellipse",
+        "kernel_size": [
+          3,
+          3
+        ],
+        "iterations": 1
+      },
+      "inpaint_radius": 3
+    },
+    "board_reference": "",
+    "criteria": {
+      "completeness_of_text_removal": {
+        "label": "Completeness of text removal",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_missed_text": {
+        "label": "Amount of missed text",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_background_over_erased": {
+        "label": "Amount of background over-erased",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "naturalness_of_restored_region": {
+        "label": "Naturalness of the restored region",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "artifacts_or_noise": {
+        "label": "Artifacts or noise",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "halo_or_border_effects": {
+        "label": "Halo or border effects",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "damage_to_linework_texture_panel_borders": {
+        "label": "Damage to linework, texture and panel borders",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      }
+    }
+  },
+  {
+    "image_id": "DollGun/002",
+    "method": "classical_baseline",
+    "algorithm": "ns",
+    "mask_proc_config": {
+      "dilation": {
+        "enabled": true,
+        "kernel_shape": "ellipse",
+        "kernel_size": [
+          3,
+          3
+        ],
+        "iterations": 1
+      },
+      "inpaint_radius": 3
+    },
+    "board_reference": "",
+    "criteria": {
+      "completeness_of_text_removal": {
+        "label": "Completeness of text removal",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_missed_text": {
+        "label": "Amount of missed text",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "amount_of_background_over_erased": {
+        "label": "Amount of background over-erased",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "naturalness_of_restored_region": {
+        "label": "Naturalness of the restored region",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "artifacts_or_noise": {
+        "label": "Artifacts or noise",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "halo_or_border_effects": {
+        "label": "Halo or border effects",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      },
+      "damage_to_linework_texture_panel_borders": {
+        "label": "Damage to linework, texture and panel borders",
+        "scale": {
+          "1": "Poor / severe issue",
+          "2": "Fair / noticeable issue",
+          "3": "Acceptable / moderate",
+          "4": "Good / minor issue",
+          "5": "Excellent / no visible issue"
+        },
+        "rating": null,
+        "observation": ""
+      }
+    }
+  }
+]

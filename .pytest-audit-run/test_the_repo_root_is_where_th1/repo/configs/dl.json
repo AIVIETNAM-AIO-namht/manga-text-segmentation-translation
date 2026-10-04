@@ -1,0 +1,95 @@
+{
+  "methods": {
+    "manga-text-segmentation": {
+      "repository": {
+        "url": "https://github.com/juvian/Manga-Text-Segmentation",
+        "revision": "de8f148c78978d70ad0e0ae3242566da6d70f3a5"
+      },
+      "checkpoints": [
+        {
+          "identity": "fold.0.-.final.refined.model.2.pkl",
+          "path": "checkpoints/manga-text-segmentation/fold.0.-.final.refined.model.2.pkl",
+          "size_bytes": 344290372,
+          "sha256": "fa1d074002955c66f7df32ff60f6602d4aa21f1e1c1ca158dcb852b7e9eeb623",
+          "fold": 0
+        },
+        {
+          "identity": "fold.1.-.final.refined.model.2.pkl",
+          "path": "checkpoints/manga-text-segmentation/fold.1.-.final.refined.model.2.pkl",
+          "size_bytes": 344289930,
+          "sha256": null,
+          "fold": 1
+        },
+        {
+          "identity": "fold.2.-.final.refined.model.2.pkl",
+          "path": "checkpoints/manga-text-segmentation/fold.2.-.final.refined.model.2.pkl",
+          "size_bytes": 344289982,
+          "sha256": null,
+          "fold": 2
+        },
+        {
+          "identity": "fold.3.-.final.refined.model.2.pkl",
+          "path": "checkpoints/manga-text-segmentation/fold.3.-.final.refined.model.2.pkl",
+          "size_bytes": 344289958,
+          "sha256": null,
+          "fold": 3
+        },
+        {
+          "identity": "fold.4.-.final.refined.model.2.pkl",
+          "path": "checkpoints/manga-text-segmentation/fold.4.-.final.refined.model.2.pkl",
+          "size_bytes": 344289948,
+          "sha256": null,
+          "fold": 4
+        }
+      ],
+      "sha256_note": "Only fold.0's sha256 is published (GitHub reports no digest for the v1.0 release assets). The other four are null here on purpose: whoever obtains them hashes them and records the observed value in provenance. A guessed hash would be worse than an absent one.",
+      "device": { "type": "cpu", "name": "12th Gen Intel(R) Core(TM) i5-12500H" },
+      "threshold": 0.5,
+      "padding": { "mode": "pad-to-multiple", "multiple": 8 },
+      "channel_order": "rgb",
+      "code_license": "MIT",
+      "weight_license": "MIT"
+    },
+    "comic-text-detector": {
+      "repository": {
+        "url": "https://github.com/dmMaze/comic-text-detector",
+        "revision": "440b978563c71b758e31aaa315d100faba1efa2f"
+      },
+      "checkpoints": [
+        {
+          "identity": "comictextdetector.pt",
+          "path": "checkpoints/comic-text-detector/comictextdetector.pt",
+          "size_bytes": 79948869,
+          "sha256": "1f90fa60aeeb1eb82e2ac1167a66bf139a8a61b8780acd351ead55268540cccb"
+        }
+      ],
+      "device": { "type": "cpu", "name": "12th Gen Intel(R) Core(TM) i5-12500H" },
+      "threshold": 0.235,
+      "padding": { "mode": "letterbox", "multiple": 64 },
+      "channel_order": "bgr",
+      "channel_order_note": "Upstream reads images with cv2 (BGR) and does not convert. Recorded as the order actually used, not corrected: the reversal degrades accuracy without raising an error.",
+      "code_license": "GPL-3.0",
+      "weight_license": "GPL-3.0"
+    },
+    "unetpp-efficientnetv2": {
+      "repository": {
+        "url": "https://github.com/ContemporaryCat/Manga-Text-Segmentation",
+        "revision": "6cfa907b0721faa398054be527de98171746ef1b"
+      },
+      "checkpoints": [
+        {
+          "identity": "model.pth",
+          "path": "checkpoints/unetpp-efficientnetv2/model.pth",
+          "size_bytes": 216911417,
+          "sha256": "a0a895dc385608554a81ca765b0c62d654462c2bac661abdff63634985ab37fc"
+        }
+      ],
+      "device": { "type": "cpu", "name": "12th Gen Intel(R) Core(TM) i5-12500H" },
+      "threshold": 0.5,
+      "padding": { "mode": "pad-to-multiple", "multiple": 32 },
+      "channel_order": "rgb",
+      "code_license": "none",
+      "weight_license": "none"
+    }
+  }
+}

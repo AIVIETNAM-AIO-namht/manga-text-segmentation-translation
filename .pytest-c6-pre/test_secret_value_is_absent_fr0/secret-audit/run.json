@@ -1,0 +1,153 @@
+{
+  "run_id": "secret-audit",
+  "segmentation_method": "classical_baseline",
+  "inpainting_source": {
+    "run_id": "default",
+    "algorithm": "telea"
+  },
+  "target_language": "vi",
+  "ocr_engine": {
+    "name": "manga-ocr",
+    "version": null
+  },
+  "translation_provider": {
+    "name": "fixture-provider",
+    "model": "fixture-model",
+    "version": "fixture-v1",
+    "deterministic": false,
+    "secret_env_var": "SPEC004_TRANSLATION_TEST_SECRET"
+  },
+  "region_extraction_config": {
+    "min_area": 1,
+    "max_area": 1000000,
+    "merge_distance": 0,
+    "crop_padding": 0,
+    "reading_order": "manga",
+    "polygon_epsilon": 1.0
+  },
+  "rendering_config": {
+    "font_family": "DejaVu Sans",
+    "font_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\assets\\fonts\\DejaVuSans.ttf",
+    "fallback_font_path": null,
+    "font_size": 32,
+    "min_font_size": 12,
+    "color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "stroke_width": 0,
+    "stroke_fill": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "background": null,
+    "wrap": true,
+    "line_spacing": 1.0,
+    "align_h": "center",
+    "align_v": "middle",
+    "text_direction": "horizontal",
+    "expansion_allowance": 0
+  },
+  "resolved_config": {
+    "manifest_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\outputs\\segmentation\\default\\manifest.json",
+    "segmentation_method": "classical_baseline",
+    "inpainting_source": {
+      "run_id": "default",
+      "algorithm": "telea"
+    },
+    "target_language": "vi",
+    "region_extraction": {
+      "min_area": 1,
+      "max_area": 1000000,
+      "merge_distance": 0,
+      "crop_padding": 0,
+      "reading_order": "manga",
+      "polygon_epsilon": 1.0
+    },
+    "ocr": {
+      "engine": "manga-ocr",
+      "preprocessing": {
+        "enabled": false,
+        "grayscale": false,
+        "upscale_factor": 1.0
+      }
+    },
+    "provider": {
+      "name": "fixture-provider",
+      "model": "fixture-model",
+      "version": "fixture-v1",
+      "deterministic": false,
+      "secret_env_var": "SPEC004_TRANSLATION_TEST_SECRET",
+      "base_url": "https://api.openai.com/v1",
+      "timeout_seconds": 30.0,
+      "retry": {
+        "max_attempts": 1,
+        "initial_backoff_seconds": 1.0,
+        "max_backoff_seconds": 30.0,
+        "retry_status_codes": [
+          429,
+          500,
+          502,
+          503,
+          504
+        ]
+      },
+      "failure_policy": "keep_ocr_text",
+      "cache": {
+        "enabled": true,
+        "bypass": false,
+        "root": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-c6-pre\\test_secret_value_is_absent_fr0\\cache\\translation"
+      }
+    },
+    "rendering": {
+      "font_family": "DejaVu Sans",
+      "font_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\assets\\fonts\\DejaVuSans.ttf",
+      "fallback_font_path": null,
+      "font_size": 32,
+      "min_font_size": 12,
+      "color": [
+        0,
+        0,
+        0,
+        255
+      ],
+      "stroke_width": 0,
+      "stroke_fill": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "background": null,
+      "wrap": true,
+      "line_spacing": 1.0,
+      "align_h": "center",
+      "align_v": "middle",
+      "text_direction": "horizontal",
+      "expansion_allowance": 0
+    },
+    "output_roots": {
+      "translation": "D:\\Work\\DIP\\manga-text-segmentation-translation\\outputs\\translation",
+      "cache": "D:\\Work\\DIP\\manga-text-segmentation-translation\\cache\\translation"
+    }
+  },
+  "input_image_ids": [
+    "ARMS/000"
+  ],
+  "counts": {
+    "pages_attempted": 1,
+    "pages_succeeded": 1,
+    "pages_failed": 0
+  },
+  "page_statuses": {
+    "ARMS/000": "accepted"
+  },
+  "page_list_identity": "checked-in-page-list-identity",
+  "input_image_identity": {
+    "ARMS/000": "checked-in-image-identity"
+  }
+}

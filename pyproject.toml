@@ -12,6 +12,7 @@ dependencies = [
     "pandas>=2.0.0",
     "matplotlib>=3.7.0",
     "pytest>=9.1.1",
+    "Pillow>=10.0.0",
 ]
 
 [project.optional-dependencies]
@@ -20,6 +21,9 @@ dev = [
     "pytest-cov>=4.1.0",
     "ruff>=0.1.0",
     "black>=23.0.0",
+]
+ocr = [
+    "manga-ocr",
 ]
 
 [project.scripts]

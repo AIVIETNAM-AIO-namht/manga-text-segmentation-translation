@@ -1,0 +1,45 @@
+{
+  "status": "ok",
+  "regions": [
+    {
+      "region_id": 1,
+      "bbox": [
+        100,
+        100,
+        120,
+        60
+      ],
+      "polygon": [
+        [
+          100,
+          100
+        ],
+        [
+          219,
+          100
+        ],
+        [
+          219,
+          159
+        ],
+        [
+          100,
+          159
+        ]
+      ],
+      "orientation": "horizontal",
+      "reading_order_index": 1,
+      "merged_from": 1,
+      "crop_path": null,
+      "crop_box": [
+        100,
+        100,
+        220,
+        160
+      ],
+      "clipped": false,
+      "area": 7200
+    }
+  ],
+  "excluded_components": []
+}

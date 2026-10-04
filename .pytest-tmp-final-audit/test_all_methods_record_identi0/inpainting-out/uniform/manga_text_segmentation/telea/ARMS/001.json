@@ -1,0 +1,39 @@
+{
+  "image_id": "ARMS/001",
+  "method": "manga_text_segmentation",
+  "algorithm": "telea",
+  "model_repository": null,
+  "experiment_id": "fixture-run",
+  "input_image_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-final-audit\\test_all_methods_record_identi0\\synthetic-raw-1\\ARMS\\001.png",
+  "prediction_mask_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-final-audit\\test_all_methods_record_identi0\\inpaint-fixture-2\\masks\\ARMS\\001.png",
+  "mask_size": [
+    1654,
+    1170
+  ],
+  "alignment": {
+    "rule": "pass-through",
+    "pre_size": [
+      1654,
+      1170
+    ],
+    "post_size": [
+      1654,
+      1170
+    ]
+  },
+  "dilation": {
+    "enabled": true,
+    "kernel_shape": "ellipse",
+    "kernel_size": [
+      3,
+      3
+    ],
+    "iterations": 1
+  },
+  "inpaint_algorithm": "INPAINT_TELEA",
+  "inpaint_radius": 4,
+  "output_format": "png",
+  "processing_time_seconds": 0.02313289999437984,
+  "status": "ok",
+  "error_message": null
+}

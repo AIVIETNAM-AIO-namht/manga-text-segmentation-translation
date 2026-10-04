@@ -1,0 +1,83 @@
+{
+  "manifest_path": "outputs/segmentation/default/manifest.json",
+  "segmentation_method": "classical_baseline",
+  "inpainting_source": {
+    "run_id": "default",
+    "algorithm": "telea"
+  },
+  "target_language": "vi",
+  "region_extraction": {
+    "min_area": 1,
+    "max_area": 1000000,
+    "merge_distance": 0,
+    "crop_padding": 0,
+    "reading_order": "manga",
+    "polygon_epsilon": 1.0
+  },
+  "ocr": {
+    "engine": "manga-ocr",
+    "preprocessing": {
+      "enabled": false,
+      "grayscale": false,
+      "upscale_factor": 1.0
+    }
+  },
+  "provider": {
+    "name": "openai",
+    "model": "gpt-4o-mini",
+    "version": null,
+    "base_url": "https://api.openai.com/v1",
+    "secret_env_var": "MANGA_TRANSLATE_API_KEY",
+    "timeout_seconds": 30.0,
+    "retry": {
+      "max_attempts": 3,
+      "initial_backoff_seconds": 1.0,
+      "max_backoff_seconds": 30.0,
+      "retry_status_codes": [
+        429,
+        500,
+        502,
+        503,
+        504
+      ]
+    },
+    "failure_policy": "keep_ocr_text",
+    "deterministic": false,
+    "cache": {
+      "enabled": true,
+      "bypass": false,
+      "root": "cache/translation"
+    }
+  },
+  "rendering": {
+    "font_family": "DejaVu Sans",
+    "font_path": "assets/fonts/DejaVuSans.ttf",
+    "fallback_font_path": null,
+    "font_size": 32,
+    "min_font_size": 12,
+    "color": [
+      0,
+      0,
+      0,
+      255
+    ],
+    "stroke_width": 0,
+    "stroke_fill": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "background": null,
+    "wrap": true,
+    "line_spacing": 1.0,
+    "align_h": "justify",
+    "align_v": "middle",
+    "text_direction": "horizontal",
+    "expansion_allowance": 0
+  },
+  "output_roots": {
+    "translation": "outputs/translation",
+    "cache": "cache/translation"
+  }
+}

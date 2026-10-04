@@ -1,0 +1,25 @@
+{
+  "run_id": "error-matrix",
+  "gt_root": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-round5-regression\\test_each_error_category_is_in10\\groundtruth-never-read",
+  "raw_root": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-round5-regression\\test_each_error_category_is_in10\\translation-bundle-ARMS-000-1\\raw",
+  "total": 2,
+  "manga_names": [
+    "ARMS"
+  ],
+  "pairs": [
+    {
+      "manga": "ARMS",
+      "stem": "000",
+      "raw_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-round5-regression\\test_each_error_category_is_in10\\translation-bundle-ARMS-000-1\\raw\\ARMS\\000.png",
+      "mask_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-round5-regression\\test_each_error_category_is_in10\\translation-bundle-ARMS-000-1\\gt-never-created\\ARMS\\000.png",
+      "mask_encoding": "magenta-black"
+    },
+    {
+      "manga": "ARMS",
+      "stem": "001",
+      "raw_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-round5-regression\\test_each_error_category_is_in10\\translation-bundle-ARMS-001-2\\raw\\ARMS\\001.png",
+      "mask_path": "D:\\Work\\DIP\\manga-text-segmentation-translation\\.pytest-tmp-round5-regression\\test_each_error_category_is_in10\\translation-bundle-ARMS-001-2\\gt-never-created\\ARMS\\001.png",
+      "mask_encoding": "magenta-black"
+    }
+  ]
+}

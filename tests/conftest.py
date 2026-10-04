@@ -370,6 +370,177 @@ def synthetic_manifest(tmp_path: Path):
 
 
 @pytest.fixture()
+def translation_bundle(tmp_path: Path):
+    """Build a valid-ID Spec 004 input bundle with independently perturbable files.
+
+    The selected ID and both Spec 2 identity strings come from the checked-in
+    Spec 2 page-list metadata. Source images/masks are synthetic and no GT file
+    is created or read. ``benchmark/manifest.json`` is fixture-local and is
+    written with the repository's Spec 1 Manifest serializer.
+    """
+    import cv2
+
+    from manga_text_seg.imaging import save_mask
+    from manga_text_seg.manifest import Manifest, Pair, save_manifest
+
+    page_list = json.loads(
+        (REPO_ROOT / "benchmark" / "page-list.json").read_text(encoding="utf-8")
+    )
+    valid_pages = {page["image_id"]: page for page in page_list["pages"]}
+    default_id = sorted(valid_pages)[0]
+
+    def build(
+        method: str = "classical_baseline",
+        image_id: str = default_id,
+        *,
+        missing_original: bool = False,
+        missing_prediction_mask: bool = False,
+        missing_mask_sidecar: bool = False,
+        missing_inpainted_image: bool = False,
+        missing_inpainted_sidecar: bool = False,
+        original_size: tuple[int, int] = (1654, 1170),
+        mask_size: tuple[int, int] = (1654, 1170),
+        inpainted_size: tuple[int, int] = (1654, 1170),
+        original_pixel_value: int = 210,
+        prediction_text_value: int = 255,
+        inpainted_pixel_value: int = 230,
+        empty_mask: bool = False,
+    ) -> dict:
+        if method not in {
+            "classical_baseline",
+            "manga_text_segmentation",
+            "comic_text_detector",
+            "unetpp_efficientnetv2",
+        }:
+            raise ValueError(
+                f"method is not a Spec 2 segmentation identity: {method!r}"
+            )
+        if image_id not in valid_pages:
+            raise ValueError(
+                f"image_id is not present in the Spec 2 page list: {image_id!r}"
+            )
+        for label, value in (
+            ("original_pixel_value", original_pixel_value),
+            ("prediction_text_value", prediction_text_value),
+            ("inpainted_pixel_value", inpainted_pixel_value),
+        ):
+            if (
+                not isinstance(value, int)
+                or isinstance(value, bool)
+                or not 0 <= value <= 255
+            ):
+                raise ValueError(f"{label} must be an integer from 0 to 255")
+        page = valid_pages[image_id]
+        manga, stem = page["manga"], page["stem"]
+        root = (
+            tmp_path
+            / f"translation-bundle-{image_id.replace('/', '-')}-{len(list(tmp_path.iterdir()))}"
+        )
+        raw_root = root / "raw"
+        prediction_root = root / "prediction"
+        inpaint_root = root / "inpainted"
+        original_path = raw_root / manga / f"{stem}.png"
+        prediction_path = prediction_root / "masks" / manga / f"{stem}.png"
+        mask_sidecar_path = prediction_root / "metadata" / manga / f"{stem}.json"
+        inpainted_method_root = inpaint_root / method / "telea"
+        inpainted_path = inpainted_method_root / manga / f"{stem}.png"
+        inpainted_sidecar_path = inpainted_method_root / manga / f"{stem}.json"
+        height, width = original_size[1], original_size[0]
+        if not missing_original:
+            original_path.parent.mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(
+                str(original_path),
+                np.full((height, width, 3), original_pixel_value, dtype=np.uint8),
+            )
+
+        mask = np.zeros((mask_size[1], mask_size[0]), dtype=np.uint8)
+        if not empty_mask:
+            mask[100:160, 100:220] = prediction_text_value
+        if not missing_prediction_mask:
+            save_mask(prediction_path, mask)
+
+        sidecar = {
+            "image_id": image_id,
+            "page_list_identity": page_list["page_list_identity"],
+            "input_image_identity": page["input_image_identity"],
+            "method": method,
+            "output_size": list(mask_size),
+            "status": "success",
+            "fold_attribution": None,
+        }
+        if not missing_mask_sidecar:
+            mask_sidecar_path.parent.mkdir(parents=True, exist_ok=True)
+            mask_sidecar_path.write_text(
+                json.dumps(sidecar, indent=2) + "\n", encoding="utf-8"
+            )
+
+        ih, iw = inpainted_size[1], inpainted_size[0]
+        if not missing_inpainted_image:
+            inpainted_path.parent.mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(
+                str(inpainted_path),
+                np.full((ih, iw, 3), inpainted_pixel_value, dtype=np.uint8),
+            )
+        inpaint_meta = {
+            "image_id": image_id,
+            "method": method,
+            "algorithm": "telea",
+            "model_repository": None,
+            "experiment_id": "translation-fixture",
+            "input_image_path": str(original_path),
+            "prediction_mask_path": str(prediction_path),
+            "mask_size": list(mask_size),
+            "alignment": {
+                "rule": "pass-through",
+                "pre_size": list(mask_size),
+                "post_size": list(mask_size),
+            },
+            "dilation": {"enabled": False},
+            "inpaint_algorithm": "INPAINT_TELEA",
+            "inpaint_radius": 3.0,
+            "output_format": "png",
+            "processing_time_seconds": 0.0,
+            "status": "ok",
+        }
+        if not missing_inpainted_sidecar:
+            inpainted_sidecar_path.parent.mkdir(parents=True, exist_ok=True)
+            inpainted_sidecar_path.write_text(
+                json.dumps(inpaint_meta, indent=2) + "\n", encoding="utf-8"
+            )
+
+        pair = Pair(
+            manga=manga,
+            stem=stem,
+            mask_path=root / "gt-never-created" / manga / f"{stem}.png",
+            raw_path=original_path,
+            mask_encoding="magenta-black",
+        )
+        manifest = Manifest(
+            run_id="translation-fixture",
+            gt_root=root / "gt-never-created",
+            raw_root=raw_root,
+            pairs=[pair],
+        )
+        manifest_path = root / "benchmark" / "manifest.json"
+        save_manifest(manifest, manifest_path)
+        return {
+            "root": root,
+            "image_id": image_id,
+            "page_list_identity": page_list["page_list_identity"],
+            "input_image_identity": page["input_image_identity"],
+            "original": original_path,
+            "prediction_mask": prediction_path,
+            "mask_sidecar": mask_sidecar_path,
+            "inpainted": inpainted_path,
+            "inpainted_sidecar": inpainted_sidecar_path,
+            "manifest": manifest_path,
+            "manifest_entry": manifest.to_dict()["pairs"][0],
+        }
+
+    return build
+
+
+@pytest.fixture()
 def inpaint_config(tmp_path: Path):
     """Return a builder for an ``InpaintConfig`` that lives entirely under tmp (T022-T025).
 

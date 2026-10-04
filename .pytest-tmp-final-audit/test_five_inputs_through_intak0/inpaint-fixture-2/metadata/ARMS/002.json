@@ -1,0 +1,12 @@
+{
+  "image_id": "ARMS/002",
+  "page_list_identity": "b52aa60d-fixture",
+  "input_image_identity": "fixture-sha256-ARMS/002",
+  "method": "classical_baseline",
+  "output_size": [
+    1654,
+    1170
+  ],
+  "status": "ok",
+  "fold_attribution": null
+}

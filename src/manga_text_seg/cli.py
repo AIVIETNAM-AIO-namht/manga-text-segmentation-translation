@@ -18,9 +18,10 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from pathlib import Path
 
-from .config import ConfigError, load_config
+from .config import ConfigError, load_config, load_translation_config
 from .manifest import build_manifest, load_manifest, save_manifest
 
 #: The exported artefacts and the run store sit at fixed places in the repo
@@ -394,8 +395,13 @@ def cmd_inpaint(
     from .inpaint import process_batch
     from .intake import source_available
     from .runs import (
-        INPAINT_METHOD_ORDER, InpaintRun, MethodSource, RunError, create_run,
-        write_performance_summary, write_run_record,
+        INPAINT_METHOD_ORDER,
+        InpaintRun,
+        MethodSource,
+        RunError,
+        create_run,
+        write_performance_summary,
+        write_run_record,
     )
     from .pagelist import load_identity_record, load_page_list
 
@@ -404,8 +410,11 @@ def cmd_inpaint(
     manifest = load_manifest(repo_root / DEFAULT_MANIFEST)
 
     if all_methods:
-        methods = tuple(m for m in INPAINT_METHOD_ORDER if m in config.methods
-                        and source_available(config.methods[m].source_root))
+        methods = tuple(
+            m
+            for m in INPAINT_METHOD_ORDER
+            if m in config.methods and source_available(config.methods[m].source_root)
+        )
     elif method in config.methods:
         methods = (method,)
     else:
@@ -451,30 +460,43 @@ def cmd_inpaint(
             name: MethodSource(
                 str(config.methods[name].source_root),
                 origins[name][0],
-                "highest IoU of the six Spec 1 methods (research R1)"
-                if name == "classical_baseline" else None,
+                (
+                    "highest IoU of the six Spec 1 methods (research R1)"
+                    if name == "classical_baseline"
+                    else None
+                ),
             )
             for name in methods
         }
         batch = process_batch(
-            manifest, pages, methods=methods, run_id=run_id, config=config,
-            origins=origins, algorithms=(algorithm,) if algorithm else None,
+            manifest,
+            pages,
+            methods=methods,
+            run_id=run_id,
+            config=config,
+            origins=origins,
+            algorithms=(algorithm,) if algorithm else None,
         )
         batch["errors"].write(run_dir / "errors.json")
         write_performance_summary(run_dir, batch["timings"], batch["counts"])
         page_ids = {f"{manga}/{stem}" for manga, stem in pages}
         selected_identities = {
             image_id: image_identities[image_id]
-            for image_id in sorted(page_ids) if image_id in image_identities
+            for image_id in sorted(page_ids)
+            if image_id in image_identities
         }
-        write_run_record(run_dir, InpaintRun(
-            run_id=run_id, method_sources=method_sources,
-            mask_processing_config=config.mask_processing,
-            inpainting_config=config.inpainting,
-            page_list_identity=page_identity,
-            input_image_identity=selected_identities,
-            counts=batch["counts"],
-        ))
+        write_run_record(
+            run_dir,
+            InpaintRun(
+                run_id=run_id,
+                method_sources=method_sources,
+                mask_processing_config=config.mask_processing,
+                inpainting_config=config.inpainting,
+                page_list_identity=page_identity,
+                input_image_identity=selected_identities,
+                counts=batch["counts"],
+            ),
+        )
     except RunError as exc:
         print(f"Refused: {exc}", file=sys.stderr)
         return 2
@@ -489,6 +511,99 @@ def cmd_inpaint(
     return 0
 
 
+def cmd_translate(
+    config_path: str,
+    run_id: str,
+    image_id: str | None,
+    stage: str | None,
+    region_id: int | None,
+    segmentation_method: str | None,
+    inpainting_run: str | None,
+    target_language: str | None,
+    overwrite: bool,
+    export_to: str | None,
+) -> int:
+    """Run Spec 004 operations using its configuration and persisted artifacts."""
+    from .translation.pipeline import (
+        export_intermediates,
+        rerun_region,
+        rerun_stage,
+        run_batch,
+        run_intake,
+    )
+
+    config = load_translation_config(config_path)
+    if segmentation_method is not None:
+        config = replace(config, segmentation_method=segmentation_method)
+    if inpainting_run is not None:
+        config = replace(config, inpainting_run_id=inpainting_run)
+    if target_language is not None:
+        config = replace(config, target_language=target_language)
+    run_dir = config.output_roots.translation / run_id
+
+    if region_id is not None and stage not in {"ocr", "translate", "render"}:
+        raise ValueError("--region requires --stage ocr, translate, or render")
+    if overwrite and stage not in {None, "full", "intake"}:
+        raise ValueError("--overwrite applies only when creating a run")
+
+    if export_to is not None:
+        if image_id is None:
+            raise ValueError("--image-id is required when exporting page intermediates")
+        exported = export_intermediates(run_dir, image_id, export_to)
+        print(f"Copied intermediates to: {exported}")
+        return 0
+
+    repo_root = _repo_root(config_path)
+    if stage in {None, "full"}:
+        result = run_batch(
+            config,
+            run_id,
+            repo_root=repo_root,
+            image_ids=(image_id,) if image_id else None,
+            overwrite=overwrite,
+        )
+        print(f"Translation run '{run_id}' finished: {len(result.pages)} page(s).")
+        print(f"Output: {result.run_dir}")
+        return 0
+    if stage == "intake":
+        result = run_intake(
+            config,
+            run_id,
+            repo_root=repo_root,
+            image_ids=(image_id,) if image_id else None,
+            overwrite=overwrite,
+        )
+        print(f"Intake '{run_id}' finished: {len(result.pages)} page(s).")
+        print(f"Output: {result.run_dir}")
+        return 0
+    if not run_dir.is_dir():
+        raise FileNotFoundError(
+            f"run '{run_id}' does not exist; run the intake stage first"
+        )
+    run_record = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
+    if (
+        segmentation_method is not None
+        and segmentation_method != run_record["segmentation_method"]
+    ):
+        raise ValueError("a stage rerun must use the run's stored segmentation method")
+    if (
+        inpainting_run is not None
+        and inpainting_run != run_record["inpainting_source"]["run_id"]
+    ):
+        raise ValueError("a stage rerun must use the run's stored inpainting source")
+    if target_language is not None and target_language != run_record["target_language"]:
+        raise ValueError("a stage rerun must use the run's stored target language")
+    if image_id is None:
+        raise ValueError("--image-id is required for an isolated translation stage")
+    if region_id is not None:
+        rerun_region(region_id, image_id, run_dir, stage_name=stage)
+        print(f"Re-ran {stage} for region {region_id} on {image_id}.")
+    else:
+        rerun_stage(stage, image_id, run_dir)
+        print(f"Re-ran {stage} for {image_id}.")
+    return 0
+
+
 def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
     """Run a dilation/radius sweep in its isolated ablation namespace."""
     from dataclasses import asdict, replace
@@ -496,19 +611,27 @@ def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
 
     from .ablation import run_ablation
     from .config import (
-        DILATION_KERNEL_SHAPES, DilationConfig, MaskProcessingConfig,
+        DILATION_KERNEL_SHAPES,
+        DilationConfig,
+        MaskProcessingConfig,
         load_inpaint_config,
     )
     from .inpaint import process_batch
     from .intake import source_available
     from .pagelist import load_identity_record, load_page_list
     from .runs import (
-        INPAINT_METHOD_ORDER, InpaintRun, MethodSource, RunError,
-        write_performance_summary, write_run_record,
+        INPAINT_METHOD_ORDER,
+        InpaintRun,
+        MethodSource,
+        RunError,
+        write_performance_summary,
+        write_run_record,
     )
 
     supported = {
-        "dilation.kernel_size", "dilation.iterations", "dilation.kernel_shape",
+        "dilation.kernel_size",
+        "dilation.iterations",
+        "dilation.kernel_shape",
         "inpaint.radius",
     }
     if vary not in supported:
@@ -537,19 +660,25 @@ def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
             radius = baseline["inpaint_radius"]
             if vary == "dilation.kernel_size":
                 if not dilation["enabled"]:
-                    raise ValueError("cannot vary kernel size while dilation is disabled")
+                    raise ValueError(
+                        "cannot vary kernel size while dilation is disabled"
+                    )
                 if value < 1:
                     raise ValueError("dilation kernel sizes must be positive")
                 dilation["kernel_size"] = [value, value]
             elif vary == "dilation.iterations":
                 if not dilation["enabled"]:
-                    raise ValueError("cannot vary iterations while dilation is disabled")
+                    raise ValueError(
+                        "cannot vary iterations while dilation is disabled"
+                    )
                 if value < 1:
                     raise ValueError("dilation iterations must be positive")
                 dilation["iterations"] = value
             elif vary == "dilation.kernel_shape":
                 if not dilation["enabled"]:
-                    raise ValueError("cannot vary kernel shape while dilation is disabled")
+                    raise ValueError(
+                        "cannot vary kernel shape while dilation is disabled"
+                    )
                 if value not in DILATION_KERNEL_SHAPES:
                     raise ValueError(
                         f"kernel shape must be one of {sorted(DILATION_KERNEL_SHAPES)}"
@@ -567,8 +696,10 @@ def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
     try:
         manifest = load_manifest(repo_root / DEFAULT_MANIFEST)
         methods = tuple(
-            method for method in INPAINT_METHOD_ORDER
-            if method in config.methods and source_available(config.methods[method].source_root)
+            method
+            for method in INPAINT_METHOD_ORDER
+            if method in config.methods
+            and source_available(config.methods[method].source_root)
         )
         if not methods:
             print("Refused: no configured method has admitted masks.", file=sys.stderr)
@@ -588,19 +719,26 @@ def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
     page_ids = {f"{manga}/{stem}" for manga, stem in pages}
     selected_identities = {
         image_id: image_identities[image_id]
-        for image_id in sorted(page_ids) if image_id in image_identities
+        for image_id in sorted(page_ids)
+        if image_id in image_identities
     }
     method_sources = {
         name: MethodSource(
-            str(config.methods[name].source_root), origins[name][0],
-            "highest IoU of the six Spec 1 methods (research R1)"
-            if name == "classical_baseline" else None,
+            str(config.methods[name].source_root),
+            origins[name][0],
+            (
+                "highest IoU of the six Spec 1 methods (research R1)"
+                if name == "classical_baseline"
+                else None
+            ),
         )
         for name in methods
     }
     try:
         result = run_ablation(
-            output_root=config.output_root, run_id=run_id, configs=configs,
+            output_root=config.output_root,
+            run_id=run_id,
+            configs=configs,
             baseline_config=baseline,
         )
     except (ValueError, OSError) as exc:
@@ -624,27 +762,38 @@ def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
         )
         variant_run_id = config_dir.name
         batch = process_batch(
-            manifest, pages, methods=methods, run_id=variant_run_id,
-            config=variant_config, origins=origins,
+            manifest,
+            pages,
+            methods=methods,
+            run_id=variant_run_id,
+            config=variant_config,
+            origins=origins,
         )
         batch["errors"].write(config_dir / "errors.json")
         write_performance_summary(config_dir, batch["timings"], batch["counts"])
-        write_run_record(config_dir, InpaintRun(
-            run_id=variant_run_id, method_sources=method_sources,
-            mask_processing_config=variant_config.mask_processing,
-            inpainting_config=variant_config.inpainting,
-            page_list_identity=page_identity,
-            input_image_identity=selected_identities,
-            counts=batch["counts"], ablation=True,
-        ))
+        write_run_record(
+            config_dir,
+            InpaintRun(
+                run_id=variant_run_id,
+                method_sources=method_sources,
+                mask_processing_config=variant_config.mask_processing,
+                inpainting_config=variant_config.inpainting,
+                page_list_identity=page_identity,
+                input_image_identity=selected_identities,
+                counts=batch["counts"],
+                ablation=True,
+            ),
+        )
         record_path = config_dir / "run.json"
         record = json.loads(record_path.read_text(encoding="utf-8"))
-        record.update({
-            "parent_run_id": run_id,
-            "varied": result["varied"],
-            "baseline_config": baseline,
-            "configuration": variant,
-        })
+        record.update(
+            {
+                "parent_run_id": run_id,
+                "varied": result["varied"],
+                "baseline_config": baseline,
+                "configuration": variant,
+            }
+        )
         record_path.write_text(
             json.dumps(record, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
         )
@@ -663,7 +812,10 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
     from .config import load_inpaint_config
     from .runs import INPAINT_ALGORITHMS, artifact_paths, sample_paths
     from .selection import (
-        SELECTION_RULES, require_main_run, select_samples, write_selection,
+        SELECTION_RULES,
+        require_main_run,
+        select_samples,
+        write_selection,
     )
 
     repo_root = _repo_root(config_path)
@@ -689,13 +841,15 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
     metrics = []
     for row in rows:
         image_id = row.get("image_id") or f"{row['manga']}/{row['stem']}"
-        metrics.append({
-            "image_id": image_id,
-            "iou": float(row["iou"]),
-            "f1": float(row["f1"]),
-            "fp": int(float(row["fp"])),
-            "fn": int(float(row["fn"])),
-        })
+        metrics.append(
+            {
+                "image_id": image_id,
+                "iou": float(row["iou"]),
+                "f1": float(row["f1"]),
+                "fp": int(float(row["fp"])),
+                "fn": int(float(row["fn"])),
+            }
+        )
     config_record = {
         "dilation": run_record["mask_processing_config"]["dilation"],
         "inpaint_radius": run_record["inpainting_config"]["radius"],
@@ -704,7 +858,9 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
     board_count = 0
     for rule in SELECTION_RULES:
         result = select_samples(
-            {method: metrics}, rule, config.selection_n,
+            {method: metrics},
+            rule,
+            config.selection_n,
             manual_flags=config.manual_artifact_flags,
         )
         selections[rule] = result
@@ -712,15 +868,21 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
             image_id = entry["image_id"]
             panel_paths = {}
             for algorithm in INPAINT_ALGORITHMS:
-                paths = artifact_paths(sample_paths(
-                    config.output_root, run_id, method, algorithm, image_id
-                ))
+                paths = artifact_paths(
+                    sample_paths(
+                        config.output_root, run_id, method, algorithm, image_id
+                    )
+                )
                 panel_paths[algorithm] = paths
+
             def load(path):
                 image = cv2.imread(str(path), cv2.IMREAD_UNCHANGED)
                 if image is None:
-                    raise FileNotFoundError(f"Required board input is missing or unreadable: {path}")
+                    raise FileNotFoundError(
+                        f"Required board input is missing or unreadable: {path}"
+                    )
                 return image
+
             sample = {
                 "image_id": image_id,
                 "method": method,
@@ -755,7 +917,9 @@ def cmd_qualitative(config_path: str, run_id: str) -> int:
     if not run_dir.is_dir():
         raise FileNotFoundError(f"Inpainting run does not exist: {run_dir}")
     if not (run_dir / "run.json").is_file():
-        raise FileNotFoundError(f"Inpainting run record is missing: {run_dir / 'run.json'}")
+        raise FileNotFoundError(
+            f"Inpainting run record is missing: {run_dir / 'run.json'}"
+        )
     json_path, md_path, count = generate_run_scaffold(run_dir)
     print(f"Wrote qualitative scaffold for {count} samples in run '{run_id}'.")
     print(f"JSON: {json_path}")
@@ -845,7 +1009,11 @@ def main() -> None:
     inpaint_cmd.add_argument(
         "--method", default=None, help="Segmentation method whose masks to use"
     )
-    inpaint_cmd.add_argument("--all-methods", action="store_true", help="Process every configured method with admitted masks")
+    inpaint_cmd.add_argument(
+        "--all-methods",
+        action="store_true",
+        help="Process every configured method with admitted masks",
+    )
     inpaint_cmd.add_argument(
         "--image-id", default=None, help="Process only this page (<manga>/<page_id>)"
     )
@@ -859,11 +1027,54 @@ def main() -> None:
         "--overwrite", action="store_true", help="Replace an existing run with this id"
     )
 
-    boards_cmd = subparsers.add_parser("boards", help="Select samples and render comparison boards")
+    translate_cmd = subparsers.add_parser(
+        "translate", help="Run Spec 004 OCR, translation and rendering stages"
+    )
+    translate_cmd.add_argument("--config", required=True, help="Spec 004 JSON config")
+    translate_cmd.add_argument("--run", required=True, help="Translation run id")
+    translate_cmd.add_argument(
+        "--image-id", default=None, help="Process one manifest page (<manga>/<NNN>)"
+    )
+    translate_cmd.add_argument(
+        "--stage",
+        choices=["intake", "regions", "ocr", "translate", "render", "full"],
+        default=None,
+        help="Run one stage against stored artifacts, or the full pipeline (default)",
+    )
+    translate_cmd.add_argument(
+        "--region",
+        type=int,
+        default=None,
+        help="Re-run one region at the selected stage",
+    )
+    translate_cmd.add_argument(
+        "--segmentation-method",
+        choices=[
+            "classical_baseline",
+            "manga_text_segmentation",
+            "comic_text_detector",
+            "unetpp_efficientnetv2",
+        ],
+        default=None,
+    )
+    translate_cmd.add_argument("--inpainting-run", default=None)
+    translate_cmd.add_argument("--target-lang", choices=["vi", "en"], default=None)
+    translate_cmd.add_argument("--overwrite", action="store_true")
+    translate_cmd.add_argument(
+        "--export-to",
+        default=None,
+        help="Copy this page's stored intermediates to a new destination",
+    )
+
+    boards_cmd = subparsers.add_parser(
+        "boards", help="Select samples and render comparison boards"
+    )
     _common_parser(boards_cmd)
     boards_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
     boards_cmd.add_argument("--run", required=True, help="Inpainting run id")
-    boards_cmd.add_argument("--method", required=True, help="Segmentation method to render")
+    boards_cmd.add_argument(
+        "--method", required=True, help="Segmentation method to render"
+    )
 
     qualitative_cmd = subparsers.add_parser(
         "qualitative", help="Create a blank human qualitative review scaffold"
@@ -879,7 +1090,8 @@ def main() -> None:
     ablate_cmd.set_defaults(config=DEFAULT_INPAINT_CONFIG)
     ablate_cmd.add_argument("--run", required=True, help="Ablation run id")
     ablate_cmd.add_argument(
-        "--vary", required=True,
+        "--vary",
+        required=True,
         help="Configuration key: dilation.kernel_size, dilation.iterations, dilation.kernel_shape or inpaint.radius",
     )
     ablate_cmd.add_argument(
@@ -925,6 +1137,19 @@ def main() -> None:
                 args.overwrite,
                 args.all_methods,
             )
+        elif args.command == "translate":
+            code = cmd_translate(
+                args.config,
+                args.run,
+                args.image_id,
+                args.stage,
+                args.region,
+                args.segmentation_method,
+                args.inpainting_run,
+                args.target_lang,
+                args.overwrite,
+                args.export_to,
+            )
         elif args.command == "boards":
             code = cmd_boards(args.config, args.run, args.method)
         elif args.command == "qualitative":
@@ -942,6 +1167,9 @@ def main() -> None:
         sys.exit(2)
     except FileExistsError as exc:
         print(f"Refusing to overwrite: {exc}", file=sys.stderr)
+        sys.exit(2)
+    except (ValueError, RuntimeError) as exc:
+        print(f"Translation operation refused: {exc}", file=sys.stderr)
         sys.exit(2)
 
     sys.exit(code)

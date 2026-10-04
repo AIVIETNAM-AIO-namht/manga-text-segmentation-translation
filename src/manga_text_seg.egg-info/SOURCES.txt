@@ -1,9 +1,11 @@
 README.md
 pyproject.toml
 src/manga_text_seg/__init__.py
+src/manga_text_seg/ablation.py
 src/manga_text_seg/align.py
 src/manga_text_seg/availability.py
 src/manga_text_seg/benchmark.py
+src/manga_text_seg/boards.py
 src/manga_text_seg/cli.py
 src/manga_text_seg/config.py
 src/manga_text_seg/discovery.py
@@ -17,10 +19,12 @@ src/manga_text_seg/normalize.py
 src/manga_text_seg/pagelist.py
 src/manga_text_seg/preprocess.py
 src/manga_text_seg/provenance.py
+src/manga_text_seg/qualitative.py
 src/manga_text_seg/receipt.py
 src/manga_text_seg/report.py
 src/manga_text_seg/run.py
 src/manga_text_seg/runs.py
+src/manga_text_seg/selection.py
 src/manga_text_seg/validation.py
 src/manga_text_seg/visualize.py
 src/manga_text_seg.egg-info/PKG-INFO
@@ -43,3 +47,11 @@ src/manga_text_seg/methods/morphology.py
 src/manga_text_seg/methods/mser.py
 src/manga_text_seg/methods/otsu.py
 src/manga_text_seg/methods/pipeline.py
+src/manga_text_seg/translation/__init__.py
+src/manga_text_seg/translation/intake.py
+src/manga_text_seg/translation/ocr.py
+src/manga_text_seg/translation/pipeline.py
+src/manga_text_seg/translation/regions.py
+src/manga_text_seg/translation/render.py
+src/manga_text_seg/translation/runs.py
+src/manga_text_seg/translation/translate.py

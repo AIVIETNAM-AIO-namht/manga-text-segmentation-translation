@@ -1,0 +1,26 @@
+{
+  "mask_processing": {
+    "dilation": {
+      "enabled": true,
+      "kernel_shape": "ellipse",
+      "kernel_size": [
+        3,
+        3
+      ],
+      "iterations": 1
+    }
+  },
+  "inpaint": {
+    "radius": 3,
+    "algorithms": [
+      "telea",
+      "ns"
+    ],
+    "output_format": "png"
+  },
+  "selection": {
+    "n": 5,
+    "manual_artifact_flags": []
+  },
+  "output_root": "outputs/inpainting/"
+}
