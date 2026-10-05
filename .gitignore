@@ -46,6 +46,10 @@ data/
 # Notebook-generated files
 .ipynb_checkpoints/
 
+# pytest scratch dirs (conftest uses .pytest-tmp-*/; pytest uses .pytest-*/)
+.pytest-*/
+.pytest_cache/
+
 # The distributable image bundle: distribution, not contract (FR-054a, research.md R10).
 # The committed benchmark/image-identity.json is what makes any copy verifiable.
 benchmark/dist/

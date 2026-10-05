@@ -1,3 +1,0 @@
-manga,stem,method,iou,precision,recall,f1,tp,fp,fn,inference_time_seconds
-A,001,otsu,0.8,0.6,0.7,0.65,20,5,3,0.12
-B,002,otsu,0.3,0.6,0.7,0.65,5,10,15,0.12
