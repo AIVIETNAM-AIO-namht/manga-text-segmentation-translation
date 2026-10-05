@@ -56,3 +56,6 @@ benchmark/dist/
 
 .specify/
 .claude/
+
+# Pytest temporary work directories
+/.pytest*/
