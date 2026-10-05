@@ -1,2 +1,0 @@
-[console_scripts]
-manga-text-seg = manga_text_seg.cli:main
