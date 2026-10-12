@@ -28,7 +28,7 @@ def _prepare_cli_workspace(tmp_path: Path, bundle: dict) -> tuple[Path, Path]:
         / "outputs"
         / "inpainting"
         / "translation-cli-fixture"
-        / "classical_baseline"
+        / bundle["method"]
         / "telea"
         / manga
     )
@@ -40,7 +40,7 @@ def _prepare_cli_workspace(tmp_path: Path, bundle: dict) -> tuple[Path, Path]:
     config.update(
         {
             "manifest_path": str(bundle["manifest"]),
-            "segmentation_method": "classical_baseline",
+            "segmentation_method": bundle["method"],
             "inpainting_source": {
                 "run_id": "translation-cli-fixture",
                 "algorithm": "telea",
@@ -145,7 +145,7 @@ def test_quickstart_scenarios_1_and_2_use_the_user_facing_cli(
     assert region_record["regions"]
     metadata = json.loads((page_dir / "metadata.json").read_text(encoding="utf-8"))
     assert metadata["image_id"] == bundle["image_id"]
-    assert metadata["segmentation_method"] == "classical_baseline"
+    assert metadata["segmentation_method"] == bundle["method"]
     assert (
         metadata["regions"][0]["region_id"] == region_record["regions"][0]["region_id"]
     )

@@ -1,8 +1,11 @@
 """Image I/O utilities — read-only loaders for GT masks and raw pages.
 
 All loaders validate dtype and channel count at load time (fail fast).
-GT masks are color PNGs (magenta-encoded text, Research R1); raw pages are
-grayscale.  Only prediction masks are guaranteed strictly binary {0, 255}.
+GT masks are color PNGs (magenta-encoded text, Research R1); ``load_raw_page``
+returns grayscale because Spec 1's segmentation model wants it that way — the
+source pages themselves are colour (8519/8519 are 3-channel), so anything that
+must preserve page colour reads the file directly instead.  Only prediction
+masks are guaranteed strictly binary {0, 255}.
 """
 from __future__ import annotations
 

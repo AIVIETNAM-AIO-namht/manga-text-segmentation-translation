@@ -38,11 +38,11 @@ from .runs import (
     write_run_json,
 )
 from .translate import (
-    FixtureTranslationProvider,
     TranslationProviderAdapter,
     TranslationRequest,
     TranslationResult,
     TranslationService,
+    default_provider_adapter,
     write_translations_json,
 )
 
@@ -538,12 +538,7 @@ def run_batch(
     if not isinstance(config, TranslationConfig):
         raise TypeError("config must be TranslationConfig")
     if provider is None:
-        if config.provider.secret_env_var:
-            raise ValueError(
-                "a provider adapter must be supplied; no live provider "
-                "protocol is defined"
-            )
-        provider = FixtureTranslationProvider({})
+        provider = default_provider_adapter(config.provider)
     ids = tuple(image_ids) if image_ids is not None else _manifest_page_ids(config)
     manifest_ids = _manifest_page_ids(config)
     if any(image_id not in manifest_ids for image_id in ids):
@@ -1264,12 +1259,7 @@ def _rerun_stage(
             )
     elif stage == "translate":
         _assert_current_ocr(page_dir, regions)
-        if provider is None and config.provider.secret_env_var is not None:
-            raise ValueError(
-                "the configured provider requires an injected adapter; this repository "
-                "does not define a live provider wire protocol"
-            )
-        provider = provider or FixtureTranslationProvider({})
+        provider = provider or default_provider_adapter(config.provider)
         translations_path = page_dir / "translations.json"
         old = (
             _load_translations(translations_path) if translations_path.is_file() else ()

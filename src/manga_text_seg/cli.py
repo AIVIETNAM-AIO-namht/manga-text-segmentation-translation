@@ -11,6 +11,13 @@ Subcommands (FR-036: all paths come from a single JSON config file):
   admit     — validate and admit a returned hand-off (FR-058, FR-059)
   status    — pre-flight availability verdicts, and admitted vs awaited (FR-016, FR-049)
   inpaint   — remove text from pages with TELEA / NS, from admitted masks (Spec 003)
+  translate — OCR, translate and render a page's regions (Spec 004)
+  boards    — select samples and render comparison boards (Spec 003)
+  qualitative — create the human qualitative review scaffold (Spec 003)
+  ablate    — run a dilation or inpaint-radius ablation sweep (Spec 003)
+
+Spec 005's ``serve`` subcommand is not here yet: it lands with that spec's web
+package, task by task under ``specs/005-web-e2e-reporting/tasks.md`` (T015).
 """
 
 from __future__ import annotations
@@ -372,6 +379,19 @@ def _mask_origin(method: str, source_root: Path, manifest) -> tuple[str, str | N
     return source_root.parent.name, repository
 
 
+def _resolved_identity(method: str, source_root: Path) -> str:
+    """What a method's masks resolve to (FR-026, research R1).
+
+    Not the same thing as ``_mask_origin``'s ``experiment_id``: for
+    ``classical_baseline`` this is the one named Spec 1 method pinned in config
+    (the last segment of its root), whereas the experiment id is the Spec 1 run
+    itself. A deep-learning identity resolves to its admitted run id, the
+    segment above the method's root.
+    """
+    root = Path(source_root)
+    return root.name if method == "classical_baseline" else root.parent.name
+
+
 def cmd_inpaint(
     config_path: str,
     run_id: str,
@@ -459,7 +479,7 @@ def cmd_inpaint(
         method_sources = {
             name: MethodSource(
                 str(config.methods[name].source_root),
-                origins[name][0],
+                _resolved_identity(name, config.methods[name].source_root),
                 (
                     "highest IoU of the six Spec 1 methods (research R1)"
                     if name == "classical_baseline"
@@ -725,7 +745,7 @@ def cmd_ablate(config_path: str, run_id: str, vary: str, values: str) -> int:
     method_sources = {
         name: MethodSource(
             str(config.methods[name].source_root),
-            origins[name][0],
+            _resolved_identity(name, config.methods[name].source_root),
             (
                 "highest IoU of the six Spec 1 methods (research R1)"
                 if name == "classical_baseline"
@@ -835,7 +855,7 @@ def cmd_boards(config_path: str, run_id: str, method: str) -> int:
         rows = [row for row in rows if row.get("method") == resolved]
     else:
         source_root = Path(run_record["method_sources"][method]["source_root"])
-        metric_path = source_root.parent / "metrics" / "per-page.csv"
+        metric_path = source_root / "metrics" / "per-page.csv"
         rows = list(csv.DictReader(metric_path.open(encoding="utf-8", newline="")))
 
     metrics = []

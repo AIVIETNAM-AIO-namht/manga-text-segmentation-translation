@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 from dataclasses import replace
 from pathlib import Path
@@ -23,10 +24,15 @@ def _write_cli_config(tmp_path: Path, bundle: dict) -> Path:
     raw["provider"]["secret_env_var"] = None
     raw["provider"]["deterministic"] = True
     raw["provider"]["cache"]["root"] = str(tmp_path / "cache")
-    # The CLI derives repo_root from config_path.parent.parent. Keep the
-    # temporary config directly under pytest's repository-local basetemp so
-    # fonts and committed Spec 2 identity records resolve as in real use.
-    config_path = tmp_path.parent / f"{tmp_path.name}-translation.json"
+    # The CLI derives repo_root from config_path.parent.parent. Give it a
+    # repo-shaped parent holding the committed Spec 2 identity records, which
+    # intake resolves relative to repo_root.
+    fixture_repo = tmp_path / "fixture-repo"
+    (fixture_repo / "benchmark").mkdir(parents=True)
+    (fixture_repo / "configs").mkdir()
+    for name in ("page-list.json", "image-identity.json"):
+        shutil.copyfile(ROOT / "benchmark" / name, fixture_repo / "benchmark" / name)
+    config_path = fixture_repo / "configs" / "translation.json"
     config_path.write_text(json.dumps(raw, indent=2) + "\n", encoding="utf-8")
     return config_path
 
@@ -99,7 +105,7 @@ def test_cli_valid_stage_invocation_writes_and_updates_real_artifacts(
     assert regions["regions"][0]["region_id"] == metadata["regions"][0]["region_id"]
     assert metadata["image_id"] == bundle["image_id"]
     assert metadata["run_id"] == "cli-valid-run"
-    assert metadata["segmentation_method"] == "classical_baseline"
+    assert metadata["segmentation_method"] == "unetpp_efficientnetv2"
 
 
 def test_cli_rejects_missing_required_run_before_creating_outputs(

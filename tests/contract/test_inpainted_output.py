@@ -173,6 +173,49 @@ def test_the_page_copy_has_the_pixels_of_the_original_page(
         assert np.array_equal(copy, original)
 
 
+def test_a_colour_source_page_keeps_its_colour_through_inpainting(
+    inpaint_fixture, synthetic_manifest, inpaint_config, aligned_mask
+):
+    """Every raw page is colour; nothing in this contract asks for a grey one.
+
+    The page copy is defined as "the original page image" (rule 1, line 24), so
+    on a colour source it must stay colour -- and the inpainted page it feeds
+    must not silently become grey either. Both were grey: the page reached the
+    inpaint stage through a grayscale loader.
+    """
+    manifest = synthetic_manifest()
+    page = np.full((*aligned_mask.shape, 3), (40, 90, 200), dtype=np.uint8)
+    cv2.imwrite(str(manifest.pairs[0].raw_path), page)
+
+    root = inpaint_fixture(METHOD, IMAGE_ID)
+    config = inpaint_config({METHOD: root})
+    create_run(config.output_root, RUN_ID)
+    process_sample(
+        manifest,
+        "ARMS",
+        "000",
+        method=METHOD,
+        run_id=RUN_ID,
+        config=config,
+        experiment_id="fixture-experiment",
+        model_repository=None,
+    )
+
+    original = _read(manifest.pairs[0].raw_path)
+    assert original.ndim == 3, "the fixture page must actually be colour"
+
+    for algorithm in ALGORITHMS:
+        artifacts = _artifacts(config, algorithm)
+        inpainted = _read(artifacts["inpainted"])
+        assert inpainted.ndim == 3, "inpainting must not drop the page's colour"
+        copy = _read(artifacts["page"])
+        assert np.array_equal(copy, original), "the copy is the original page"
+        outside = _read(artifacts["processed_mask"]) == 0
+        assert np.array_equal(inpainted[outside], original[outside]), (
+            "colour outside the mask must survive inpainting untouched"
+        )
+
+
 def test_a_gt_canvas_mask_is_copied_raw_and_processed_at_the_aligned_size(
     inpaint_fixture, synthetic_manifest, inpaint_config, aligned_mask
 ):

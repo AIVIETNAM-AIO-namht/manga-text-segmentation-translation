@@ -8,7 +8,7 @@ import math
 import time
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -221,7 +221,7 @@ def _record_direct_edits(document: dict[str, Any]) -> bool:
             region_id=region_id,
             original_text=baseline,
             edited_text=text,
-            edited_at=datetime.now(UTC).isoformat(),
+            edited_at=datetime.now(timezone.utc).isoformat(),
         )
         document["manual_edits"].append(asdict(edit))
         latest[region_id] = edit
@@ -579,7 +579,7 @@ def apply_manual_edit(
         raise KeyError(f"OCR result for region_id {region_id} was not found")
     previous_edits = [ManualEditRecord(**entry) for entry in document["manual_edits"]]
     original_text = target["text"]
-    timestamp = edited_at or datetime.now(UTC).isoformat()
+    timestamp = edited_at or datetime.now(timezone.utc).isoformat()
     edit = ManualEditRecord(region_id, original_text, edited_text, timestamp)
     document["manual_edits"] = [
         *[asdict(item) for item in previous_edits],

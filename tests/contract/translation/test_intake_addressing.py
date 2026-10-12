@@ -52,7 +52,7 @@ def test_consumer_resolves_and_reads_the_addressed_page_without_an_index(
     # The consumer is given only the three contract address fields and the
     # configured output root. It does not read the manifest or an index.
     bundle["manifest"].unlink()
-    address = ("addressing-run", "classical_baseline", image_id)
+    address = ("addressing-run", "unetpp_efficientnetv2", image_id)
     resolved = page_directory(tmp_path / "outputs", *address)
 
     assert resolved == result.pages[0].page_dir
@@ -82,9 +82,9 @@ def test_each_wrong_contract_field_fails_to_resolve(
     )
 
     wrong_addresses = [
-        ("wrong-run", "classical_baseline", image_id),
+        ("wrong-run", "unetpp_efficientnetv2", image_id),
         ("addressing-run", "comic_text_detector", image_id),
-        ("addressing-run", "classical_baseline", wrong_image_id),
+        ("addressing-run", "unetpp_efficientnetv2", wrong_image_id),
     ]
     for address in wrong_addresses:
         resolved = page_directory(tmp_path / "outputs", *address)
@@ -93,7 +93,7 @@ def test_each_wrong_contract_field_fails_to_resolve(
 
 def test_nonexistent_address_and_invalid_method_fail_explicitly(tmp_path: Path) -> None:
     unresolved = page_directory(
-        tmp_path / "outputs", "unknown-run", "classical_baseline", "ARMS/001"
+        tmp_path / "outputs", "unknown-run", "unetpp_efficientnetv2", "ARMS/001"
     )
     assert not unresolved.exists()
     with pytest.raises(ValueError, match="unsupported segmentation method"):

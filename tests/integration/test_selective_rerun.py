@@ -42,7 +42,7 @@ def _copy_bundle_artifacts(bundle, prediction_root: Path, inpainting_root: Path)
     shutil.copyfile(bundle["prediction_mask"], prediction_page / f"{stem}.png")
     shutil.copyfile(bundle["mask_sidecar"], metadata_page / f"{stem}.json")
 
-    method_root = inpainting_root / "classical_baseline" / "telea" / manga
+    method_root = inpainting_root / bundle["method"] / "telea" / manga
     method_root.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(bundle["inpainted"], method_root / f"{stem}.png")
     sidecar = json.loads(bundle["inpainted_sidecar"].read_text(encoding="utf-8"))

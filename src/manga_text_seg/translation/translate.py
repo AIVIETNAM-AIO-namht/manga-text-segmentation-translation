@@ -1,8 +1,10 @@
-"""Per-region translation policy, mockable provider seam, and shared cache.
+"""Per-region translation policy, provider adapters, and the shared cache.
 
-Spec 004 does not define a concrete provider's wire request/response schema.
-This module therefore supplies the adapter contract and deterministic fixture
-provider without inventing a live endpoint or authentication protocol.
+The adapter contract is the pluggable seam FR-029 requires. Two adapters
+satisfy it: a deterministic fixture used by the default suite (FR-060), and one
+live cloud adapter that issues its request with the standard library's
+``urllib.request`` (research R4) against the OpenAI-compatible chat
+completions API.
 """
 
 from __future__ import annotations
@@ -12,16 +14,48 @@ import json
 import math
 import os
 import socket
+import ssl
 import time
 import urllib.error
+import urllib.request
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Protocol
 
-from ..config import TranslationConfig
+from ..config import TranslationConfig, TranslationProviderConfig
 from .runs import ErrorReport
+
+#: One manga speech bubble is short; this bounds a runaway response.
+TRANSLATION_MAX_TOKENS = 1024
+
+
+def _provider_ssl_context() -> ssl.SSLContext | None:
+    """Trust certifi's roots when this interpreter's default ones are unusable.
+
+    Some Windows installs ship no OpenSSL trust bundle at all (``openssl_cafile``
+    points at a path that does not exist), and the interpreter then falls back
+    to the Windows store -- which lags: a gateway on a chain ending at ISRG Root
+    X2 fails verification against a store whose only ISRG entry has expired.
+    certifi is already installed (a transitive dependency of httpx) and carries
+    the current roots, so prefer it whenever this interpreter cannot verify.
+
+    Returns ``None`` to mean "use the interpreter default": a working default
+    bundle and an ``SSL_CERT_FILE`` the operator set by hand are both left alone.
+    """
+    try:
+        import certifi
+    except ImportError:  # pragma: no cover - certifi is a transitive dependency
+        return None
+    default = ssl.get_default_verify_paths()
+    if os.environ.get("SSL_CERT_FILE") or (default.cafile and Path(default.cafile).is_file()):
+        return None
+    return ssl.create_default_context(cafile=certifi.where())
+
+
+#: Resolved once: reading the trust store per region would be pure overhead.
+PROVIDER_SSL_CONTEXT = _provider_ssl_context()
 
 
 class TranslationProviderError(RuntimeError):
@@ -147,6 +181,114 @@ class FixtureTranslationProvider:
         if isinstance(response, BaseException):
             raise response
         return response
+
+
+def _translation_prompt(text: str, target_language: str) -> str:
+    return (
+        f"Translate this manga speech bubble text into {target_language}. "
+        "Reply with the translation only - no notes, no quotes, no romaji.\n\n"
+        f"{text}"
+    )
+
+
+class OpenAICompatibleTranslationProvider:
+    """Live provider adapter: one chat-completions request per region (FR-029).
+
+    The configured provider speaks the OpenAI chat-completions shape, so the
+    credential rides an ``Authorization: Bearer`` header rather than a
+    vendor-specific one. The credential is read from the environment on every
+    call and is never stored on the instance, so it cannot reach a run record
+    or a log (FR-035).
+    """
+
+    deterministic = False
+
+    def __init__(self, config: TranslationProviderConfig) -> None:
+        self.config = config
+        self.base_url = config.base_url.rstrip("/")
+
+    def translate(self, text: str, target_language: str) -> str:
+        env_var = self.config.secret_env_var
+        secret = os.environ.get(env_var) if env_var else None
+        if not secret:
+            raise MissingProviderSecretError(
+                f"required provider credential environment variable {env_var!r} "
+                "is not set"
+            )
+        payload = json.dumps(
+            {
+                "model": self.config.model,
+                "max_tokens": TRANSLATION_MAX_TOKENS,
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": _translation_prompt(text, target_language),
+                    }
+                ],
+            }
+        ).encode("utf-8")
+        request = urllib.request.Request(
+            f"{self.base_url}/chat/completions",
+            data=payload,
+            method="POST",
+            headers={
+                "content-type": "application/json",
+                "authorization": f"Bearer {secret}",
+            },
+        )
+        try:
+            with urllib.request.urlopen(
+                request,
+                timeout=self.config.timeout_seconds,
+                context=PROVIDER_SSL_CONTEXT,
+            ) as response:
+                body = response.read()
+        except urllib.error.HTTPError as error:
+            # ponytail: read only the status, never the error body. A provider's
+            # error text can echo the request, and the request carries the key.
+            raise ProviderHttpError(
+                error.code, f"provider returned HTTP {error.code}"
+            ) from None
+        # URLError and socket.timeout propagate untouched: TranslationService
+        # classifies them with _is_timeout/_status_code for retry policy.
+        return _chat_completion_text(body)
+
+
+def _chat_completion_text(body: bytes) -> str:
+    try:
+        document = json.loads(body.decode("utf-8"))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        raise TranslationProviderError("provider returned a non-JSON response") from exc
+    if not isinstance(document, dict):
+        raise TranslationProviderError("provider returned an unexpected response shape")
+    choices = document.get("choices")
+    if not isinstance(choices, list) or not choices:
+        raise TranslationProviderError("provider response carried no choices")
+    message = choices[0].get("message") if isinstance(choices[0], dict) else None
+    content = message.get("content") if isinstance(message, dict) else None
+    if not isinstance(content, str) or not content:
+        raise TranslationProviderError("provider response carried no text content")
+    return content
+
+
+def default_provider_adapter(
+    config: TranslationProviderConfig,
+) -> TranslationProviderAdapter:
+    """Pick the live adapter, or the network-free fixture when no credential is named.
+
+    A provider with no configured credential is a fixture-only configuration
+    (FR-060): the default suite must run with no key and no network.
+
+    # ponytail: the seam is the credential, not the vendor name. Every live
+    # provider config carries a validated HTTP(S) ``base_url`` and speaks the
+    # OpenAI chat-completions shape, so a name whitelist bought nothing and went
+    # stale the moment the gateway changed -- it refused a working endpoint with
+    # "no live adapter is implemented for provider 'vilao'". ``name`` is
+    # provenance (FR-029); the transport is the config's ``base_url``.
+    """
+    if config.secret_env_var is None:
+        return FixtureTranslationProvider({})
+    return OpenAICompatibleTranslationProvider(config)
 
 
 def translation_cache_key(
@@ -342,7 +484,7 @@ class TranslationService:
                     provider=provider.name,
                     model=provider.model,
                     version=provider.version,
-                    fetched_at=datetime.now(UTC).isoformat(),
+                    fetched_at=datetime.now(timezone.utc).isoformat(),
                 ),
             )
         return result

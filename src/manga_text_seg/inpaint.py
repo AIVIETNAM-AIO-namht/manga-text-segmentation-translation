@@ -21,7 +21,6 @@ import cv2
 import numpy as np
 
 from manga_text_seg.config import INPAINT_ALGORITHMS, InpaintConfig, InpaintingConfig
-from manga_text_seg.imaging import load_raw_page
 from manga_text_seg.intake import intake_mask
 from manga_text_seg.manifest import Manifest
 from manga_text_seg.maskproc import dilate_mask
@@ -142,7 +141,7 @@ def process_sample(
     processed_mask, dilation = dilate_mask(
         accepted.mask, config.mask_processing.dilation
     )
-    page = load_raw_page(accepted.page_path)
+    page = cv2.imread(str(accepted.page_path), cv2.IMREAD_UNCHANGED)
 
     outcomes: dict[str, tuple[np.ndarray, float]] = {}
     for algorithm in chosen:

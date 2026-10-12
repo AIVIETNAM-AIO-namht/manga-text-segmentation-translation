@@ -390,7 +390,9 @@ def translation_bundle(tmp_path: Path):
     default_id = sorted(valid_pages)[0]
 
     def build(
-        method: str = "classical_baseline",
+        # ponytail: default matches the shipped config's resolved method, so a
+        # default bundle is admissible against configs/translation.json.
+        method: str = "unetpp_efficientnetv2",
         image_id: str = default_id,
         *,
         missing_original: bool = False,
@@ -526,6 +528,7 @@ def translation_bundle(tmp_path: Path):
         return {
             "root": root,
             "image_id": image_id,
+            "method": method,
             "page_list_identity": page_list["page_list_identity"],
             "input_image_identity": page["input_image_identity"],
             "original": original_path,

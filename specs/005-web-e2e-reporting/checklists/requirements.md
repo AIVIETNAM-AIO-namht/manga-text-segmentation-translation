@@ -1,4 +1,4 @@
-# Specification Quality Checklist: Streamlit End-to-End Manga Translation Demo & Reporting
+# Specification Quality Checklist: End-to-End Manga Translation Web Demo & Reporting
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
 **Created**: 2026-09-10
@@ -12,7 +12,7 @@
 - [x] CHK004 - Requirements distinguish MUST/SHOULD from preferences (SHOULD not required — all normative statements are MUST per template)
 - [x] CHK005 - Success criteria are measurable and technology-agnostic (SC-001 time bound; SC-003 zero random selections; SC-011 checksum invariance; SC-012 offline report generation)
 - [x] CHK006 - No implementation leakage (rendering delegated to "Spec 4 rendering component"; orchestration described by contract, not by code)
-- [x] CHK007 - Edge cases enumerated (16, covering missing artifacts, ambiguity, failures, collisions, mid-session changes)
+- [x] CHK007 - Edge cases enumerated (20, covering missing artifacts, ambiguity, failures, collisions, mid-session changes, browser reload, absent frontend bundle, non-loopback origin, session end during a batch)
 - [x] CHK008 - Assumptions documented (12, including upstream maturity as blocking precondition and provider pattern)
 - [x] CHK009 - Dependencies on Specs 1–4 stated explicitly with their contract contributions
 
@@ -21,16 +21,16 @@
 - [x] CHK010 - All [NEEDS CLARIFICATION] markers resolved — FR-056 default qualitative sample-selection policy resolved by requester 2026-09-10: **Option A — combined best-N + worst-N + typical-N as the default**
 - [x] CHK011 - Requirements trace back to the requester's brief (8 goals, 10 pipeline steps, 8 page states, 15 error categories, 18 test areas, output tree, CLI operations, verbatim security rules)
 - [x] CHK012 - Each user story is independently testable (Independent Test given for all 10 stories)
-- [x] CHK013 - Out-of-scope section lists all 9 excluded capabilities from the brief
+- [x] CHK013 - Out-of-scope section lists all 9 excluded capabilities from the brief, plus the 2 the 2026-10-10 revision adds (authoring the frontend bundle; cloud deployment restated for a client/server app)
 - [x] CHK014 - The requester's hard constraints are encoded as FRs: no segmentation re-run (FR-006), no upstream modification (FR-001, FR-035, FR-062), no random selection (FR-016, FR-017), secrets via env vars only (FR-042, FR-085), spec-only deliverable
-- [x] CHK015 - Key Entities cover every persisted artifact in the output tree (FR-063 tree ↔ EndToEndRun, PageBundle, PageSummaryRecord, ChapterSummaryRecord, QuantitativeReport, ErrorReport)
+- [x] CHK015 - Key Entities cover every persisted artifact in the output tree and every runtime object the API depends on (FR-063 tree ↔ EndToEndRun, PageBundle, PageSummaryRecord, ChapterSummaryRecord, QuantitativeReport, ErrorReport, BackendSession, BatchJob)
 
 ## Specification Readiness
 
 - [x] CHK016 - All user stories have priorities (P1: US1–US3; P2: US4–US7; P3: US8–US10)
 - [x] CHK017 - MVP scope boundary explicit (single-page MVP; batch/chapter as extension designed in contract; FR-007 precomputed-artifacts-only)
-- [x] CHK018 - Success criteria cover the requester's acceptance criteria 1–18 (mapped across SC-001–SC-013 including criterion 14 CPU/no-local-DL via FR-089, criterion 15 secrets via SC-005, criterion 16 invariance via SC-011, criterion 17 report-from-artifacts via SC-012)
-- [x] CHK019 - Error categories from the brief (15) all appear as FR-079
+- [x] CHK018 - Success criteria cover the requester's acceptance criteria 1–18 (mapped across SC-001–SC-015 including criterion 14 CPU/no-local-DL via FR-089, criterion 15 secrets via SC-005, criterion 16 invariance via SC-011, criterion 17 report-from-artifacts via SC-012; SC-014 bundle-swap and SC-015 refusal surface added by the 2026-10-10 revision)
+- [x] CHK019 - Error categories from the brief (15) all appear as FR-079, plus the four the client/server boundary adds (cross-run mismatch, invalid request, not-ready, internal failure) — 19 total
 - [x] CHK020 - Spec is ready for `/speckit-clarify` pending only the single FR-056 marker
 
 ## Notes
@@ -53,3 +53,8 @@
     (20/20 → 20/20). Deferred to planning by design: concrete N values for best/worst/typical
     selection (FR-086 configuration), deterministic ranking tie-breaks, and the concrete summary
     provider behind the adapter (FR-041).
+- Revision 2026-10-10: the requester replaced the Streamlit UI with an externally authored
+  web frontend, so the spec is now a client/server contract. Re-verified all 20 items against
+  the revised spec; no checkbox state changed. Counts moved to 99 FRs / 15 SCs / 20 edge cases
+  (CHK007, CHK013, CHK015, CHK018, CHK019 updated). CHK006 still holds: the endpoint table and
+  status policy live in [plan.md](../plan.md), not in the spec.

@@ -1,12 +1,16 @@
-# Feature Specification: Streamlit End-to-End Manga Translation Demo & Reporting
+# Feature Specification: End-to-End Manga Translation Web Demo & Reporting
 
-**Feature Branch**: `005-streamlit-e2e-reporting`
+**Feature Branch**: `005-web-e2e-reporting`
 
 **Created**: 2026-09-10
 
-**Status**: Draft — ready for /speckit-plan. Clarification session 2026-09-10 resolved 4 questions: demo-run lifecycle (one auto-created run per app session / per CLI invocation, FR-065); self-contained runs (page artifacts materialized into the run on open, re-render replaces them, FR-063/FR-036); chapter = explicit user-supplied ordered page list with stable chapter/selection id stored in the run, book ≠ chapter (FR-046/FR-063/FR-075); reports always belong to a run — target an existing run for regeneration or auto-create one (FR-054/FR-068/FR-074). 90 FRs, 13 SCs, 10 user stories, 16 edge cases, 0 [NEEDS CLARIFICATION] markers.
+**Status**: Draft — ready for /speckit-plan. Clarification session 2026-09-10 resolved 4 questions: demo-run lifecycle (one auto-created run per app session / per CLI invocation, FR-065); self-contained runs (page artifacts materialized into the run on open, re-render replaces them, FR-063/FR-036); chapter = explicit user-supplied ordered page list with stable chapter/selection id stored in the run, book ≠ chapter (FR-046/FR-063/FR-075); reports always belong to a run — target an existing run for regeneration or auto-create one (FR-054/FR-068/FR-074). 99 FRs, 15 SCs, 10 user stories, 20 edge cases, 0 [NEEDS CLARIFICATION] markers.
+
+**Revision 2026-10-10**: the requester replaced the Streamlit UI with an externally authored web frontend. The feature is now a local client/server application: a Python backend owns all orchestration, artifact access and reporting, and serves a static HTML/CSS/JS bundle authored outside this repository. Requirements changed: FR-013–022 (application boundary, static-asset serving, session identity), FR-023/FR-028–030 (what the backend serves vs. what the frontend composes), FR-078 (launch command) and FR-079 (error categories). The Input brief below is retained verbatim as the historical record.
 
 **Input**: User description: "Xây dựng feature “Streamlit End-to-End Manga Translation Demo và Reporting” cho pipeline xử lý manga. Spec 1 cung cấp dataset, manifest, image_id, classical baseline và metrics. Spec 2 cung cấp prediction mask từ các phương pháp segmentation (deep learning chạy độc lập trên Google Colab). Spec 3 cung cấp kết quả xóa văn bản và inpainting. Spec 4 cung cấp OCR, translation và text rendering. Spec 5 là lớp orchestration, giao diện demo Streamlit và reporting cuối cùng. Không chạy lại segmentation model trong feature này. Không thay đổi các output của Spec 1–4. MVP chỉ làm việc với các ảnh benchmark đã có đầy đủ artifact từ Spec 2–4; upload ảnh manga bất kỳ là ngoài phạm vi MVP. Ứng dụng chính là một Streamlit app chạy local (`streamlit run app.py`) cho phép chọn manga/page/segmentation method/inpainting run/translation run/ngôn ngữ đích, xem toàn bộ kết quả từ ảnh gốc đến ảnh đã dịch, chỉnh sửa OCR/bản dịch rồi render lại, tạo summary, tải kết quả. Báo cáo định lượng đọc metrics từ Spec 1–2 so sánh bốn phương pháp; báo cáo định tính đọc output Spec 3–4 với chính sách chọn sample cấu hình được. Batch nhiều trang là chức năng mở rộng nhưng được thiết kế trong contract. Mỗi run có run_id, không ghi đè, upstream read-only. Không có secret trong source code, log hoặc output. Chỉ tạo specification, chưa viết code."
+
+> **Superseded in part (2026-10-10)**: the brief's "giao diện demo Streamlit" and "Ứng dụng chính là một Streamlit app chạy local (`streamlit run app.py`)" are replaced by FR-013. Everything else in the brief stands unchanged.
 
 ---
 
@@ -158,9 +162,9 @@ As a user, I want to download the rendered translated image and the metadata, OC
 
 ### User Story 10 - Perform equivalent operations from the CLI (Priority: P3)
 
-As a user working in a terminal or scripting the demo, I want a CLI covering the app's core operations — running the demo for one or many image_ids, generating reports from existing outputs, creating page/chapter summaries, selecting method/runs/language, checking run status, retrying failed pages and launching the Streamlit app — so that the feature is usable without the browser.
+As a user working in a terminal or scripting the demo, I want a CLI covering the app's core operations — running the demo for one or many image_ids, generating reports from existing outputs, creating page/chapter summaries, selecting method/runs/language, checking run status, retrying failed pages and launching the local web demo — so that the feature is usable without the browser.
 
-**Why this priority**: The Streamlit app is the primary deliverable; the CLI mirrors it for automation and reproducibility and reuses the same orchestration layer, so it is naturally third.
+**Why this priority**: The web demo is the primary deliverable; the CLI mirrors it for automation and reproducibility and reuses the same orchestration layer, so it is naturally third.
 
 **Independent Test**: Execute each CLI operation against fixture artifacts and confirm each behaves identically to its in-app counterpart, including error messages for ambiguous selections.
 
@@ -190,6 +194,10 @@ As a user working in a terminal or scripting the demo, I want a CLI covering the
 - What happens when a page in the manifest has no entry in the selected Spec 4 run? → distinct page state; listed as missing OCR/translation output.
 - What happens when chapter summaries are incomplete? → chapter summary lists the missing pages in order; no invented content.
 - What happens when an upstream artifact changes or disappears mid-session? → the next load re-validates every location; stale views are never silently served.
+- What happens when the browser is reloaded mid-session? → the backend session is preserved (FR-022a); the same run and selections are restored, and no second run is created.
+- What happens when the frontend bundle is absent from the configured static root? → the backend still starts and reports the missing bundle explicitly; it does not substitute a built-in UI (FR-013a/FR-013b).
+- What happens when a request arrives with a non-loopback `Host`/`Origin`? → refused before any artifact is read (FR-013c).
+- What happens when a long-running batch job is still running and the session ends or the browser closes? → the job is recorded with its status; the run's partial results and status remain readable, and the outcome is reported as not-ready rather than lost or fabricated.
 
 ## Clarifications
 
@@ -232,9 +240,13 @@ As a user working in a terminal or scripting the demo, I want a CLI covering the
 - **FR-011**: The target-language selection MUST resolve to Spec 4 runs whose recorded configuration names that language; if no such run exists the system MUST show an explicit error and MUST NOT re-run translation to satisfy the choice.
 - **FR-012**: The system MUST recover the Spec 2 run ID for provenance display from the Spec 3 sidecar's recorded upstream mask provenance (or the Spec 4 metadata where present) and MUST NOT infer or guess it.
 
-### Streamlit application and artifact selection (FR-013–022)
+### Web application and artifact selection (FR-013–022)
 
-- **FR-013**: The primary deliverable MUST be a local web application startable with the documented command (`streamlit run app.py`); Streamlit is a deliberately mandated product requirement from the requester, as are the named upstream method and algorithm contracts. The application runs locally only; deployment is out of scope.
+- **FR-013**: The primary deliverable MUST be a local web application startable with the documented command (`manga-text-seg serve`). It is a client/server application: a local Python backend owns all orchestration, artifact access, editing, re-rendering and reporting, and the browser frontend is a static HTML/CSS/JS bundle authored outside this repository. The application runs locally only; deployment is out of scope. The named upstream method and algorithm contracts remain mandated product requirements.
+- **FR-013a**: The backend MUST serve the frontend bundle from exactly one configurable static root. Replacing the UI MUST require only dropping a new bundle into that root — no backend code change, no rebuild step, no bundler in this repository.
+- **FR-013b**: The backend MUST NOT generate or compose presentation markup; it serves the static bundle, JSON responses and artifact bytes only. All layout, styling and view composition live in the bundle.
+- **FR-013c**: The backend MUST bind to the loopback interface only, and MUST reject requests whose `Host`/`Origin` is not a loopback origin.
+- **FR-013d**: Every artifact the backend serves MUST resolve inside a configured, allow-listed artifact root. Path traversal outside those roots MUST be refused, and `data/no-need-to-read/` MUST never be served (FR-008).
 - **FR-014**: The application MUST offer selection of: manga/book; page (image_id) from the manifest; segmentation method; Spec 3 inpainting run; Spec 4 translation run; and target language.
 - **FR-015**: All selectable choices MUST be enumerated from artifacts that actually exist on disk (present runs, methods, pages, recorded languages); nothing may be hard-coded.
 - **FR-016**: The system MUST NOT select any artifact randomly or arbitrarily; whenever multiple candidates exist and no deterministic rule resolves them, it MUST show a clear error naming the candidates and require the user to choose.
@@ -244,10 +256,12 @@ As a user working in a terminal or scripting the demo, I want a CLI covering the
 - **FR-020**: The application MUST recognise and display distinctly the eight single-page demo states: valid input; missing prediction mask; missing inpainting output; missing OCR/translation output; page without text regions; region OCR failure; region translation failure; rendering failure.
 - **FR-021**: Every selection change (method, page, run, language) MUST re-validate all artifact locations before anything is displayed.
 - **FR-022**: The application state (current manga, page, method, runs, language) MUST be preserved across interactions within a session so the user does not lose their selections while inspecting or editing.
+- **FR-022a**: Session identity MUST be issued by the backend on the first request and MUST survive a page reload, so that reloading the browser does not abandon the session's run (FR-065). Session state MUST live in the backend, not in the bundle.
 
 ### Page display, regions and downloads (FR-023–030)
 
-- **FR-023**: For a valid page the application MUST display: the original page image; the Spec 2 prediction mask; the Spec 3 processed (post-dilation) mask; the Spec 3 inpainted image for the selected algorithm; a region overlay with bounding boxes over the page; and the Spec 4 rendered page.
+- **FR-023**: For a valid page the backend MUST make available: the original page image; the Spec 2 prediction mask; the Spec 3 processed (post-dilation) mask; the Spec 3 inpainted image for the selected algorithm; the region bounding boxes and reading order as structured data; and the Spec 4 rendered page. The region overlay is composed by the frontend from that data and is never a stored artifact.
+- **FR-023a**: The original page image served under FR-023 is the benchmark source image and MUST be served through the same allow-listed artifact root as every other artifact (FR-013d).
 - **FR-024**: The application MUST present a per-region list containing region_id, bounding box, reading-order index, OCR text, translation and per-region statuses, exactly as recorded in the Spec 4 metadata.
 - **FR-025**: Region isolation MUST hold in the UI: one failed region MUST NOT hide or corrupt the display of other regions.
 - **FR-026**: A page-level failure MUST be displayed as such and recorded in the run's error report; it MUST NOT terminate the application session.
@@ -255,6 +269,7 @@ As a user working in a terminal or scripting the demo, I want a CLI covering the
 - **FR-028**: The application MUST let the user download the rendered image and the metadata, OCR and translation JSON artifacts of the open page.
 - **FR-029**: Downloaded content MUST be byte-identical to the stored demo-run artifacts.
 - **FR-030**: A page without text regions MUST be displayed with an explicit "no text regions" state, omitting OCR/translation/rendering panels gracefully.
+- **FR-030a**: The backend MUST serve the run's report artifacts for download or display, covering at minimum the quantitative metrics table (FR-048), the metrics comparison image (FR-050) and the qualitative report document (FR-061), under the same allow-listed root as FR-013d.
 
 ### OCR/translation editing and re-rendering (FR-031–038)
 
@@ -346,11 +361,13 @@ outputs/end-to-end/
 - **FR-075**: The CLI MUST support creating a page summary and a chapter summary; a chapter summary invocation MUST take the explicit ordered page list defining the chapter (FR-046).
 - **FR-076**: The CLI MUST support explicit selection of: segmentation method; Spec 3 inpainting run; Spec 4 translation run; target language; and run ID.
 - **FR-077**: The CLI MUST support checking run status and retrying failed pages of an existing run.
-- **FR-078**: The CLI MUST provide a command that launches the Streamlit application, and every CLI operation MUST behave identically to its in-app counterpart, including ambiguity errors.
+- **FR-078**: The CLI MUST provide a command that launches the local web application (`serve`), and every CLI operation MUST behave identically to its in-app counterpart, including ambiguity errors.
 
 ### Error handling (FR-079–084)
 
-- **FR-079**: The system MUST detect and record the following error categories: missing prediction mask; missing metadata sidecar; missing inpainting output; missing OCR output; missing translation output; undeterminable segmentation method; undeterminable run; OCR failure; translation failure; rendering failure; summary failure; API timeout/rate limit; output write failure; page without text regions; duplicate run ID.
+- **FR-079**: The system MUST detect and record the following error categories: missing prediction mask; missing metadata sidecar; missing inpainting output; missing OCR output; missing translation output; undeterminable segmentation method; undeterminable run; OCR failure; translation failure; rendering failure; summary failure; API timeout/rate limit; output write failure; page without text regions; duplicate run ID; cross-run mismatch (FR-010); invalid request (malformed or unselectable parameters); not-ready (a requested result whose producing job has not finished); internal failure (an unexpected fault, reported without leaking internals).
+- **FR-079a**: Every backend error response MUST carry one of the FR-079 categories plus a human-readable message; a request that fails MUST NOT return a partial or substituted result.
+- **FR-079b**: An unexpected internal failure MUST be recorded in the run's error report and MUST NOT terminate the backend process or abandon the session.
 - **FR-080**: A failed region MUST NOT invalidate its page's other regions, and a failed page MUST NOT stop a batch.
 - **FR-081**: The system MUST NOT fabricate data or silently substitute artifacts under any error condition.
 - **FR-082**: Ambiguity errors (multiple candidate runs/methods) MUST name every candidate so the user can choose explicitly.
@@ -383,6 +400,8 @@ outputs/end-to-end/
 - **SC-011**: After any demo activity — browsing, editing, re-rendering, summarising, reporting — the Spec 1–4 trees are checksum-identical to their pre-session state.
 - **SC-012**: Reports can be regenerated from existing artifacts in a session in which no segmentation, OCR, translation or summary provider is reachable, proving report generation is artifact-only.
 - **SC-013**: At least three demo runs with different configurations coexist under `outputs/end-to-end/` without any overwrite.
+- **SC-014**: Replacing the frontend bundle at the configured static root changes the UI with zero backend code changes, verified by serving two different bundles in one test session (FR-013a/FR-013b).
+- **SC-015**: Every path-traversal, non-loopback `Host`/`Origin`, and `data/no-need-to-read/` request is refused with an explicit FR-079 category, verified by automated tests over the artifact-serving surface (FR-013c/FR-013d/FR-023a/FR-030a).
 
 ## Key Entities
 
@@ -399,6 +418,8 @@ outputs/end-to-end/
 - **QualitativeReportSpec**: Configuration of one qualitative report. Attributes: selection policy (`first-N`/`best-N`/`worst-N`/`typical-N`/`manual-list`, with `combined` — best-N + worst-N + typical-N together — as the default), N per section, manual page list, ranking metric, sections to include.
 - **SummaryProviderAdapter**: The pluggable provider boundary for summaries. Attributes: provider/model/version identity, retry/timeout/rate-limit policy, cache, secret requirements (environment-variable key).
 - **ErrorReport**: The run's structured error list over the FR-079 categories, each entry naming the affected page/region and the expected artifact location.
+- **BackendSession**: One browser session's server-side state. Attributes: session id (issued on first request, preserved across reload per FR-022a), current selection (manga, page, method, runs, language), the run it owns (FR-065), and the ids of jobs it started.
+- **BatchJob**: One long-running batch execution started from the session. Attributes: job id, owning session, target run, page list, completed/total counts (FR-084), status, error categories encountered; readable after the session ends so partial results and status survive.
 
 ## Assumptions
 
@@ -410,8 +431,9 @@ outputs/end-to-end/
 - **Language selection semantics**: because a Spec 4 run fixes its target language (Spec 4 FR-049), the app's language selector filters/identifies compatible Spec 4 runs rather than triggering new translation.
 - **Benchmark provenance**: Method A = Manga-Text-Segmentation, whose checkpoint strategy (LOFO, five fold checkpoints, seed-42 book→fold mapping) is inherited from Spec 2 FR-013a and reported, not recomputed.
 - **Qualitative report format**: self-contained HTML per the requester's proposed tree (`qualitative_report.html`); the metrics summary is CSV and the comparison chart PNG, per the same tree.
-- **Local-only, single-user**: the app runs on the researcher's machine with no authentication, no concurrent multi-user access, and no cloud deployment.
-- **Downloads**: handled by the local UI for images and JSON artifacts; the CLI equivalents are file copies of the same stored artifacts.
+- **Local-only, single-user**: the app runs on the researcher's machine with no authentication, no concurrent multi-user access, and no cloud deployment. The backend binds to loopback only (FR-013c); the frontend is served by that backend.
+- **Frontend authored externally (blocking precondition)**: the HTML/CSS/JS bundle is produced outside this repository and is a hard prerequisite for the demo to be usable. This spec defines the contract the bundle consumes — the API surface and the static root (FR-013a) — not the bundle's contents. Its absence is reported explicitly and never substituted (edge cases).
+- **Downloads**: images, JSON artifacts and report files are fetched from the backend, which serves the stored bytes unchanged; the CLI equivalents are file copies of the same stored artifacts.
 - **English specification language**: kept for tooling consistency with Specs 1–4; user communication remains Vietnamese.
 
 ## Dependencies
@@ -426,12 +448,13 @@ All four are specification-only as of 2026-09-10 and are blocking preconditions 
 ## Out of Scope
 
 - Training or fine-tuning any segmentation, OCR, translation or summary model.
-- Running the segmentation model inside Streamlit or anywhere in this feature.
+- Running the segmentation model inside the demo application or anywhere in this feature.
 - Creating a new benchmark or changing benchmark methodology.
 - Modifying ground-truth masks, prediction masks or original inpainting outputs.
 - Using OCR, translation or summary quality to score segmentation.
 - Uploading arbitrary new manga images in the MVP (future extension; masks must come from the external segmentation pipeline, chiefly Google Colab).
-- Deploying Streamlit to the cloud.
+- Deploying the demo application to the cloud.
+- Authoring the frontend bundle's markup, styling or client-side framework choice (FR-013a/FR-013b); this spec fixes only the API surface and the static root it is served from.
 - Treating chapter summaries as mandatory when the constituent page outputs are incomplete.
 - Whole-book summarization (a book is not a chapter; if ever needed it would be a separate book-summary mode) — Clarifications, 2026-09-10.
 - Batch processing as an MVP deliverable (designed in contract; delivered as the designated extension).

@@ -57,5 +57,12 @@ data/
 # The committed benchmark/image-identity.json is what makes any copy verifiable.
 benchmark/dist/
 
+# Debug scratch: root-level _*.png crops and diagnostic script output.
+# Regenerate with tools/diag_*.py; never part of a deliverable.
+/_*.png
+deliverables/diag/
+tools/*.png
+tools/_diag_tmp/
+
 .specify/
 .claude/

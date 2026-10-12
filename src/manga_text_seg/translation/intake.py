@@ -422,7 +422,13 @@ def assemble_bundle(
             "Spec 2 page-list and image-identity records disagree",
             error_report,
         )
-    if mask_sidecar.get("image_id") != image_id or mask_sidecar.get("method") != method:
+    # ponytail: Spec 2's adapters register the hyphenated spelling
+    # (``unetpp-efficientnetv2``) while Specs 3-5 fix the underscored identity.
+    # Same method, two vocabularies; normalize rather than rewrite either.
+    sidecar_method = mask_sidecar.get("method")
+    if isinstance(sidecar_method, str):
+        sidecar_method = sidecar_method.replace("-", "_")
+    if mask_sidecar.get("image_id") != image_id or sidecar_method != method:
         _reject(
             image_id,
             "missing_prediction_mask",

@@ -47,7 +47,6 @@ class _Component:
     label: int
     area: int
     bbox: tuple[int, int, int, int]
-    pixels: np.ndarray
 
 
 def _validate_mask(mask: np.ndarray) -> np.ndarray:
@@ -211,9 +210,7 @@ def extract_regions(
                 }
             )
             continue
-        components.append(
-            _Component(label, area, (x, y, width, height), labels == label)
-        )
+        components.append(_Component(label, area, (x, y, width, height)))
 
     if not components:
         record(
@@ -224,18 +221,29 @@ def extract_regions(
 
     candidates: list[dict[str, Any]] = []
     for group in _groups(components, config.merge_distance):
-        group_mask = np.zeros(binary.shape, dtype=np.uint8)
-        for component in group:
-            group_mask[component.pixels] = 255
+        # ponytail: render each group into a window bounded by its own members
+        # instead of the full page. A real mask has thousands of components, so
+        # the old full-page-per-component approach was O(components x page).
+        x0 = min(component.bbox[0] for component in group)
+        y0 = min(component.bbox[1] for component in group)
+        x1 = max(component.bbox[0] + component.bbox[2] for component in group)
+        y1 = max(component.bbox[1] + component.bbox[3] for component in group)
+        window = labels[y0:y1, x0:x1]
+        labels_in_group = np.array([component.label for component in group])
+        group_mask = np.isin(window, labels_in_group).astype(np.uint8) * 255
         ys, xs = np.nonzero(group_mask)
-        left, top = int(xs.min()), int(ys.min())
-        right, bottom = int(xs.max()) + 1, int(ys.max()) + 1
+        left, top = x0 + int(xs.min()), y0 + int(ys.min())
+        right = x0 + int(xs.max()) + 1
+        bottom = y0 + int(ys.max()) + 1
         bbox = (left, top, right - left, bottom - top)
         crop_box, clipped = _crop_geometry(bbox, config.crop_padding)
         candidates.append(
             {
                 "bbox": bbox,
-                "polygon": _polygon(group_mask, float(config.polygon_epsilon)),
+                "polygon": tuple(
+                    (x + x0, y + y0)
+                    for x, y in _polygon(group_mask, float(config.polygon_epsilon))
+                ),
                 "area": sum(component.area for component in group),
                 "merged_from": len(group),
                 "crop_box": crop_box,

@@ -15,8 +15,8 @@ ROOT = Path(__file__).resolve().parents[3]
 
 def test_explicit_configured_method_has_precedence():
     config = load_translation_config(ROOT / "configs" / "translation.json")
-    assert config.segmentation_method == "classical_baseline"
-    assert _resolve_method(config) == "classical_baseline"
+    assert config.segmentation_method == "unetpp_efficientnetv2"
+    assert _resolve_method(config) == "unetpp_efficientnetv2"
 
 
 def test_missing_explicit_method_without_recorded_selection_refuses():

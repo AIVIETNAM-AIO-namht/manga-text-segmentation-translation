@@ -20,7 +20,7 @@ Dataset
   -> Japanese OCR
   -> Translation
   -> Text rendering
-  -> Summary and Streamlit demo
+  -> Summary and web demo
 ```
 
 ## Trạng thái hiện tại
@@ -31,7 +31,7 @@ Năm feature specification đã được tạo:
 2. `specs/002-deep-learning-segmentation-benchmark`
 3. `specs/003-text-removal-inpainting`
 4. `specs/004-ocr-translation-rendering`
-5. `specs/005-streamlit-e2e-reporting`
+5. `specs/005-web-e2e-reporting`
 
 Các specification mô tả yêu cầu và contract giữa các feature. Source code đang được triển khai sau giai đoạn plan và task breakdown.
 
@@ -100,14 +100,16 @@ Metadata tối thiểu nên bao gồm:
 - inference time;
 - status và error nếu có.
 
-## Streamlit demo
+## Web demo
 
-Demo end-to-end chạy local trên project chính và sử dụng các artifact đã được tạo từ Spec 2–4. MVP không chạy deep-learning segmentation model trực tiếp trong Streamlit.
+Demo end-to-end chạy local trên project chính và sử dụng các artifact đã được tạo từ Spec 2–4. MVP không chạy deep-learning segmentation model trực tiếp trong demo.
+
+Kiến trúc là client/server: một backend Python chạy local phục vụ JSON, artifact và một bundle frontend HTML/CSS/JS tĩnh. Bundle frontend được viết bên ngoài repository này (ví dụ export từ Stitch) và đặt vào static root cấu hình sẵn; thay UI chỉ cần thay thư mục, không sửa backend.
 
 Khi đã có source code:
 
 ```bash
-streamlit run app.py
+manga-text-seg serve
 ```
 
 Demo cho phép:
@@ -135,7 +137,7 @@ Upload ảnh manga mới là chức năng mở rộng vì ảnh mới cần ch�
 6. Implement data foundation và evaluation
 7. Nhận prediction masks từ Colab
 8. Implement inpainting, OCR, translation và rendering
-9. Chạy Streamlit demo
+9. Chạy web demo
 10. Tạo báo cáo định lượng và định tính
 ```
 
@@ -150,7 +152,7 @@ Không commit các file sau lên repository:
 - virtual environment;
 - output ảnh lớn và cache.
 
-API key translation/summary phải được cung cấp qua environment variable hoặc secret configuration bên ngoài repository.
+API key translation/summary phải được cung cấp qua environment variable bên ngoài repository. Backend chỉ bind loopback và chỉ phục vụ artifact nằm trong các root được allow-list; `data/no-need-to-read/` không bao giờ được phục vụ.
 
 ## Spec 003: Text removal and inpainting
 

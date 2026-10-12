@@ -228,7 +228,7 @@ def test_each_error_category_is_induced_by_pipeline(
             shutil.copyfile(bundle["prediction_mask"], prediction_page / f"{stem}.png")
         if bundle["mask_sidecar"].is_file():
             shutil.copyfile(bundle["mask_sidecar"], metadata_page / f"{stem}.json")
-        method_root = inpainting_root / "classical_baseline" / "telea" / manga
+        method_root = inpainting_root / bundle["method"] / "telea" / manga
         method_root.mkdir(parents=True, exist_ok=True)
         if bundle["inpainted"].is_file():
             shutil.copyfile(bundle["inpainted"], method_root / f"{stem}.png")

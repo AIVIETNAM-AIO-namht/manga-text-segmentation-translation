@@ -57,7 +57,7 @@ def test_valid_bundle_is_joined_by_image_id_and_mask_is_copied(
         == page_directory(
             tmp_path / "translation-output",
             "intake-test",
-            "classical_baseline",
+            "unetpp_efficientnetv2",
             result.image_id,
         )
         / "mask.png"
@@ -177,6 +177,25 @@ def test_identity_mismatch_is_rejected_and_upstream_mask_is_unchanged(
 
     assert report.counts["missing_prediction_mask"] == 1
     assert bundle["prediction_mask"].read_bytes() == before
+
+
+def test_hyphenated_spec2_method_spelling_is_accepted(
+    translation_bundle, tmp_path
+) -> None:
+    """Spec 2's adapters record ``unetpp-efficientnetv2``; Spec 4's identity is
+    ``unetpp_efficientnetv2``. Same method, two vocabularies — the boundary
+    normalizes rather than rejecting an admissible page."""
+    bundle = translation_bundle()
+    sidecar_path = bundle["mask_sidecar"]
+    sidecar = json.loads(sidecar_path.read_text(encoding="utf-8"))
+    assert sidecar["method"] == "unetpp_efficientnetv2"
+    sidecar["method"] = "unetpp-efficientnetv2"
+    sidecar_path.write_text(json.dumps(sidecar), encoding="utf-8")
+
+    result, report, _ = _assemble(tmp_path, bundle)
+
+    assert result.status == "accepted"
+    assert report.counts["missing_prediction_mask"] == 0
 
 
 def test_unconfigured_method_is_rejected_and_reported(

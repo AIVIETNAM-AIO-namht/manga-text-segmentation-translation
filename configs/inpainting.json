@@ -4,13 +4,13 @@
             "source_root": "outputs/segmentation/default/adaptive/"
         },
         "manga_text_segmentation": {
-            "source_root": "deliverables/<RUN_ID_METHOD_A>/manga_text_segmentation/"
+            "source_root": "deliverables/spec002/manga-text-segmentation/"
         },
         "comic_text_detector": {
-            "source_root": "deliverables/<RUN_ID_METHOD_B>/comic_text_detector/"
+            "source_root": "deliverables/spec002/comic-text-detector/"
         },
         "unetpp_efficientnetv2": {
-            "source_root": "deliverables/<RUN_ID_METHOD_C>/unetpp_efficientnetv2/"
+            "source_root": "deliverables/spec002/unetpp-efficientnetv2/"
         }
     },
     "mask_processing": {
