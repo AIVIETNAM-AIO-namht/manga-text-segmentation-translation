@@ -1,6 +1,6 @@
 """Configuration loader and schema validation.
 
-Two configuration documents, two loaders:
+Five configuration documents, five loaders:
 
 * :func:`load_config` reads the classical benchmark configuration
   (``configs/default.json``) — dataset paths, alignment, methods, metrics and
@@ -11,6 +11,14 @@ Two configuration documents, two loaders:
   answers a different question and is consumed by a different part of the
   pipeline; folding it into ``Config`` would give every classical caller fields
   it has no use for (research.md R11).
+* :func:`load_inpaint_config` reads the Spec 003 inpainting configuration
+  (``configs/inpainting.json``).
+* :func:`load_translation_config` reads the Spec 004 translation configuration
+  (``configs/translation.json``).
+* :func:`load_web_config` reads the Spec 005 local web-service configuration
+  (``configs/web.json``) — bind address, static root, allow-listed artifact
+  roots, run root, session names and summary provider (FR-086, FR-013c,
+  FR-013d).
 
 Relative paths are resolved against the repository root (the config file's
 parent parent).
@@ -866,4 +874,286 @@ def load_inpaint_config(
         selection_n=selection_n,
         output_root=output_root,
         manual_artifact_flags=manual_artifact_flags,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Spec 005 — local web service configuration (FR-086, FR-013c, FR-013d)
+# --------------------------------------------------------------------------- #
+
+# FR-013c: the service binds to loopback only, and so only loopback names are
+# accepted here. Membership beats ``ipaddress`` parsing: "localhost" is not an
+# IP literal, so an IP-based check would need both paths anyway.
+LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
+
+# The artifact roots the backend is allowed to serve from (FR-013d). Fixed set:
+# a config that omits one gets a clear error rather than a silently missing root.
+WEB_ARTIFACT_ROOT_NAMES = {
+    "segmentation",
+    "inpainting",
+    "translation",
+    "deliverables",
+    "raw_images",
+    "groundtruth",
+}
+
+MIN_WEB_PORT = 1024
+MAX_WEB_PORT = 65535
+
+# RFC 9110 token, used for the session header and cookie names (FR-022a).
+HTTP_TOKEN_PATTERN = re.compile(r"[!#$%&'*+\-.^_`|~0-9A-Za-z]+")
+
+
+@dataclass(frozen=True)
+class WebServerConfig:
+    """The loopback bind address (FR-013c)."""
+
+    host: str
+    port: int
+
+
+@dataclass(frozen=True)
+class WebSessionConfig:
+    """Where the backend-issued session id travels (FR-022a)."""
+
+    header_name: str
+    cookie_name: str
+
+
+@dataclass(frozen=True)
+class WebProviderConfig:
+    """Summary provider settings.
+
+    Deliberately flat and separate from :class:`TranslationProviderConfig`: the
+    retry and cache fields sit at the top level, and translation-only knobs
+    (``failure_policy``, ``deterministic``) are absent. Sharing one parser would
+    cost more than the duplication it removes.
+    """
+
+    name: str
+    model: str
+    version: str | None
+    base_url: str
+    secret_env_var: str | None
+    timeout_seconds: float
+    max_attempts: int
+    initial_backoff_seconds: float
+    max_backoff_seconds: float
+    retry_status_codes: tuple[int, ...]
+    cache_enabled: bool
+    cache_bypass: bool
+    cache_root: Path
+
+
+@dataclass(frozen=True)
+class WebConfig:
+    """Everything the local web service needs.
+
+    FR-086: no path, host, port or root is hardcoded anywhere in the web
+    service — every one of them is read from ``configs/web.json`` through this
+    loader.
+    """
+
+    server: WebServerConfig
+    static_root: Path
+    artifact_roots: dict[str, Path]
+    forbidden_roots: tuple[Path, ...]
+    run_root: Path
+    session: WebSessionConfig
+    provider: WebProviderConfig
+
+
+def _web_inside(path: Path, root: Path, where: str) -> Path:
+    """Require ``path`` to be a proper descendant of the repository root."""
+    if path == root or not path.is_relative_to(root):
+        raise ConfigError(
+            f"'{where}' must resolve to a directory inside the repository root, got '{path}'"
+        )
+    return path
+
+
+def _web_http_token(raw: Any, where: str) -> str:
+    """A header or cookie name must be a valid HTTP token, not free text."""
+    token = _translation_text(raw, where)
+    if not HTTP_TOKEN_PATTERN.fullmatch(token):
+        raise ConfigError(f"'{where}' must be a valid HTTP token, got '{token}'")
+    return token
+
+
+def _parse_web_provider(data: dict[str, Any], root: Path) -> WebProviderConfig:
+    """Validate the ``provider`` block of the web configuration."""
+    provider = _translation_mapping(
+        data,
+        "provider",
+        {
+            "name",
+            "model",
+            "version",
+            "base_url",
+            "secret_env_var",
+            "timeout_seconds",
+            "retry",
+            "cache",
+        },
+    )
+
+    base_url = _translation_text(provider["base_url"], "provider.base_url")
+    try:
+        parsed_base_url = urlsplit(base_url)
+        parsed_base_url.port
+    except ValueError as exc:
+        raise ConfigError("'provider.base_url' is malformed") from exc
+    if (
+        parsed_base_url.scheme not in {"http", "https"}
+        or not parsed_base_url.hostname
+        or parsed_base_url.username is not None
+        or parsed_base_url.password is not None
+        or parsed_base_url.query
+        or parsed_base_url.fragment
+    ):
+        raise ConfigError(
+            "'provider.base_url' must be an HTTP(S) base URL without credentials or query data"
+        )
+
+    secret_env = _translation_text(provider["secret_env_var"], "provider.secret_env_var", True)
+    if secret_env is not None and not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", secret_env):
+        raise ConfigError(
+            "'provider.secret_env_var' must be an environment variable name, not a secret value"
+        )
+
+    retry = _translation_mapping(
+        provider,
+        "retry",
+        {"max_attempts", "initial_backoff_seconds", "max_backoff_seconds", "retry_status_codes"},
+    )
+    attempts = _translation_int(retry["max_attempts"], "provider.retry.max_attempts", 1)
+    initial_backoff = _translation_number(
+        retry["initial_backoff_seconds"], "provider.retry.initial_backoff_seconds"
+    )
+    max_backoff = _translation_number(
+        retry["max_backoff_seconds"], "provider.retry.max_backoff_seconds"
+    )
+    if max_backoff < initial_backoff:
+        raise ConfigError(
+            "'provider.retry.max_backoff_seconds' must be >= initial_backoff_seconds"
+        )
+    statuses_raw = retry["retry_status_codes"]
+    if not isinstance(statuses_raw, list) or not statuses_raw:
+        raise ConfigError("'provider.retry.retry_status_codes' must be a non-empty list")
+    statuses = tuple(
+        _translation_int(code, "provider.retry.retry_status_codes", 100) for code in statuses_raw
+    )
+    if any(code > 599 for code in statuses) or len(set(statuses)) != len(statuses):
+        raise ConfigError(
+            "'provider.retry.retry_status_codes' must be unique HTTP status codes from 100 to 599"
+        )
+
+    cache = _translation_mapping(provider, "cache", {"enabled", "bypass", "root"})
+
+    return WebProviderConfig(
+        name=_translation_text(provider["name"], "provider.name"),
+        model=_translation_text(provider["model"], "provider.model"),
+        version=_translation_text(provider["version"], "provider.version", True),
+        base_url=base_url,
+        secret_env_var=secret_env,
+        timeout_seconds=_translation_number(
+            provider["timeout_seconds"], "provider.timeout_seconds", 0.000001
+        ),
+        max_attempts=attempts,
+        initial_backoff_seconds=initial_backoff,
+        max_backoff_seconds=max_backoff,
+        retry_status_codes=statuses,
+        cache_enabled=_translation_bool(cache["enabled"], "provider.cache.enabled"),
+        cache_bypass=_translation_bool(cache["bypass"], "provider.cache.bypass"),
+        cache_root=_resolve(Path(_translation_text(cache["root"], "provider.cache.root")), root),
+    )
+
+
+def load_web_config(path: str | Path, repo_root: Path | None = None) -> WebConfig:
+    """Load and validate ``configs/web.json`` (T001, FR-086, FR-013c, FR-013d).
+
+    Follows :func:`load_inpaint_config`: a missing file raises
+    ``FileNotFoundError`` rather than being folded into ``ConfigError``.
+    """
+    config_path = Path(path)
+    with open(config_path, "r", encoding="utf-8") as fh:
+        data = json.load(fh)
+
+    data = _translation_object(
+        data,
+        "web config",
+        {
+            "server",
+            "static_root",
+            "artifact_roots",
+            "forbidden_roots",
+            "run_root",
+            "session",
+            "provider",
+        },
+    )
+    root = (repo_root or config_path.resolve().parent.parent).resolve()
+
+    server_raw = _translation_mapping(data, "server", {"host", "port"})
+    host = _translation_text(server_raw["host"], "server.host")
+    if host not in LOOPBACK_HOSTS:
+        raise ConfigError(
+            f"'server.host' must be a loopback name {sorted(LOOPBACK_HOSTS)} (FR-013c), got '{host}'"
+        )
+    port = _translation_int(server_raw["port"], "server.port", MIN_WEB_PORT)
+    if port > MAX_WEB_PORT:
+        raise ConfigError(f"'server.port' must be <= {MAX_WEB_PORT}")
+
+    static_root = _web_inside(
+        _resolve(Path(_translation_text(data["static_root"], "static_root")), root),
+        root,
+        "static_root",
+    )
+
+    roots_raw = _require_mapping(data, "artifact_roots")
+    missing_roots = WEB_ARTIFACT_ROOT_NAMES - set(roots_raw)
+    if missing_roots:
+        raise ConfigError(
+            f"'artifact_roots' is missing required root(s): {sorted(missing_roots)}"
+        )
+    artifact_roots = {
+        name: _web_inside(
+            _resolve(Path(_translation_text(roots_raw[name], f"artifact_roots.{name}")), root),
+            root,
+            f"artifact_roots.{name}",
+        )
+        for name in sorted(WEB_ARTIFACT_ROOT_NAMES)
+    }
+
+    forbidden_raw = data["forbidden_roots"]
+    if not isinstance(forbidden_raw, list) or not forbidden_raw:
+        raise ConfigError("'forbidden_roots' must be a non-empty list")
+    forbidden_roots = tuple(
+        _resolve(Path(_translation_text(entry, "forbidden_roots")), root)
+        for entry in forbidden_raw
+    )
+
+    # FR-008: a forbidden root that sits inside an allow-listed root would be
+    # reachable through it, and the refusal would be a lie.
+    for forbidden in forbidden_roots:
+        for name, artifact_root in artifact_roots.items():
+            if forbidden.is_relative_to(artifact_root):
+                raise ConfigError(
+                    f"'artifact_roots.{name}' would serve the forbidden path "
+                    f"'{forbidden.name}' (FR-008)"
+                )
+
+    session_raw = _translation_mapping(data, "session", {"header_name", "cookie_name"})
+
+    return WebConfig(
+        server=WebServerConfig(host=host, port=port),
+        static_root=static_root,
+        artifact_roots=artifact_roots,
+        forbidden_roots=forbidden_roots,
+        run_root=_resolve(Path(_translation_text(data["run_root"], "run_root")), root),
+        session=WebSessionConfig(
+            header_name=_web_http_token(session_raw["header_name"], "session.header_name"),
+            cookie_name=_web_http_token(session_raw["cookie_name"], "session.cookie_name"),
+        ),
+        provider=_parse_web_provider(data, root),
     )

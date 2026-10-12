@@ -1,0 +1,42 @@
+{
+    "server": {
+        "host": "127.0.0.1",
+        "port": 8765
+    },
+    "static_root": "web-ui/",
+    "artifact_roots": {
+        "segmentation": "outputs/segmentation/",
+        "inpainting": "outputs/inpainting/",
+        "translation": "outputs/translation/",
+        "deliverables": "deliverables/",
+        "raw_images": "data/raw/Manga109s_released_2026_05_21/images/",
+        "groundtruth": "data/groundtruth/post-processed/"
+    },
+    "forbidden_roots": [
+        "data/no-need-to-read/"
+    ],
+    "run_root": "outputs/end-to-end/",
+    "session": {
+        "header_name": "X-Manga-Session",
+        "cookie_name": "manga_session"
+    },
+    "provider": {
+        "name": "vilao",
+        "model": "deepseek-v4.1-flash",
+        "version": null,
+        "base_url": "https://api.vilao.ai/v1",
+        "secret_env_var": "ANTHROPIC_AUTH_TOKEN",
+        "timeout_seconds": 30.0,
+        "retry": {
+            "max_attempts": 3,
+            "initial_backoff_seconds": 1.0,
+            "max_backoff_seconds": 30.0,
+            "retry_status_codes": [429, 500, 502, 503, 504]
+        },
+        "cache": {
+            "enabled": true,
+            "bypass": false,
+            "root": "cache/summary"
+        }
+    }
+}
