@@ -203,10 +203,13 @@ Nhưng nó **chặn demo**, không chặn backend:
 | T078 (SC-014 static-root swap) | **Có** — cần bundle để swap |
 | T081 (SC-001 two-minute timing) | **Có** — "first fully rendered page" |
 
-**Hai việc cần chốt:**
+**Ba việc cần chốt:**
 
 1. **Ai làm frontend.** Nó là làn thứ ba hoàn toàn tách biệt — chỉ cần bảng 17 endpoint trong `plan.md`, không cần code chạy. Đây là ứng viên tự nhiên cho người rảnh nhất trong Sprint 0, hoặc làm song song từ ngày 1. Nó **không** tiêu tốn task nào của A/B/C.
-2. **`stitch_manga_translation_pipeline_workbench/` đang untracked.** Quyết định: promote vào static root, hay xóa. `plan.md` chốt bundle **không** nằm trong repo này — phục vụ nguyên trạng từ static root cấu hình. Cần một quyết định dứt khoát trước T078.
+2. **`stitch_manga_translation_pipeline_workbench/` → promote, không xóa.** Quyết định đã chốt: bundle Stitch được **promote nguyên trạng** vào static root cấu hình ở T001. `plan.md` nói bundle phục vụ nguyên trạng từ static root cấu hình — static root đó **nằm trong repo này**, không phải bundle bị loại khỏi repo. Không có phương án xóa: thư mục chưa từng bị commit nào đụng tới, cả ba file (`DESIGN.md`, `code.html`, `screen.png`) còn nguyên.
+3. **Nối fetch layer vào bundle.** `tasks.md` chỉ định nghĩa backend; `tasks.md:426` ghi *"No task above writes frontend source"* — nghĩa là **chưa task nào viết JS nối 17 endpoint vào UI Stitch**. Đây là việc của làn frontend, không phải của A/B/C, và nó nằm **ngoài** `tasks.md`. Hiến pháp Nguyên tắc I cấm tự thêm task vào `tasks.md`, nên việc này được ghi ở đây thay vì ở đó. Nội dung: `fetch` 17 endpoint, bind vào các view Stitch đã có, giữ session id trong bundle (FR-022a), render 8 trạng thái FR-020, hiện envelope lỗi theo `category`.
+
+**Phạm vi demo**: demo chạy trên máy của người trình bày (`manga-text-seg serve` rồi mở browser tại loopback). Reproducibility-on-clone là mục tiêu phụ, không phải điều kiện nghiệm thu — nhưng promote vào repo vẫn đúng vì nó khiến T078 (SC-014 swap) và T081 (SC-001 timing) chạy được mà không cần copy tay.
 
 ---
 
