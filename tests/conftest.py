@@ -17,6 +17,7 @@ network (FR-051).
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 from pathlib import Path
 
@@ -594,3 +595,681 @@ def inpaint_config(tmp_path: Path):
         )
 
     return _build
+
+
+# --------------------------------------------------------------------------- #
+# Spec 5 fixtures — the web demo (T005)
+# --------------------------------------------------------------------------- #
+
+#: The one synthetic page every web fixture builds.  ``<manga>/<NNN>`` is the
+#: Spec 4 addressing rule and the same pattern the pipeline metadata schema
+#: enforces on ``image_id``.
+WEB_PAGE_MANGA = "WebManga"
+WEB_PAGE_STEM = "001"
+WEB_PAGE_ID = f"{WEB_PAGE_MANGA}/{WEB_PAGE_STEM}"
+#: Spec 3's inpainting run and Spec 4's translation run.  They must differ:
+#: ``assemble_bundle`` refuses a page whose run already holds a ``mask.png``.
+WEB_INPAINTING_RUN = "spec003-fixture"
+WEB_TRANSLATION_RUN = "spec004-fixture"
+#: The segmentation identity both configs select.
+WEB_METHOD = "unetpp_efficientnetv2"
+
+
+@pytest.fixture()
+def web_bundle(tmp_path: Path):
+    """Build a throwaway Spec 1-4 tree and the configs that address it (T005).
+
+    ``build(**flags)`` lays the whole chain out under ``tmp_path`` at the paths
+    the two config files name, loads both configs through their real loaders,
+    and returns a dict of every path it wrote.  Each flag omits exactly one
+    artifact, so a test can ask for the incomplete bundle its case needs
+    (SC-002) without editing files afterwards.
+
+    Unlike ``translation_bundle`` — which builds the shapes Spec 4's own tests
+    hand to ``assemble_bundle`` — this tree is *run-rooted*, because the web
+    config's ``artifact_roots`` are enumerated per run id (FR-014).  The two
+    fixtures cover different contracts and neither is a superset of the other.
+    """
+    import cv2
+
+    from manga_text_seg.config import load_translation_config, load_web_config
+    from manga_text_seg.imaging import save_mask
+    from manga_text_seg.manifest import Manifest, Pair, save_manifest
+    from manga_text_seg.translation import runs as translation_runs
+
+    def _region(
+        *,
+        ocr_failed: bool,
+        translation_failed: bool,
+        render_failed: bool,
+    ) -> dict:
+        """One schema-valid metadata region exercising whichever stage fails."""
+        region = {
+            "region_id": 1,
+            "bbox": [100, 100, 220, 160],
+            "polygon": [[100, 100], [220, 100], [220, 160], [100, 160]],
+            "orientation": "horizontal",
+            "reading_order_index": 1,
+            "merged_from": 1,
+            "crop_path": "crops/1.png",
+            "clipped": False,
+            "ocr_text": "こんにちは",
+            "ocr_confidence": 0.91,
+            "ocr_status": "ok",
+            "ocr_error": None,
+            "manually_edited": False,
+            "translation": "Xin chào",
+            "translation_status": "ok",
+            "translation_error": None,
+            "cache_status": "miss",
+            "failure_policy": "keep_ocr_text",
+            "render_status": "rendered",
+            "render_warning": None,
+            "font_size_used": 20,
+            "line_count": 1,
+            "display_box": [100, 100, 220, 160],
+            "direction_used": "horizontal",
+            "ocr_time_seconds": 0.1,
+            "translation_time_seconds": 0.2,
+            "render_time_seconds": 0.3,
+        }
+        if ocr_failed:
+            region.update(
+                ocr_text="", ocr_confidence=None, ocr_status="failed",
+                ocr_error="fixture: OCR engine failed",
+            )
+        if translation_failed:
+            region.update(
+                translation="", translation_status="failed",
+                translation_error="fixture: provider returned HTTP 401",
+            )
+        if render_failed:
+            region.update(
+                render_status="skipped", font_size_used=None,
+                direction_used=None, render_warning="fixture: no renderable text",
+            )
+        return region
+
+    def _build(
+        *,
+        # Spec 1-3 omissions.
+        missing_original: bool = False,
+        missing_prediction_mask: bool = False,
+        missing_mask_sidecar: bool = False,
+        missing_inpainted_image: bool = False,
+        missing_inpainted_sidecar: bool = False,
+        empty_mask: bool = False,
+        # Spec 4 omissions.
+        missing_ocr: bool = False,
+        missing_translations: bool = False,
+        missing_regions: bool = False,
+        missing_render_stage: bool = False,
+        missing_rendered: bool = False,
+        missing_page_metadata: bool = False,
+        # FR-020 page states.
+        no_regions: bool = False,
+        ocr_failed: bool = False,
+        translation_failed: bool = False,
+        render_failed: bool = False,
+        # Config-level switches.
+        missing_static_root: bool = False,
+    ) -> dict:
+        root = tmp_path
+        method = WEB_METHOD
+        run3, run4 = WEB_INPAINTING_RUN, WEB_TRANSLATION_RUN
+        language = "vi"
+
+        segmentation_root = root / "outputs" / "segmentation"
+        inpainting_root = root / "outputs" / "inpainting"
+        translation_root = root / "outputs" / "translation"
+        raw_root = root / "outputs" / "raw"
+        deliverables_root = root / "deliverables"
+        groundtruth_root = root / "groundtruth"
+        run_root = root / "outputs" / "end-to-end"
+        forbidden_root = root / "no-need-to-read"
+        static_root = root / "static"
+        alt_static_root = root / "static-alt"
+
+        manifest_path = segmentation_root / "default" / "manifest.json"
+        original_path = raw_root / WEB_PAGE_MANGA / f"{WEB_PAGE_STEM}.png"
+        prediction_path = segmentation_root / "masks" / WEB_PAGE_MANGA / f"{WEB_PAGE_STEM}.png"
+        mask_sidecar_path = (
+            segmentation_root / "metadata" / WEB_PAGE_MANGA / f"{WEB_PAGE_STEM}.json"
+        )
+        inpainted_dir = inpainting_root / run3 / method / "telea" / WEB_PAGE_MANGA
+        inpainted_path = inpainted_dir / f"{WEB_PAGE_STEM}.png"
+        inpainted_sidecar_path = inpainted_dir / f"{WEB_PAGE_STEM}.json"
+
+        height, width = ALIGNED_SHAPE
+
+        # ---- Spec 1: the raw page and the manifest -------------------------
+        if not missing_original:
+            original_path.parent.mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(
+                str(original_path),
+                np.full((height, width, 3), 210, dtype=np.uint8),
+            )
+
+        pair = Pair(
+            manga=WEB_PAGE_MANGA,
+            stem=WEB_PAGE_STEM,
+            mask_path=groundtruth_root / WEB_PAGE_MANGA / f"{WEB_PAGE_STEM}.png",
+            raw_path=original_path,
+            mask_encoding="magenta-black",
+        )
+        manifest = Manifest(
+            run_id="web-fixture", gt_root=groundtruth_root, raw_root=raw_root, pairs=[pair]
+        )
+        save_manifest(manifest, manifest_path)
+
+        # ---- Spec 2: the prediction mask and its sidecar -------------------
+        mask = np.zeros(ALIGNED_SHAPE, dtype=np.uint8)
+        if not empty_mask:
+            mask[100:160, 100:220] = 255
+        if not missing_prediction_mask:
+            save_mask(prediction_path, mask)
+
+        page_list_identity = "web-fixture-page-list-identity"
+        input_image_identity = "web-fixture-input-image-identity"
+        if not missing_mask_sidecar:
+            mask_sidecar_path.parent.mkdir(parents=True, exist_ok=True)
+            mask_sidecar_path.write_text(
+                json.dumps(
+                    {
+                        "image_id": WEB_PAGE_ID,
+                        "page_list_identity": page_list_identity,
+                        "input_image_identity": input_image_identity,
+                        "method": method,
+                        "output_size": list(ALIGNED_SIZE),
+                        "status": "success",
+                        "fold_attribution": None,
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+        # ---- Spec 3: the inpainted page and its 15-field sidecar -----------
+        if not missing_inpainted_image:
+            inpainted_path.parent.mkdir(parents=True, exist_ok=True)
+            cv2.imwrite(
+                str(inpainted_path),
+                np.full((height, width, 3), 230, dtype=np.uint8),
+            )
+        if not missing_inpainted_sidecar:
+            inpainted_sidecar_path.parent.mkdir(parents=True, exist_ok=True)
+            inpainted_sidecar_path.write_text(
+                json.dumps(
+                    {
+                        "image_id": WEB_PAGE_ID,
+                        "method": method,
+                        "algorithm": "telea",
+                        "model_repository": None,
+                        "experiment_id": "web-fixture",
+                        "input_image_path": str(original_path),
+                        "prediction_mask_path": str(prediction_path),
+                        "mask_size": list(ALIGNED_SIZE),
+                        "alignment": {
+                            "rule": "pass-through",
+                            "pre_size": list(ALIGNED_SIZE),
+                            "post_size": list(ALIGNED_SIZE),
+                        },
+                        "dilation": {"enabled": False},
+                        "inpaint_algorithm": "INPAINT_TELEA",
+                        "inpaint_radius": 3.0,
+                        "output_format": "png",
+                        "processing_time_seconds": 0.0,
+                        "status": "ok",
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+        # ---- Spec 4: the translation run's page directory ------------------
+        page_dir = translation_runs.page_directory(
+            translation_root, run4, method, WEB_PAGE_ID
+        )
+        page_dir.mkdir(parents=True, exist_ok=True)
+        regions = [] if no_regions else [
+            _region(
+                ocr_failed=ocr_failed,
+                translation_failed=translation_failed,
+                render_failed=render_failed,
+            )
+        ]
+        metadata = {
+            "image_id": WEB_PAGE_ID,
+            "run_id": run4,
+            "segmentation_method": method,
+            "inpainting_method": {
+                "run_id": run3,
+                "algorithm": "telea",
+                "inpaint_algorithm": "INPAINT_TELEA",
+                "inpaint_radius": 3.0,
+                "dilation": {"enabled": False},
+            },
+            "target_language": language,
+            "ocr_engine": {"name": "manga-ocr", "version": "0.1.16", "deterministic": False},
+            "translation_provider": {
+                "name": "fixture",
+                "model": "fixture-model",
+                "version": None,
+                "deterministic": False,
+                "secret_env_var": None,
+            },
+            "rendering_config": {
+                "font_path": "assets/fonts/DejaVuSans.ttf",
+                "font_size": 32,
+                "min_font_size": 12,
+                "text_direction": "horizontal",
+                "align_h": "center",
+                "align_v": "middle",
+                "wrap": True,
+                "line_spacing": 1.0,
+                "expansion_allowance": 0,
+            },
+            "regions": regions,
+            "stage_timings": {"ocr": 0.1, "translation": 0.2, "rendering": 0.3},
+            "status": "no_regions" if no_regions else "ok",
+        }
+        if not missing_page_metadata:
+            translation_runs.write_metadata(page_dir, metadata)
+
+        if not missing_ocr:
+            translation_runs.write_ocr_json(
+                page_dir,
+                {
+                    "engine": "manga-ocr",
+                    "engine_version": "0.1.16",
+                    "preprocessing": None,
+                    "region_set": [
+                        {"region_id": 1, "bbox": [100, 100, 220, 160], "polygon": None}
+                    ]
+                    if regions
+                    else [],
+                    "recognized_text": {"1": "こんにちは"} if regions else {},
+                    "results": [
+                        {
+                            "region_id": 1,
+                            "crop_path": "crops/1.png",
+                            "text": "" if ocr_failed else "こんにちは",
+                            "confidence": None if ocr_failed else 0.91,
+                            "engine": "manga-ocr",
+                            "engine_version": "0.1.16",
+                            "preprocessing": None,
+                            "processing_time_seconds": 0.1,
+                            "status": "failed" if ocr_failed else "ok",
+                            "error": "fixture: OCR engine failed" if ocr_failed else None,
+                            "manually_edited": False,
+                        }
+                    ]
+                    if regions
+                    else [],
+                    "manual_edits": [],
+                    "invalidation_reports": [],
+                    "stale_region_ids": [],
+                },
+            )
+
+        if not missing_translations:
+            translation_runs.write_translations_json(
+                page_dir,
+                [
+                    {
+                        "region_id": 1,
+                        "source_text": "こんにちは",
+                        "translated_text": "" if translation_failed else "Xin chào",
+                        "target_language": language,
+                        "provider": "fixture",
+                        "model": "fixture-model",
+                        "version": None,
+                        "cache_status": "miss",
+                        "processing_time_seconds": 0.2,
+                        "status": "failed" if translation_failed else "ok",
+                        "error": (
+                            "fixture: provider returned HTTP 401"
+                            if translation_failed
+                            else None
+                        ),
+                        "failure_policy": "keep_ocr_text",
+                    }
+                ]
+                if regions
+                else [],
+            )
+
+        if not missing_regions:
+            (page_dir / "regions.json").write_text(
+                json.dumps(
+                    {
+                        "status": "no_regions" if no_regions else "ok",
+                        "regions": [
+                            {
+                                "region_id": 1,
+                                "bbox": [100, 100, 220, 160],
+                                "polygon": [[100, 100], [220, 100], [220, 160], [100, 160]],
+                                "orientation": "horizontal",
+                                "reading_order_index": 1,
+                                "merged_from": 1,
+                                "crop_path": "crops/1.png",
+                                "crop_box": [100, 100, 220, 160],
+                                "clipped": False,
+                                "area": 7200,
+                            }
+                        ]
+                        if regions
+                        else [],
+                        "excluded_components": [],
+                    },
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+        if not missing_render_stage:
+            (page_dir / "render-stage.json").write_text(
+                json.dumps(
+                    [
+                        {
+                            "region_id": 1,
+                            "render_status": "skipped" if render_failed else "rendered",
+                            "render_warning": (
+                                "fixture: no renderable text" if render_failed else None
+                            ),
+                            "font_size_used": None if render_failed else 20,
+                            "line_count": 1,
+                            "display_box": [100, 100, 220, 160],
+                            "direction_used": None if render_failed else "horizontal",
+                        }
+                    ]
+                    if regions
+                    else [],
+                    indent=2,
+                )
+                + "\n",
+                encoding="utf-8",
+            )
+
+        crop_path = None
+        if regions:
+            # ponytail: write_crop copies bytes or a path, never an ndarray —
+            # encode in memory rather than round-tripping through a temp file.
+            encoded_ok, encoded = cv2.imencode(
+                ".png", np.full((60, 120, 3), 255, dtype=np.uint8)
+            )
+            assert encoded_ok
+            crop_path = translation_runs.write_crop(page_dir, 1, encoded.tobytes())
+
+        if not missing_rendered:
+            translation_runs.write_rendered_png(page_dir, inpainted_path)
+
+        if not missing_prediction_mask:
+            translation_runs.write_mask_copy(page_dir, prediction_path)
+        if not missing_original:
+            shutil.copyfile(original_path, page_dir / "original.png")
+        if not missing_inpainted_image:
+            shutil.copyfile(inpainted_path, page_dir / "inpainted.png")
+
+        # ---- The Spec 2 identity records the intake contract reads ---------
+        benchmark_root = root / "benchmark"
+        benchmark_root.mkdir(parents=True, exist_ok=True)
+        page_list_path = benchmark_root / "page-list.json"
+        page_list_path.write_text(
+            json.dumps(
+                {
+                    "generated_at_run": "web-fixture",
+                    "aligned_size": list(ALIGNED_SIZE),
+                    "alignment": "crop-topleft",
+                    "mask_convention": {
+                        "dtype": "uint8",
+                        "channels": 1,
+                        "values": [0, 255],
+                        "text": 255,
+                        "background": 0,
+                    },
+                    "image_bundle": {
+                        "root": "dist/images",
+                        "identity_record": "image-identity.json",
+                    },
+                    "pages": [
+                        {
+                            "manga": WEB_PAGE_MANGA,
+                            "stem": WEB_PAGE_STEM,
+                            "image_id": WEB_PAGE_ID,
+                            "image_ref": f"{WEB_PAGE_ID}.jpg",
+                            "input_image_identity": input_image_identity,
+                        }
+                    ],
+                    "page_list_identity": page_list_identity,
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        image_identity_path = benchmark_root / "image-identity.json"
+        image_identity_path.write_text(
+            json.dumps(
+                {WEB_PAGE_ID: {"sha256": input_image_identity, "size_bytes": 4096}},
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        # ---- The static bundle the backend serves verbatim (FR-013a) -------
+        if not missing_static_root:
+            static_root.mkdir(parents=True, exist_ok=True)
+            (static_root / "index.html").write_text(
+                "<!doctype html><title>fixture-bundle</title>\n", encoding="utf-8"
+            )
+        alt_static_root.mkdir(parents=True, exist_ok=True)
+        (alt_static_root / "index.html").write_text(
+            "<!doctype html><title>fixture-bundle-alt</title>\n", encoding="utf-8"
+        )
+
+        deliverables_root.mkdir(parents=True, exist_ok=True)
+        groundtruth_root.mkdir(parents=True, exist_ok=True)
+        run_root.mkdir(parents=True, exist_ok=True)
+        forbidden_root.mkdir(parents=True, exist_ok=True)
+        (forbidden_root / "secret.txt").write_text("must never be served\n", encoding="utf-8")
+
+        # ---- The two configs, written where their loaders resolve root -----
+        cache_root = root / "cache" / "translation"
+        configs_root = root / "configs"
+        configs_root.mkdir(parents=True, exist_ok=True)
+
+        translation_config_path = configs_root / "translation.json"
+        translation_config_path.write_text(
+            json.dumps(
+                {
+                    "manifest_path": str(manifest_path),
+                    "segmentation_method": method,
+                    "inpainting_source": {"run_id": run3, "algorithm": "telea"},
+                    "target_language": language,
+                    "region_extraction": {
+                        "min_area": 50,
+                        "max_area": 12000,
+                        "merge_distance": 8,
+                        "crop_padding": 0,
+                        "reading_order": "manga",
+                        "polygon_epsilon": 1.0,
+                    },
+                    "ocr": {
+                        "engine": "manga-ocr",
+                        "preprocessing": {
+                            "enabled": False,
+                            "grayscale": False,
+                            "upscale_factor": 1.0,
+                        },
+                    },
+                    "provider": {
+                        "name": "fixture",
+                        "model": "fixture-model",
+                        "version": None,
+                        "base_url": "https://fixture.invalid/v1",
+                        "secret_env_var": "MANGA_TEXT_SEG_FIXTURE_TOKEN",
+                        "timeout_seconds": 30.0,
+                        "retry": {
+                            "max_attempts": 3,
+                            "initial_backoff_seconds": 1.0,
+                            "max_backoff_seconds": 30.0,
+                            "retry_status_codes": [429, 500, 502, 503, 504],
+                        },
+                        "failure_policy": "keep_ocr_text",
+                        "deterministic": False,
+                        # ponytail: must resolve to output_roots.cache, or the
+                        # loader refuses the file outright.
+                        "cache": {"enabled": True, "bypass": False, "root": str(cache_root)},
+                    },
+                    "rendering": {
+                        "font_family": "DejaVu Sans",
+                        "font_path": "assets/fonts/DejaVuSans.ttf",
+                        "fallback_font_path": None,
+                        "font_size": 32,
+                        "min_font_size": 12,
+                        "color": [0, 0, 0, 255],
+                        "stroke_width": 0,
+                        "stroke_fill": [255, 255, 255, 255],
+                        "background": None,
+                        "wrap": True,
+                        "line_spacing": 1.0,
+                        "align_h": "center",
+                        "align_v": "middle",
+                        "text_direction": "horizontal",
+                        "expansion_allowance": 0,
+                    },
+                    "output_roots": {
+                        "translation": str(translation_root),
+                        "cache": str(cache_root),
+                    },
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        web_config_path = configs_root / "web.json"
+        web_config_path.write_text(
+            json.dumps(
+                {
+                    "server": {"host": "127.0.0.1", "port": 8765},
+                    "static_root": str(static_root),
+                    "artifact_roots": {
+                        "segmentation": str(segmentation_root),
+                        "inpainting": str(inpainting_root),
+                        "translation": str(translation_root),
+                        "deliverables": str(deliverables_root),
+                        "raw_images": str(raw_root),
+                        "groundtruth": str(groundtruth_root),
+                    },
+                    "forbidden_roots": [str(forbidden_root)],
+                    "run_root": str(run_root),
+                    "session": {
+                        "header_name": "X-Manga-Session",
+                        "cookie_name": "manga_session",
+                    },
+                    "provider": {
+                        "name": "fixture",
+                        "model": "fixture-model",
+                        "version": None,
+                        "base_url": "https://fixture.invalid/v1",
+                        "secret_env_var": "MANGA_TEXT_SEG_FIXTURE_TOKEN",
+                        "timeout_seconds": 30.0,
+                        "retry": {
+                            "max_attempts": 3,
+                            "initial_backoff_seconds": 1.0,
+                            "max_backoff_seconds": 30.0,
+                            "retry_status_codes": [429, 500, 502, 503, 504],
+                        },
+                        "cache": {"enabled": True, "bypass": False, "root": str(cache_root)},
+                    },
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        return {
+            "root": root,
+            "web_config": load_web_config(web_config_path, repo_root=root),
+            "translation_config": load_translation_config(
+                translation_config_path, repo_root=root
+            ),
+            "web_config_path": web_config_path,
+            "translation_config_path": translation_config_path,
+            "static_root": static_root,
+            "alt_static_root": alt_static_root,
+            "forbidden_root": forbidden_root,
+            "run_root": run_root,
+            "image_id": WEB_PAGE_ID,
+            "method": method,
+            "inpainting_run": run3,
+            "translation_run": run4,
+            "language": language,
+            "manifest": manifest_path,
+            "original": original_path,
+            "prediction_mask": prediction_path,
+            "mask_sidecar": mask_sidecar_path,
+            "inpainted": inpainted_path,
+            "inpainted_sidecar": inpainted_sidecar_path,
+            "page_list": page_list_path,
+            "image_identity": image_identity_path,
+            "page_dir": page_dir,
+            "metadata": page_dir / "metadata.json",
+            "ocr": page_dir / "ocr.json",
+            "translations": page_dir / "translations.json",
+            "regions": page_dir / "regions.json",
+            "render_stage": page_dir / "render-stage.json",
+            "rendered": page_dir / "rendered.png",
+            "mask_copy": page_dir / "mask.png",
+            "crop": crop_path,
+            "manifest_entry": manifest.to_dict()["pairs"][0],
+        }
+
+    return _build
+
+
+@pytest.fixture()
+def web_app(web_bundle):
+    """Build the Spec 005 app against the fixture bundle's own configuration.
+
+    The built bundle is attached at ``app.state.fixture`` so a test can reach
+    the paths it addresses without rebuilding the tree; ``web_bundle`` is
+    function-scoped, so requesting it separately would re-run the whole
+    builder against the same ``tmp_path``.
+
+    For a different static root (SC-014), rebuild from the same config rather
+    than rewriting the config file — ``WebConfig`` is a frozen dataclass:
+
+        create_app(dataclasses.replace(config, static_root=other))
+    """
+    from manga_text_seg.web.app import create_app
+
+    built = web_bundle()
+    app = create_app(built["web_config"])
+    app.state.fixture = built
+    return app
+
+
+@pytest.fixture()
+def web_client(web_app):
+    """A ``TestClient`` whose ``Host`` header is the configured loopback bind.
+
+    ``TestClient`` defaults to ``base_url="http://testserver"``, which the
+    FR-013c ``Host`` guard is required to refuse — every request would come
+    back a refusal that looks like a guard bug. Binding the base URL to the
+    configured host and port is what makes the client speak as a real
+    loopback caller.
+    """
+    from fastapi.testclient import TestClient
+
+    server = web_app.state.fixture["web_config"].server
+    with TestClient(web_app, base_url=f"http://{server.host}:{server.port}") as client:
+        yield client

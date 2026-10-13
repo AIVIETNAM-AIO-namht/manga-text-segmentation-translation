@@ -15,9 +15,7 @@ Subcommands (FR-036: all paths come from a single JSON config file):
   boards    — select samples and render comparison boards (Spec 003)
   qualitative — create the human qualitative review scaffold (Spec 003)
   ablate    — run a dilation or inpaint-radius ablation sweep (Spec 003)
-
-Spec 005's ``serve`` subcommand is not here yet: it lands with that spec's web
-package, task by task under ``specs/005-web-e2e-reporting/tasks.md`` (T015).
+  serve     — start the local web application (Spec 005, FR-013)
 """
 
 from __future__ import annotations
@@ -28,7 +26,7 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
-from .config import ConfigError, load_config, load_translation_config
+from .config import ConfigError, load_config, load_translation_config, load_web_config
 from .manifest import build_manifest, load_manifest, save_manifest
 
 #: The exported artefacts and the run store sit at fixed places in the repo
@@ -46,6 +44,9 @@ AVAILABILITY_RECORD = "availability.json"
 
 #: ``inpaint`` reads Spec 003's own config, not Spec 1's ``config.json``.
 DEFAULT_INPAINT_CONFIG = "configs/inpainting.json"
+
+#: ``serve`` reads Spec 005's own config, for the same reason.
+DEFAULT_WEB_CONFIG = "configs/web.json"
 
 
 def _common_parser(sub: argparse.ArgumentParser) -> None:
@@ -947,6 +948,25 @@ def cmd_qualitative(config_path: str, run_id: str) -> int:
     return 0
 
 
+def cmd_serve(config_path: str) -> int:
+    """Start the local web application (FR-013, FR-078).
+
+    Every other command in this file is a batch operation that returns a code;
+    this one hands the process to the server and only returns if the server
+    stops. The bind comes from the config (FR-086), and a config naming a
+    non-loopback host is refused by the loader before anything starts (FR-013c).
+    """
+    import uvicorn
+
+    from .web.app import create_app
+
+    config = load_web_config(config_path)
+    print(f"Serving the web demo on http://{config.server.host}:{config.server.port}")
+    print(f"Static root: {config.static_root}")
+    uvicorn.run(create_app(config), host=config.server.host, port=config.server.port)
+    return 0
+
+
 def main() -> None:
     """Main entry point for the CLI."""
     parser = argparse.ArgumentParser(
@@ -1118,6 +1138,12 @@ def main() -> None:
         "--values", required=True, help="Comma-separated sweep values, e.g. 3,5,7"
     )
 
+    serve_cmd = subparsers.add_parser(
+        "serve", help="Start the local web application (Spec 005)"
+    )
+    _common_parser(serve_cmd)
+    serve_cmd.set_defaults(config=DEFAULT_WEB_CONFIG)
+
     args = parser.parse_args()
 
     if not args.command:
@@ -1176,6 +1202,8 @@ def main() -> None:
             code = cmd_qualitative(args.config, args.run)
         elif args.command == "ablate":
             code = cmd_ablate(args.config, args.run, args.vary, args.values)
+        elif args.command == "serve":
+            code = cmd_serve(args.config)
         else:  # pragma: no cover - argparse prevents unknown commands
             parser.error(f"Unknown command: {args.command}")
             return
