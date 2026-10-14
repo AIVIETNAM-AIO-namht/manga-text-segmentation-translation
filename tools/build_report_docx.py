@@ -36,10 +36,10 @@ TITLE_EN = (
 )
 
 MEMBERS = [
-    ("Nguyễn Quang Huy", "TV1 — inpainting (Spec 003 làn A)"),
+    ("Nguyễn Quang Huy", "TV4 — inpainting (Spec 003 làn A)"),
     ("Hà Duy Anh", "TV2 — đánh giá định tính (Spec 003 làn B)"),
     ("", "TV3 — OCR / dịch / render (Spec 004)"),
-    ("", "TV4 — baseline + benchmark + web (Spec 001/002/005)"),
+    ("", "TV1 — baseline + benchmark + web (Spec 001/002/005)"),
 ]
 
 ABBREV = [
@@ -59,29 +59,29 @@ ABBREV = [
 ]
 
 FIGURES = [
-    ("1", "Sơ đồ khối pipeline tổng thể", "TV4", "README.md"),
-    ("2", "Sơ đồ nhánh baseline cổ điển", "TV4", "src/manga_text_seg/"),
-    ("3", "Kiến trúc U-Net + ResNet34", "TV1", "notebooks/deliverables/manga-text-segmentation/"),
+    ("1", "Sơ đồ khối pipeline tổng thể", "TV1", "README.md"),
+    ("2", "Sơ đồ nhánh baseline cổ điển", "TV1", "src/manga_text_seg/"),
+    ("3", "Kiến trúc U-Net + ResNet34", "TV4", "notebooks/deliverables/manga-text-segmentation/"),
     ("4", "Kiến trúc comic-text-detector", "TV2", "notebooks/deliverables/comic-text-detector/"),
     ("5", "Kiến trúc UNet++ + EfficientNetV2", "TV3", "notebooks/deliverables/unetpp-efficientnetv2/"),
-    ("6", "Biểu đồ so sánh IoU/F1 theo phương pháp", "TV4", "deliverables/spec002/charts/accuracy-by-method.png"),
+    ("6", "Biểu đồ so sánh IoU/F1 theo phương pháp", "TV1", "deliverables/spec002/charts/accuracy-by-method.png"),
     ("7", "Mask dự đoán của các phương pháp trên cùng một trang", "TV2", "outputs/inpainting/spec003-main/boards/*/highest_iou_f1/"),
     ("8", "Board so sánh xóa và inpainting", "TV2", "outputs/inpainting/spec003-main/boards/"),
     ("9", "Ca thành công điển hình", "TV2", "board highest_iou_f1"),
     ("10", "Ca thất bại điển hình (EvaLady/006)", "TV3", "board lowest_iou_f1"),
     ("11", "Kết quả OCR → dịch → render", "TV3", "outputs/translation/spec004-vilao/"),
-    ("12", "Giao diện web demo", "TV4", "web-ui/index.html"),
+    ("12", "Giao diện web demo", "TV1", "web-ui/index.html"),
 ]
 
 TABLES = [
-    ("1", "Tiêu chí đánh giá và mục đích đo lường", "TV4", "đề cương, Bảng 2"),
+    ("1", "Tiêu chí đánh giá và mục đích đo lường", "TV1", "đề cương, Bảng 2"),
     ("2", "Tham số và cấu hình từng phương pháp", "CHUNG", "deliverables/spec002/run.json"),
-    ("3", "Kết quả benchmark định lượng (IoU/P/R/F1/thời gian)", "TV4", "deliverables/spec002/comparison.csv"),
-    ("4", "Thời gian inpainting theo phương pháp × thuật toán", "TV1", "outputs/inpainting/spec003-main/performance.json"),
+    ("3", "Kết quả benchmark định lượng (IoU/P/R/F1/thời gian)", "TV1", "deliverables/spec002/comparison.csv"),
+    ("4", "Thời gian inpainting theo phương pháp × thuật toán", "TV4", "outputs/inpainting/spec003-main/performance.json"),
     ("5", "Năm trang được chọn cho pipeline demo", "TV2", "outputs/inpainting/spec003-main/selection.json"),
     ("6", "Cấu hình OCR / dịch / render", "TV3", "outputs/translation/*/run.json"),
     ("7", "So sánh trực quan inpainting theo năm tiêu chí", "TV2", "đề cương, Bảng 3"),
-    ("8", "Mức độ đóng góp của các thành viên", "TV4", "trang bìa"),
+    ("8", "Mức độ đóng góp của các thành viên", "TV1", "trang bìa"),
 ]
 
 BENCHMARK = [
@@ -299,24 +299,24 @@ def build(force=False):
     para(doc, "Chuyển thể từ đề cương đã nộp, viết lại theo văn phong báo cáo "
               "(không copy nguyên văn) và cập nhật theo thực tế đã làm.",
          size=SMALL, italic=True, color=GRAY)
-    section(doc, "1.1. Phát biểu bài toán", 2, "[TV4]", "đề cương mục 1")
-    section(doc, "1.2. Mục đích, yêu cầu cần thực hiện", 2, "[TV4]", "đề cương mục 2",
+    section(doc, "1.1. Phát biểu bài toán", 2, "[TV1]", "đề cương mục 1")
+    section(doc, "1.2. Mục đích, yêu cầu cần thực hiện", 2, "[TV1]", "đề cương mục 2",
             note="Năm mục tiêu, mỗi mục ghi rõ đã đạt hay chưa. Mục tiêu 2 chỉ ĐẠT MỘT PHẦN — "
                  "Manga-Text-Segmentation không chấm được (mục 7.1 của outline).")
-    section(doc, "1.3. Phạm vi và đối tượng", 2, "[TV4]",
+    section(doc, "1.3. Phạm vi và đối tượng", 2, "[TV1]",
             "đề cương mục 3; README.md; ONBOARDING.md")
 
     # ---- Phần 2
     heading(doc, "PHẦN 2. CƠ SỞ LÝ THUYẾT", 1, page_break=True)
-    section(doc, "2.1. Công cụ, môi trường, ngôn ngữ", 2, "[TV4]",
+    section(doc, "2.1. Công cụ, môi trường, ngôn ngữ", 2, "[TV1]",
             "README.md; deliverables/spec002/run.json; "
             "outputs/inpainting/spec003-main/performance.json")
-    section(doc, "2.2. Kỹ thuật xử lý ảnh cổ điển dùng trong baseline", 2, "[TV4]",
+    section(doc, "2.2. Kỹ thuật xử lý ảnh cổ điển dùng trong baseline", 2, "[TV1]",
             "src/manga_text_seg/ (Spec 001); outputs/segmentation/default/metrics.csv; "
             "Gonzalez & Woods",
             note="Mỗi kỹ thuật khoảng nửa trang: xám hoá, Otsu, adaptive threshold, MSER, "
                  "phát hiện biên, hình thái học + connected components.")
-    section(doc, "2.3. Manga-Text-Segmentation — U-Net + ResNet34", 2, "[TV1]",
+    section(doc, "2.3. Manga-Text-Segmentation — U-Net + ResNet34", 2, "[TV4]",
             "notebooks/deliverables/manga-text-segmentation/README.md; benchmark/availability.json",
             note="Kết mục bằng câu chuyển ý: phương pháp đã vào quy trình nhưng KHÔNG chấm được điểm "
                  "(mục 7.1, 4.4.1).")
@@ -325,7 +325,7 @@ def build(force=False):
     section(doc, "2.5. UNet++ EfficientNetV2 (ContemporaryCat)", 2, "[TV3]",
             "notebooks/deliverables/unetpp-efficientnetv2/; đề cương mục 4",
             note="Nói trước cảnh báo nhiễm bẩn dữ liệu ở đây; phân tích ở 4.4.3 và mục 7.2.")
-    section(doc, "2.6. Inpainting: TELEA và Navier–Stokes", 2, "[TV1]",
+    section(doc, "2.6. Inpainting: TELEA và Navier–Stokes", 2, "[TV4]",
             "src/manga_text_seg/inpaint.py; configs/inpainting.json")
     section(doc, "2.7. OCR, dịch máy, render chữ", 2, "[TV3]",
             "src/manga_text_seg/translation/; outputs/translation/*/run.json; đề cương mục 5.5",
@@ -333,21 +333,21 @@ def build(force=False):
 
     # ---- Phần 3
     heading(doc, "PHẦN 3. PHÂN TÍCH, THIẾT KẾ GIẢI PHÁP", 1, page_break=True)
-    section(doc, "3.1. Sơ đồ khối tổng thể", 2, "[TV4]",
+    section(doc, "3.1. Sơ đồ khối tổng thể", 2, "[TV1]",
             "README.md (khối pipeline); specs/002-*/spec.md",
             note="Chuỗi: Dataset → Text segmentation → Text removal & inpainting → Japanese OCR "
                  "→ Translation → Text rendering → Summary & web demo. Trên sơ đồ phải phân biệt "
                  "phạm vi benchmark chính với phần demo minh hoạ.")
-    section(doc, "3.2. Thiết kế baseline cổ điển", 2, "[TV4]",
+    section(doc, "3.2. Thiết kế baseline cổ điển", 2, "[TV1]",
             "src/manga_text_seg/ (Spec 001); outputs/segmentation/default/metrics.csv",
             note="Sáu biến thể: otsu, adaptive, mser, edges, morphology, components.")
-    section(doc, "3.3. Hợp đồng mask và quy trình kết nạp kết quả", 2, "[TV4]",
+    section(doc, "3.3. Hợp đồng mask và quy trình kết nạp kết quả", 2, "[TV1]",
             "ONBOARDING.md §2, §7, §8; benchmark/availability.json; deliverables/spec002/run.json",
             note="Phần thiết kế quan trọng nhất về kỹ thuật — viết kỹ. Mask một kênh uint8, "
                  "kích thước (1170, 1654), giá trị {0, 255}. page_list_identity trích nguyên văn: "
                  "b52aa60ded6c5c2cca115dce4335295d6795b0601b9cfa8324c675fb4cab88ef. "
                  "Prediction mask là mask DUY NHẤT được mở.")
-    section(doc, "3.4. Thiết kế quy trình xóa và phục hồi", 2, "[TV1]",
+    section(doc, "3.4. Thiết kế quy trình xóa và phục hồi", 2, "[TV4]",
             "configs/inpainting.json; outputs/inpainting/spec003-main/run.json")
     section(doc, "3.5. Thiết kế lựa chọn trang và board so sánh", 2, "[TV2]",
             "src/manga_text_seg/boards.py, selection.py, qualitative.py; "
@@ -358,7 +358,7 @@ def build(force=False):
     section(doc, "3.6. Thiết kế trích vùng, OCR, dịch, render", 2, "[TV3]",
             "src/manga_text_seg/translation/; outputs/translation/spec004-live/run.json",
             note="Ghi provider/model nhưng TUYỆT ĐỐI không ghi giá trị khoá API (mục 7.5).")
-    section(doc, "3.7. Thiết kế web demo", 2, "[TV4]",
+    section(doc, "3.7. Thiết kế web demo", 2, "[TV1]",
             "src/manga_text_seg/web/demo.py, schemas.py, security.py; web-ui/index.html; "
             "stitch_manga_translation_pipeline_workbench/",
             note="Nói thẳng: bản demo chạy 3 route, KHÔNG phải 17 endpoint trong "
@@ -366,7 +366,7 @@ def build(force=False):
 
     # ---- Phần 4
     heading(doc, "PHẦN 4. THỰC NGHIỆM, ĐÁNH GIÁ, PHÂN TÍCH KẾT QUẢ", 1, page_break=True)
-    section(doc, "4.1. Dữ liệu và giao thức đánh giá", 2, "[TV4]",
+    section(doc, "4.1. Dữ liệu và giao thức đánh giá", 2, "[TV1]",
             "benchmark/; deliverables/spec002/run.json; đề cương mục 5.1, 5.3",
             note="390 ảnh / 45 manga. KHÔNG dùng Pixel Accuracy. KHÔNG dùng PSNR/SSIM cho inpainting. "
                  "Thư mục data/no-need-to-read/ nằm ngoài phạm vi, không được đọc (mục 7.6).")
@@ -374,7 +374,7 @@ def build(force=False):
             "deliverables/spec002/run.json; outputs/inpainting/spec003-main/performance.json",
             note="Mỗi người ghi cấu hình phần mình chạy. Ghi cả sha256 của checkpoint đã dùng.")
 
-    section(doc, "4.3. Kết quả benchmark định lượng", 2, "[TV4] (bảng), [TV1][TV2][TV3] (đọc số của mình)",
+    section(doc, "4.3. Kết quả benchmark định lượng", 2, "[TV1] (bảng), [TV4][TV2][TV3] (đọc số của mình)",
             "deliverables/spec002/comparison.csv, comparison.json, run.json",
             note="Phải ghi kèm ngay dưới bảng: độ lệch chuẩn từng chỉ số (IoU của UNet++ có std 0.1219 "
                  "— phân tán rất lớn); cột công bố nhiễm bẩn; dòng Manga-Text-Segmentation ghi rõ lý do "
@@ -386,7 +386,7 @@ def build(force=False):
          size=SMALL, italic=True, color=GRAY)
 
     section(doc, "4.4. Phân tích từng phương pháp", 2)
-    section(doc, "4.4.1. Manga-Text-Segmentation", 3, "[TV1]",
+    section(doc, "4.4.1. Manga-Text-Segmentation", 3, "[TV4]",
             "benchmark/availability.json; REISSUE.md; notebooks/deliverables/manga-text-segmentation/",
             note="Thiếu 5 checkpoint fold (~344 MB mỗi file), không xác nhận được revision đã ghim "
                  "de8f148c78978d70ad0e0ae3242566da6d70f3a5 → chọn REISSUE Path 1, trạng thái "
@@ -404,13 +404,13 @@ def build(force=False):
                  "nên mọi điểm số là điểm trên tập huấn luyện. Câu này phải nằm ngay cạnh bảng kết quả, "
                  "không để ở phụ lục (mục 7.2). Ca thất bại điển hình: EvaLady/006, IoU = 0, "
                  "310.000 pixel dương tính giả.")
-    section(doc, "4.4.4. Baseline cổ điển", 3, "[TV4]",
+    section(doc, "4.4.4. Baseline cổ điển", 3, "[TV1]",
             "deliverables/spec002/comparison.csv; outputs/segmentation/default/metrics.csv",
             note="Adaptive Threshold là biến thể tốt nhất và được chọn làm đại diện. "
                  "Nêu bất đối xứng phần cứng khi so thời gian: baseline chạy CPU, model DL chạy GPU.")
 
     section(doc, "4.5. Kết quả xóa và phục hồi", 2)
-    section(doc, "4.5.1. Thời gian inpainting", 3, "[TV1]",
+    section(doc, "4.5.1. Thời gian inpainting", 3, "[TV4]",
             "outputs/inpainting/spec003-main/performance.json",
             note="390 mẫu mỗi tổ hợp, 0 lỗi, CPU Intel64, Python 3.12.13. Phân tích bắt buộc: NS trên "
                  "mask của UNet++ chậm ~14.8 lần so với TELEA trên cùng mask — quan hệ thuật toán × "
@@ -435,7 +435,7 @@ def build(force=False):
                  "Ghi nhận các vùng/ảnh lỗi, không che.")
     table(doc, ("Run", "Phương pháp phân đoạn", "Đích", "Provider / Model", "Số trang"), RUNS)
 
-    section(doc, "4.7. Giao diện phần mềm và hướng dẫn thực thi", 2, "[TV4]",
+    section(doc, "4.7. Giao diện phần mềm và hướng dẫn thực thi", 2, "[TV1]",
             "README.md; src/manga_text_seg/cli.py; web-ui/index.html",
             note="Ảnh chụp giao diện web demo + hướng dẫn chạy từng bước. Ghi rõ demo chạy trên máy "
                  "người trình bày, mở browser tại loopback.")
@@ -444,9 +444,9 @@ def build(force=False):
 
     # ---- Phần 5
     heading(doc, "PHẦN 5. KẾT LUẬN", 1, page_break=True)
-    section(doc, "5.1. Đánh giá những kết quả đã thực hiện được", 2, "[CHUNG], TV4 chốt",
+    section(doc, "5.1. Đánh giá những kết quả đã thực hiện được", 2, "[CHUNG], TV1 chốt",
             "—",
-            note="Mỗi người 2–3 gạch đầu dòng cho phần mình, TV4 gộp và viết đoạn mở/đoạn kết. "
+            note="Mỗi người 2–3 gạch đầu dòng cho phần mình, TV1 gộp và viết đoạn mở/đoạn kết. "
                  "Kết luận kỹ thuật trung thực cần có: adaptive vượt comic-text-detector về IoU/F1 "
                  "nhưng thua UNet++ — mà UNet++ nhiễm bẩn hoàn toàn nên không thể dùng để khẳng định "
                  "ưu thế của học sâu.")
