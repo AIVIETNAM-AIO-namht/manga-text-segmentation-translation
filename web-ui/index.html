@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Manga Text Segmentation and Translation Workbench</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      /* TASK A: Strict Corner-Radius Tokens - ZERO literal px elsewhere */
+      --radius-sm: 4px;   /* tags, pills, badges, mini-buttons, metric pills */
+      --radius-md: 8px;   /* DEFAULT: containers, viewports, cards, frames, inputs, standard buttons, tables, errors */
+      --radius-lg: 16px;  /* large overlay shells */
+      --radius-full: 9999px; /* ONLY toggle switches and status dot nodes */
+
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+
+      /* Region overlay accent */
+      --color-accent: #8b5cf6;
+
+      /* Palette Tokens */
+      --bg: #f8f9ff;
+      --surface: #ffffff;
+      --surface-subtle: #eff4ff;
+      --surface-border: #c6c6cd;
+      --border-dark: #76777d;
+      --text: #0b1c30;
+      --text-muted: #45464d;
+      --text-subtle: #76777d;
+      --primary: #000000;
+      --accent: #0051d5;
+      --accent-light: #eff4ff;
+      /* Status tokens - RESERVED. Never reuse a categorical method color here. */
+      --danger: #ba1a1a;
+      --danger-bg: #ffdad6;
+      --success: #047857;
+      --success-bg: #ecfdf5;
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { box-shadow: none !important; }
+    .popover-shadow { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important; }
+
+    a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    #app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .brand-wrap { display: flex; align-items: center; gap: 10px; }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chip-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .research-team-card {
+      border: 1px solid var(--surface-border);
+      background: var(--surface-subtle);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      text-align: right;
+    }
+    .research-team-title {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .team-line { font-size: 11px; line-height: 1.25; color: var(--text); white-space: nowrap; }
+
+    .nav-tabs-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--surface-border);
+      background: var(--surface);
+    }
+    .nav-tabs { display: flex; gap: 16px; height: 38px; }
+    .nav-tab-btn {
+      display: flex;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      height: 100%;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      padding: 0 4px;
+      cursor: pointer;
+    }
+    .nav-tab-btn:hover { color: var(--text); }
+    .nav-tab-btn[aria-current="page"] {
+      color: var(--accent);
+      font-weight: 600;
+      border-bottom-color: var(--accent);
+    }
+    .telemetry-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .t-badge {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+    }
+
+    .context-bar {
+      background: var(--surface-subtle);
+      padding: 6px 16px;
+      border-bottom: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .context-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .context-group { display: flex; align-items: center; gap: 6px; }
+    .context-group label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .select-native {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    main#app-main { padding: 12px 16px; min-height: 80vh; }
+    .screen-view { display: none; }
+    .screen-view.is-active { display: block; }
+
+    .state-switcher-container {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+    .state-switcher-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .state-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .state-guide-box {
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: var(--surface-subtle);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--accent);
+      font-size: 12px;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr) 360px;
+      gap: 14px;
+      align-items: start;
+    }
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--surface-subtle);
+    }
+    .panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--surface-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-badge.valid { background: var(--success-bg); color: var(--success); border-color: #86efac; }
+    .status-badge.warning { background: var(--warning-bg); color: var(--warning); border-color: #fde68a; }
+    .status-badge.error { background: var(--danger-bg); color: var(--danger); border-color: #fca5a5; }
+
+    .status-badge svg { vertical-align: -1px; margin-right: 3px; }
+
+    .form-group { margin-bottom: 10px; }
+    .form-label { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
+    .field-select, .field-input, .field-textarea {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 8px;
+      color: var(--text);
+    }
+    .field-textarea { font-family: var(--font-sans); resize: vertical; min-height: 60px; }
+
+    .btn-action-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-action-primary:hover { background: #222222; }
+
+    .toolbar-pipeline {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-tool {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-tool.active { background: var(--text); color: #ffffff; border-color: var(--text); }
+
+    .pipeline-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .pipeline-cards-grid.flow-vertical { grid-template-columns: 1fr; }
+    .chain-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .chain-card-header {
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chain-card-title { font-size: 11px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .chain-index {
+      width: 16px;
+      height: 16px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+    }
+    .chain-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--surface-border);
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+    .chain-viewport {
+      background: #0f172a;
+      height: 380px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .chain-viewport.light-bg { background: #f8fafc; }
+    .chain-viewport svg { width: 100%; height: 100%; max-height: 380px; display: block; }
+    /* Added with the fetch layer: the viewport is a fixed 380px flex box with
+       overflow hidden, so an injected <img> needs its own cap, and the region
+       overlay is stacked on top of it rather than beside it. */
+    .chain-viewport { position: relative; }
+    .chain-viewport img { max-width: 100%; max-height: 380px; object-fit: contain; display: block; }
+    .chain-viewport .overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; max-height: 380px; }
+
+    .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 8px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+    }
+    .download-btn:hover { background: #e2e8f0; }
+
+    .region-card-row {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .region-card-row:hover, .region-card-row.is-highlighted {
+      background: #ede9fe;
+      border-color: var(--color-accent);
+    }
+    .region-card-row.warning-state {
+      background: #ffdad6;
+      border-color: var(--danger);
+    }
+    .region-meta-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .region-id-tag {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--color-accent);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .region-tag-index {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-full);
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .region-coord-str { font-family: var(--font-mono); font-size: 10px; color: var(--text-subtle); margin-bottom: 6px; }
+    .ocr-translation-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+    .text-box-ja, .text-box-target {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .text-sub-label { font-size: 9px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; margin-bottom: 2px; }
+    .text-val { font-size: 11px; line-height: 1.3; color: var(--text); }
+
+    .quant-table { width: 100%; border-collapse: collapse; font-size: 11px; border-radius: var(--radius-md); overflow: hidden; }
+    .quant-table th, .quant-table td { border: 1px solid var(--surface-border); padding: 5px 8px; text-align: left; }
+    .quant-table th { background: var(--surface-subtle); font-family: var(--font-mono); font-weight: 600; color: var(--text-muted); }
+    .quant-table td { font-family: var(--font-mono); }
+    .quant-table tr.active-row { background: rgba(139, 92, 246, 0.08); font-weight: 600; }
+
+    /* Screen 2: Reports */
+    .summary-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      margin-bottom: 14px;
+    }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .page-chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .page-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--surface-border);
+      background: var(--surface-subtle);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .page-chip.missing { background: var(--danger-bg); border-color: #fca5a5; color: var(--danger); font-weight: 700; }
+
+    .report-section {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .failure-grid-7 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .failure-box {
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      background: var(--surface-subtle);
+    }
+    .failure-box.has-border-danger { border-color: #fca5a5; background: #ffdad6; }
+
+    /* Screen 3: Run Status */
+    .timeline-steps {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 20px 0;
+      padding: 0 10px;
+    }
+    .timeline-steps::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: var(--surface-border);
+      z-index: 1;
+    }
+    .timeline-step {
+      position: relative;
+      z-index: 2;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .step-circle.done { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+    .step-circle.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    footer#app-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<!-- FIXED TOP NAVIGATION BAR -->
+<header id="app-header">
+  <div class="top-bar">
+    <div class="brand-wrap">
+      <svg fill="none" height="22" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="22">
+        <rect height="18" rx="2" width="18" x="3" y="3"></rect>
+        <path d="M7 7h10"></path>
+        <path d="M7 12h7"></path>
+        <path d="M7 17h4"></path>
+      </svg>
+      <div class="brand-title">
+        <span>Manga Text Segmentation and Translation</span>
+        <span class="chip-code">manga-text-seg</span>
+      </div>
+    </div>
+    <!-- EXACT RESEARCH TEAM CARD -->
+    <div class="research-team-card">
+      <div class="research-team-title">PROJECT RESEARCH TEAM</div>
+      <div class="team-line">Huỳnh Thuyên Nam - 24110109</div>
+      <div class="team-line">Phạm Nguyễn Vương Quốc - 24110126</div>
+      <div class="team-line">Hà Duy Anh - 24110072</div>
+      <div class="team-line">Nguyễn Quang Huy - 24110095</div>
+    </div>
+  </div>
+
+  <!-- NAV TABS FOR THE THREE SCREENS -->
+  <div class="nav-tabs-bar">
+    <nav aria-label="Main Navigation" class="nav-tabs">
+      <button class="nav-tab-btn" aria-current="page" id="tab-workbench" onclick="switchTab('workbench')">Workbench</button>
+      <button class="nav-tab-btn" id="tab-reports" onclick="switchTab('reports')">Reports</button>
+      <button class="nav-tab-btn" id="tab-run-status" onclick="switchTab('run-status')">Run Status</button>
+    </nav>
+    <div class="telemetry-badges">
+      <span class="t-badge">RUN: —</span>
+      <span class="t-badge">PAGE: —</span>
+      <span class="t-badge">REGIONS: —</span>
+    </div>
+  </div>
+
+  <!-- PERSISTENT CONTEXT BAR -->
+  <div class="context-bar">
+    <div class="context-label">
+      <svg fill="none" height="12" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="12">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      CONTEXT:
+    </div>
+    <div class="context-group">
+      <label for="ctx-manga">Manga:</label>
+      <select class="select-native" id="ctx-manga">
+        <option selected="" value="">loading…</option>
+      </select>
+    </div>
+    <div class="context-group">
+      <label for="ctx-page">Page:</label>
+      <select class="select-native" id="ctx-page">
+        <option selected="" value="">loading…</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN VIEWPORT CONTAINER (CONTAINING ALL 3 SCREENS) -->
+<main id="app-main">
+
+  <!-- ========================================== -->
+  <!-- SCREEN 1: WORKBENCH (DEFAULT)              -->
+  <!-- ========================================== -->
+  <div class="screen-view is-active" id="view-workbench">
+    <section aria-label="Page state" class="state-switcher-container">
+      <div class="state-switcher-header">
+        <span class="state-title">Page State (FR-020)</span>
+        <span class="status-badge valid" id="state-machine-badge">
+          <span id="state-machine-badge-text">No page loaded</span>
+        </span>
+      </div>
+      <div class="state-guide-box" id="stateGuideNotice">
+        <span id="state-guide-text">Load a page to see its recorded state.</span>
+        <span style="font-family: var(--font-mono); font-size: 11px;" id="state-guide-status"></span>
+      </div>
+    </section>
+
+    <!-- 3-Column Layout: Left Rail 280px / Center Fluid / Right Panel 360px -->
+    <div class="workbench-grid">
+      <!-- LEFT RAIL -->
+      <aside class="left-rail">
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Pipeline Controls</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-corpus">Corpus Volume</label>
+            <select class="field-select" id="sel-corpus">
+              <option selected="" value="">loading…</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-page">Target Page Index</label>
+            <select class="field-select" id="sel-page">
+              <option selected="" value="">loading…</option>
+            </select>
+          </div>
+          <button class="btn-action-primary" id="btn-recompute">
+            <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            Re-evaluate Chain
+          </button>
+        </div>
+      </aside>
+
+      <!-- CENTER FLUID COLUMN: Artifact Pipeline Chain -->
+      <section aria-label="Artifact Pipeline Chain" class="center-chain">
+        <div class="toolbar-pipeline">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.04em;">Artifact Pipeline Chain</span>
+            <span class="status-badge" id="chain-artifact-count">Artifacts</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn-tool active" id="btn-grid-matrix" onclick="setLayout('matrix')">2×3 Matrix</button>
+            <button class="btn-tool" id="btn-grid-flow" onclick="setLayout('flow')">Vertical Flow</button>
+          </div>
+        </div>
+
+        <div class="pipeline-cards-grid" id="pipelineGrid">
+          <!-- The viewports are empty on purpose: mountStage() replaces each one's
+               contents with the real artifact on every load, so any markup drawn
+               here would be wiped before it was ever seen. The badges are filled
+               from the recorded provenance by renderChain(); they start hidden so
+               a page with no recorded value shows no claim. -->
+          <!-- 1. Original Manga Page -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">1</span><span>Original Manga Page</span></div>
+              <span class="chain-badge" id="chain-badge-1" hidden></span>
+            </div>
+            <div class="chain-viewport light-bg" id="chain-original"></div>
+          </article>
+
+          <!-- 2. Prediction Mask -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">2</span><span>Prediction Mask</span></div>
+              <span class="chain-badge" id="chain-badge-2" hidden></span>
+            </div>
+            <div class="chain-viewport" id="chain-prediction-mask"></div>
+          </article>
+
+          <!-- 3. Processed Mask -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">3</span><span>Processed Mask (Dilation)</span></div>
+              <span class="chain-badge" id="chain-badge-3" hidden></span>
+            </div>
+            <div class="chain-viewport" id="chain-processed-mask"></div>
+          </article>
+
+          <!-- 4. Inpainted Canvas -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">4</span><span>Inpainted Canvas</span></div>
+              <span class="chain-badge" id="chain-badge-4" hidden></span>
+            </div>
+            <div class="chain-viewport light-bg" id="chain-inpainted"></div>
+          </article>
+
+          <!-- 5. Interactive Region Overlay (stroke #8b5cf6, fill rgba(139,92,246,0.12)) -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title">
+                <span class="chain-index" style="background:var(--color-accent);">5</span>
+                <span>Region Overlay</span>
+              </div>
+              <span class="chain-badge" id="chain-badge-5" hidden></span>
+            </div>
+            <div class="chain-viewport light-bg" id="chain-region-overlay"></div>
+          </article>
+
+          <!-- 6. Rendered Translated Page -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">6</span><span>Rendered Translated Page</span></div>
+              <span class="chain-badge" id="chain-badge-6" hidden></span>
+            </div>
+            <div class="chain-viewport light-bg" id="chain-rendered"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- RIGHT RAIL -->
+      <aside class="right-rail">
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Artifact Exports</span>
+            <span class="status-badge" id="exports-badge">4 Files Ready</span>
+          </div>
+          <div class="download-grid" id="exports-grid">
+            <a class="download-btn" href="#" id="dl-rendered">Rendered Page</a>
+            <a class="download-btn" href="#" id="dl-meta">Metadata JSON</a>
+            <a class="download-btn" href="#" id="dl-ocr">OCR Transcripts</a>
+            <a class="download-btn" href="#" id="dl-trans">Translation JSON</a>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label" id="regions-panel-label">Region Inspector (6 Detected)</span>
+            <span class="status-badge valid" id="regions-panel-badge"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>0 Overlaps</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-subtle); margin-bottom:8px; display:flex; justify-content:space-between;">
+            <span>READING ORDER (R → L, TOP → BTM)</span>
+            <span>QUALITY AUDIT</span>
+          </div>
+          <div id="region-list"></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: REPORTS                          -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-reports">
+    <div class="report-section">
+      <div class="panel-header">
+        <span class="panel-label">1. Quantitative Benchmark Report (Spec 2 Recorded Comparison)</span>
+        <span class="status-badge valid" id="reports-bench-badge"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg><span id="reports-bench-count">Loading…</span></span>
+      </div>
+
+      <table class="quant-table" style="margin-bottom:14px;">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>IoU (mean)</th>
+            <th>IoU (std)</th>
+            <th>F1 (mean)</th>
+            <th>F1 (std)</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="bench-reports-body">
+          <tr><td colspan="6">Loading recorded benchmarks…</td></tr>
+        </tbody>
+      </table>
+
+      <!-- Chart is drawn from comparison.json; the axis rescales to the data,
+           which tops out near 0.14 rather than the 1.0 a fixed axis assumes. -->
+      <div style="background:var(--surface-subtle); border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:12px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:11px; font-weight:700; text-transform:uppercase;">Method Metric Comparison (Single-Axis Mean Scores)</span>
+          <span id="reports-chart-note" style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted);"></span>
+        </div>
+        <div id="bench-reports-chart"></div>
+      </div>
+
+      <div style="background:var(--surface-subtle); border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:10px; font-family:var(--font-mono); font-size:11px;">
+        <div><strong>EXECUTION PROVENANCE &amp; ENVIRONMENT:</strong></div>
+        <div style="margin-top:4px; color:var(--text-muted);" id="reports-prov-body">
+          Loading recorded provenance…
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualitative section: the seven dimensions are counted from the loaded
+         page's own region statuses, not from a corpus-wide report the demo
+         backend does not produce. -->
+    <div class="report-section">
+      <div class="panel-header">
+        <span class="panel-label">2. Qualitative Breakdown (Seven Separated Failure Dimensions)</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--text-muted);" id="qual-scope">Loading…</span>
+        </div>
+      </div>
+
+      <div class="failure-grid-7" id="qual-grid"></div>
+    </div>
+  </div>
+  <!-- SCREEN 3: RUN STATUS                       -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-run-status">
+    <div class="panel-card">
+      <div class="panel-header">
+        <div>
+          <span class="panel-label">Current Execution Run ID:</span>
+          <span style="font-family:var(--font-mono); font-weight:700; margin-left:6px;" id="run-status-run-id">run_seg_20250214_01</span>
+        </div>
+        <span class="status-badge valid" id="run-status-badge"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg><span id="run-status-badge-text">READ-ONLY EXECUTION STATE</span></span>
+      </div>
+
+      <!-- Pipeline Stages Timeline -->
+      <div style="margin:20px 0;">
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Pipeline Stage Progression</div>
+        <div class="timeline-steps" id="run-timeline"></div>
+      </div>
+
+      <!-- Provenance -->
+      <div style="margin-top:20px;">
+        <div class="panel-label" style="margin-bottom:8px;">Provenance &amp; Attribution</div>
+        <table class="quant-table">
+          <thead>
+            <tr><th>Field</th><th>Value</th><th>Source</th></tr>
+          </thead>
+          <tbody id="run-provenance-body">
+            <tr><td colspan="3">Loading recorded provenance…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- PERSISTENT FOOTER — filled from the loaded bundle's provenance, so it names
+     the methods this run actually used rather than a fixed pipeline. -->
+<footer id="app-footer">
+  <div>Manga Text Segmentation &amp; Translation Workbench</div>
+  <div id="footer-pipeline">Loading recorded pipeline…</div>
+</footer>
+
+<!-- VANILLA JS TAB & STATE CONTROLLER -->
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.screen-view').forEach(function(el) {
+      el.classList.remove('is-active');
+    });
+    document.querySelectorAll('.nav-tab-btn').forEach(function(btn) {
+      btn.removeAttribute('aria-current');
+    });
+    
+    const activeView = document.getElementById('view-' + tabId);
+    const activeBtn = document.getElementById('tab-' + tabId);
+    if (activeView) activeView.classList.add('is-active');
+    if (activeBtn) activeBtn.setAttribute('aria-current', 'page');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setLayout(mode) {
+    const grid = document.getElementById('pipelineGrid');
+    const btnMatrix = document.getElementById('btn-grid-matrix');
+    const btnFlow = document.getElementById('btn-grid-flow');
+    if (mode === 'flow') {
+      grid.classList.add('flow-vertical');
+      btnFlow.classList.add('active');
+      btnMatrix.classList.remove('active');
+    } else {
+      grid.classList.remove('flow-vertical');
+      btnMatrix.classList.add('active');
+      btnFlow.classList.remove('active');
+    }
+    /* The overlay is positioned from the image's rendered box, which this
+       relayout just changed; without a refit it keeps the old geometry. */
+    refitStages();
+  }
+
+  /* Paints the page's recorded state into the badge and the guide box.
+     The badge colour is the only signal for severity, so it is set from the
+     state's own class rather than left at the export's hardcoded `valid`. */
+  function paintState(text, status, tone) {
+    const badge = document.getElementById('state-machine-badge');
+    if (badge) badge.className = 'status-badge ' + tone;
+    const badgeText = document.getElementById('state-machine-badge-text');
+    if (badgeText) badgeText.textContent = text;
+    const guideText = document.getElementById('state-guide-text');
+    if (guideText) guideText.textContent = text;
+    const guideStatus = document.getElementById('state-guide-status');
+    if (guideStatus) guideStatus.textContent = status;
+  }
+
+  /* ======================================================================
+     Demo data layer.
+
+     Reads the three routes in src/manga_text_seg/web/demo.py:
+       GET /api/demo/catalog                 mangas, pages, Spec 2 benchmarks
+       GET /api/demo/page?image_id=<m>/<p>   one page bundle
+       GET /api/artifact?ref=<root>/<tail>   the bytes
+
+     Everything below replaces the placeholder values the Stitch export shipped
+     with the recorded values from the runs under outputs/.
+     ====================================================================== */
+
+  const DEMO = { catalog: null, bundle: null };
+  const STAGES = {};        /* id -> {img, svg} so overlays can be re-fitted */
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+
+  /* FR-023's strict region styling, kept from the export's own overlay. */
+  const REGION_FILL = 'rgba(139, 92, 246, 0.12)';
+  const REGION_FILL_SELECTED = 'rgba(139, 92, 246, 0.25)';
+  const REGION_STROKE = '#8b5cf6';
+
+  function $(id) { return document.getElementById(id); }
+
+  function esc(v) {
+    return String(v === null || v === undefined ? '' : v)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function artURL(ref) { return '/api/artifact?ref=' + encodeURIComponent(ref); }
+
+  /* The reference grammar is <root name>/<tail>, so a sibling of an exposed
+     artifact is the same reference with the last segment swapped. The demo
+     route resolves any tail under an allow-listed root, which is how
+     metadata.json, ocr.json and translations.json reach the export buttons
+     without a sixth field on PageArtifacts. */
+  function siblingRef(ref, filename) {
+    return ref ? ref.replace(/[^/]+$/, filename) : null;
+  }
+
+  async function getJSON(url) {
+    const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+    const body = await res.json();
+    if (!res.ok) {
+      throw new Error((body && body.error && body.error.message) || ('HTTP ' + res.status));
+    }
+    return body;
+  }
+
+  function empty(container, message) {
+    if (!container) return;
+    container.innerHTML = '<div style="padding:10px; font-size:11px; color:var(--text-subtle);">'
+      + esc(message) + '</div>';
+  }
+
+  function num(v, digits) {
+    return (v === null || v === undefined) ? '—' : Number(v).toFixed(digits);
+  }
+
+  /* ---------------------------------------------------------------- state */
+
+  /* FR-020's eight page states onto the eight chips the export draws. Three of
+     the states have no chip of their own, so each lands on the chip whose label
+     describes it best: a missing artifact is a partial run, a region failure is
+     the stage that failed. */
+  /* FR-020's eight states, as the badge and the guide box read them.
+     The descriptions are the export's chip copy, kept because they name the
+     condition better than the token does; the three chip labels that described
+     states no data can reach (Empty, Loading, Run Ambiguity) went with the
+     chips. The tone picks one of the badge classes that already exist. */
+  const STATE_LABEL = {
+    valid: ['Nominal complete', 'valid'],
+    missing_prediction_mask: ['Partial run — prediction mask absent', 'warning'],
+    missing_inpainting_output: ['Partial run — inpainting output absent', 'warning'],
+    missing_ocr_translation_output: ['Partial run — OCR/translation output absent', 'warning'],
+    no_text_regions: ['Degenerate OCR — no text regions detected', 'error'],
+    region_ocr_failure: ['Degenerate OCR — a region failed OCR', 'error'],
+    region_translation_failure: ['NMT failure — a region failed translation', 'error'],
+    rendering_failure: ['Render failure — a region failed to render', 'error']
+  };
+
+  function applyState(bundle) {
+    const status = bundle.status;
+    /* The status token the bundle recorded, not an HTTP code: these states are
+       the page's condition, and the request that carried them succeeded
+       regardless, so a "200" here would read as "the page is fine". */
+    const entry = STATE_LABEL[status] || [status, 'error'];
+    paintState(entry[0], status, entry[1]);
+  }
+
+  /* ------------------------------------------------------------- overlays */
+
+  /* The region geometry is in the page's own pixel space (1654x1170 for the
+     recorded pages), which is nothing like the export's mock viewBox. The
+     overlay therefore takes its viewBox from the loaded image, and is sized to
+     the image's rendered box rather than the viewport's, because the image is
+     object-fit: contain inside a fixed-height flex box. */
+  function mountStage(host, ref, regions, id) {
+    if (!host) return;
+    host.innerHTML = '';
+    if (!ref) {
+      empty(host, 'This artifact was not recorded for the page.');
+      return;
+    }
+
+    const img = document.createElement('img');
+    img.alt = (id || 'artifact') + ' (recorded)';
+    img.src = artURL(ref);
+    host.appendChild(img);
+
+    let svg = null;
+    if (regions && regions.length) {
+      svg = document.createElementNS(SVG_NS, 'svg');
+      svg.setAttribute('class', 'overlay-svg');
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+      svg.setAttribute('role', 'img');
+      svg.setAttribute('aria-label', regions.length + ' detected text regions');
+
+      let shapes = '';
+      regions.forEach(function (r) {
+        const shape = regionShape(r);
+        if (!shape) return;
+        shapes += '<g class="interactive-region" data-region-id="' + r.region_id
+          + '" style="cursor:pointer;">' + shape + '</g>';
+      });
+      svg.innerHTML = shapes;
+      host.appendChild(svg);
+
+      svg.addEventListener('click', function (ev) {
+        const g = ev.target.closest('g[data-region-id]');
+        if (g) openRegion(Number(g.getAttribute('data-region-id')));
+      });
+      svg.addEventListener('mouseover', function (ev) {
+        const g = ev.target.closest('g[data-region-id]');
+        if (g) highlightRegion(Number(g.getAttribute('data-region-id')));
+      });
+    }
+
+    const stage = { img: img, svg: svg };
+    if (id) STAGES[id] = stage;
+
+    const fit = function () { fitStage(stage); };
+    if (img.complete) fit(); else img.addEventListener('load', fit);
+  }
+
+  function fitStage(stage) {
+    if (!stage.svg || !stage.img) return;
+    const w = stage.img.naturalWidth || 1;
+    const h = stage.img.naturalHeight || 1;
+    stage.svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    const s = stage.svg.style;
+    s.inset = 'auto';
+    s.left = stage.img.offsetLeft + 'px';
+    s.top = stage.img.offsetTop + 'px';
+    s.width = stage.img.offsetWidth + 'px';
+    s.height = stage.img.offsetHeight + 'px';
+  }
+
+  function refitStages() {
+    Object.keys(STAGES).forEach(function (k) { fitStage(STAGES[k]); });
+  }
+
+  /* A polygon of three or more points is the real shape. Anything less is
+     degenerate — one recorded region has a two-point polygon and a one-pixel
+     box — so the box is drawn instead, with a floor of one pixel so the region
+     stays visible. vector-effect keeps the stroke at 2 CSS pixels however far
+     the 1654-pixel page is scaled down. */
+  function regionShape(r) {
+    const poly = r.polygon || [];
+    const common = ' fill="' + REGION_FILL + '" stroke="' + REGION_STROKE
+      + '" stroke-width="2" vector-effect="non-scaling-stroke"';
+    if (poly.length >= 3) {
+      return '<polygon points="' + poly.map(function (p) {
+        return p[0] + ',' + p[1];
+      }).join(' ') + '"' + common + '></polygon>';
+    }
+    const b = r.bbox || [];
+    if (b.length < 4) return '';
+    return '<rect x="' + b[0] + '" y="' + b[1] + '" width="' + Math.max(b[2], 1)
+      + '" height="' + Math.max(b[3], 1) + '"' + common + '></rect>';
+  }
+
+  /* ------------------------------------------------------------- selection */
+
+  let SELECTED = null;
+
+  function highlightRegion(regionId) {
+    document.querySelectorAll('#region-list .region-card-row').forEach(function (row) {
+      row.classList.toggle('is-highlighted', Number(row.dataset.regionId) === regionId);
+    });
+  }
+
+  function paintSelectedShape(regionId) {
+    Object.keys(STAGES).forEach(function (k) {
+      const svg = STAGES[k].svg;
+      if (!svg) return;
+      svg.querySelectorAll('g[data-region-id]').forEach(function (g) {
+        const on = Number(g.getAttribute('data-region-id')) === regionId;
+        g.querySelectorAll('polygon, rect').forEach(function (shape) {
+          shape.setAttribute('fill', on ? REGION_FILL_SELECTED : REGION_FILL);
+          shape.setAttribute('stroke-width', on ? '3' : '2');
+        });
+      });
+    });
+  }
+
+  /* Clicking a region anywhere selects it everywhere: the row in the
+     inspector and the shape in the overlay. */
+  function openRegion(regionId) {
+    SELECTED = regionId;
+    paintSelectedShape(regionId);
+    highlightRegion(regionId);
+  }
+
+  /* -------------------------------------------------------- region inspector */
+
+  function badge(text, tone) {
+    if (!text) return '';
+    if (tone === 'ok') {
+      return '<span class="status-badge valid"><svg width="8" height="8" viewBox="0 0 24 24" '
+        + 'fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12">'
+        + '</polyline></svg>' + esc(text) + '</span>';
+    }
+    const color = tone === 'bad' ? 'var(--danger)' : 'var(--warning)';
+    return '<span class="status-badge" style="color:' + color + ';">' + esc(text) + '</span>';
+  }
+
+  function regionRow(region, index, page) {
+    const b = region.bbox || [];
+    const coords = b.length >= 4
+      ? 'x: ' + b[0] + ' • y: ' + b[1] + ' • w: ' + b[2] + ' • h: ' + b[3]
+      : 'no bounding box recorded';
+    const label = 'reg_' + page + '_' + String(index + 1).padStart(2, '0');
+
+    let flags = '';
+    if (region.ocr_status && region.ocr_status !== 'ok') {
+      flags += badge('OCR ' + region.ocr_status, 'bad');
+    } else if (region.ocr_text) {
+      flags += badge('OCR ✓', 'ok');
+    }
+    if (region.translation_status && region.translation_status !== 'ok') {
+      flags += badge('NMT ' + region.translation_status, 'bad');
+    } else if (region.translation) {
+      flags += badge('Trans ✓', 'ok');
+    }
+    if (region.render_status === 'overflow_warning') {
+      flags += badge('Overflow', 'warn');
+    } else if (region.render_status === 'failed') {
+      flags += badge('Render failed', 'bad');
+    }
+
+    const warn = region.render_status === 'failed' || region.render_status === 'overflow_warning'
+      || (region.ocr_status && region.ocr_status !== 'ok')
+      || (region.translation_status && region.translation_status !== 'ok');
+
+    return '<div class="region-card-row' + (warn ? ' warning-state' : '')
+      + '" data-region-id="' + region.region_id + '">'
+      + '<div class="region-meta-head">'
+      + '<div class="region-id-tag"><span class="region-tag-index">' + (index + 1)
+      + '</span><span>' + esc(label) + '</span></div>'
+      + '<div style="display:flex; gap:4px;">' + flags + '</div>'
+      + '</div>'
+      + '<div class="region-coord-str">' + esc(coords) + '</div>'
+      + '<div class="ocr-translation-pair">'
+      + '<div class="text-box-ja"><div class="text-sub-label">JA (OCR Source)</div>'
+      + '<div class="text-val">' + esc(region.ocr_text || '—') + '</div></div>'
+      + '<div class="text-box-target"><div class="text-sub-label" style="color:var(--accent);">'
+      + 'VI (Target)</div><div class="text-val" style="font-weight:600;">'
+      + esc(region.translation || '—') + '</div></div>'
+      + '</div></div>';
+  }
+
+  function renderRegionList(bundle) {
+    const list = $('region-list');
+    if (!list) return;
+    const regions = bundle.regions || [];
+    if (!regions.length) {
+      empty(list, 'No text regions were detected on this page.');
+      return;
+    }
+    const page = String(bundle.image_id).split('/').pop();
+    list.innerHTML = regions.map(function (r, i) {
+      return regionRow(r, i, page);
+    }).join('');
+  }
+
+  /* ---------------------------------------------------------- provenance */
+
+  function provenanceRows(p) {
+    return [
+      ['Image', p.image_id, 'request'],
+      ['Segmentation method', p.segmentation_method, 'metadata.json'],
+      ['Spec 2 run', p.spec2_run_id, 'metadata.json'],
+      ['Inpainting run', p.inpainting_run_id, 'metadata.json'],
+      ['Inpainting algorithm', p.inpainting_algorithm, 'metadata.json'],
+      ['Translation run', p.translation_run_id, 'metadata.json'],
+      ['Target language', p.target_language, 'metadata.json'],
+      ['OCR engine', join(p.ocr_engine, p.ocr_version), 'metadata.json'],
+      ['Translation provider', join(p.translation_provider, p.translation_model), 'metadata.json'],
+      ['Rendering font', p.rendering_font, 'metadata.json'],
+      ['Summary provider', join(p.summary_provider, p.summary_model, p.summary_version),
+        'metadata.json']
+    ];
+  }
+
+  function join() {
+    return Array.prototype.slice.call(arguments).filter(Boolean).join(' ') || null;
+  }
+
+  function missing() {
+    return '<span style="color:var(--text-subtle); font-style:italic;">not recorded</span>';
+  }
+
+  function renderProvenance(bundle) {
+    const p = bundle.provenance;
+    const rows = provenanceRows(p);
+
+    const table = $('run-provenance-body');
+    if (table) {
+      table.innerHTML = rows.map(function (row) {
+        const value = (row[1] === null || row[1] === undefined)
+          ? '<span style="color:var(--text-subtle); font-style:italic;">not recorded</span>'
+          : esc(row[1]);
+        return '<tr><td>' + esc(row[0]) + '</td><td>' + value + '</td><td>'
+          + esc(row[1] === null || row[1] === undefined ? 'absent' : row[2]) + '</td></tr>';
+      }).join('');
+    }
+
+    const reports = $('reports-prov-body');
+    if (reports) {
+      reports.innerHTML = 'RUN ' + esc(p.translation_run_id || '—')
+        + ' • SEGMENTATION ' + esc(p.segmentation_method || '—')
+        + ' • INPAINTING ' + esc(p.inpainting_run_id || '—')
+        + ' (' + esc(p.inpainting_algorithm || '—') + ')'
+        + ' • OCR ' + esc(join(p.ocr_engine, p.ocr_version) || '—')
+        + ' • NMT ' + esc(join(p.translation_provider, p.translation_model) || '—')
+        + ' • LANG ' + esc(p.target_language || '—')
+        + ' • FONT ' + esc(p.rendering_font || '—')
+        + ' • SPEC2 RUN ' + esc(p.spec2_run_id || 'not recorded');
+    }
+
+    const footer = $('footer-pipeline');
+    if (footer) {
+      footer.textContent = 'Segmentation ' + (p.segmentation_method || '—')
+        + ' → Inpainting ' + (p.inpainting_algorithm || '—')
+        + ' → OCR ' + (p.ocr_engine || '—')
+        + ' → Translation ' + (join(p.translation_provider, p.translation_model) || '—');
+    }
+
+    const runId = $('run-status-run-id');
+    if (runId) runId.textContent = p.translation_run_id || '—';
+  }
+
+  /* -------------------------------------------------------------- stages */
+
+  function renderChain(bundle) {
+    const a = bundle.artifacts;
+    mountStage($('chain-original'), a.original, null, 'chain-original');
+    mountStage($('chain-prediction-mask'), a.prediction_mask, null, 'chain-prediction-mask');
+    mountStage($('chain-processed-mask'), a.processed_mask, null, 'chain-processed-mask');
+    mountStage($('chain-inpainted'), a.inpainted, null, 'chain-inpainted');
+    mountStage($('chain-region-overlay'), a.rendered, bundle.regions, 'chain-region-overlay');
+    mountStage($('chain-rendered'), a.rendered, null, 'chain-rendered');
+
+    /* Each badge shows one recorded value and stays hidden when the run
+       recorded none, so no card ever claims a number the bundle did not carry.
+       The processed-mask card has no badge source: the dilation kernel lives
+       in the run metadata, which the bundle does not expose. */
+    const p = bundle.provenance;
+    chainBadge(1, bundle.image_id);
+    chainBadge(2, p.segmentation_method);
+    chainBadge(4, p.inpainting_algorithm);
+    chainBadge(5, (bundle.regions || []).length + ' Regions');
+    chainBadge(6, p.target_language);
+
+    /* The five recorded stages, counted rather than asserted: a partial run
+       shows how far it got instead of a fixed stage count. */
+    const stages = ['original', 'prediction_mask', 'processed_mask', 'inpainted', 'rendered'];
+    const present = stages.filter(function (k) { return !!a[k]; }).length;
+    const count = $('chain-artifact-count');
+    if (count) count.textContent = present + ' / ' + stages.length + ' Artifacts';
+  }
+
+  /* Sets the small badge on a chain card by index. Named apart from the
+     region-flag badge above: two declarations called `badge` in one scope
+     would hoist over each other and the region flags would render nothing. */
+  function chainBadge(n, text) {
+    const el = $('chain-badge-' + n);
+    if (!el) return;
+    el.hidden = !text;
+    el.textContent = text || '';
+  }
+
+  function renderTimeline(bundle) {
+    const timeline = $('run-timeline');
+    if (!timeline) return;
+    const a = bundle.artifacts;
+    const regions = bundle.regions || [];
+    const ocrClean = regions.length > 0 && regions.every(function (r) {
+      return !r.ocr_status || r.ocr_status === 'ok';
+    });
+    const steps = [
+      ['1. Ingestion', !!a.original],
+      ['2. Segmentation', !!a.prediction_mask],
+      ['3. Inpainting', !!a.inpainted],
+      ['4. OCR & NMT', ocrClean],
+      ['5. Typesetting', !!a.rendered]
+    ];
+    timeline.innerHTML = steps.map(function (step) {
+      const done = step[1];
+      return '<div class="timeline-step">'
+        + '<div class="step-circle' + (done ? ' done' : '') + '">'
+        + (done ? '✓' : '') + '</div>'
+        + '<span style="font-size:11px; font-weight:600;'
+        + (done ? '' : ' color:var(--text-muted);') + '">' + esc(step[0]) + '</span></div>';
+    }).join('');
+  }
+
+  /* Seven failure dimensions, counted from the loaded page's own region
+     statuses rather than from a corpus-wide report the demo backend does not
+     produce. */
+  function renderQualitative(bundle) {
+    const grid = $('qual-grid');
+    if (!grid) return;
+    const regions = bundle.regions || [];
+    const count = function (test) {
+      return regions.filter(test).length;
+    };
+    const ocrFails = count(function (r) { return r.ocr_status && r.ocr_status !== 'ok'; });
+    const nmtFails = count(function (r) {
+      return r.translation_status && r.translation_status !== 'ok';
+    });
+    const renderFails = count(function (r) { return r.render_status === 'failed'; });
+    const overflow = count(function (r) { return r.render_status === 'overflow_warning'; });
+    const clean = count(function (r) { return r.render_status === 'rendered'; });
+
+    const boxes = [
+      ['1. Rendered Cleanly', clean + ' of ' + regions.length
+        + ' regions typeset with no warning recorded.', false],
+      ['2. Overflow Warnings', overflow
+        + ' regions where the translated text did not fit after fitting.', false],
+      ['3. Typical Cases', regions.length
+        + ' regions detected on this page by the active segmentation method.', false],
+      ['4. OCR Failures', ocrFails
+        + ' regions with a non-ok OCR status on this page.', true],
+      ['5. Translation Failures', nmtFails
+        + ' regions with a non-ok translation status on this page.', true],
+      ['6. Rendering Failures', renderFails
+        + ' regions that failed to render on this page.', true],
+      ['7. Inpainting Artifacts', 'Not recorded: the page metadata carries no '
+        + 'per-region inpainting quality field.', false]
+    ];
+
+    grid.innerHTML = boxes.map(function (box) {
+      const danger = box[2] ? ' has-border-danger' : '';
+      const color = box[2] ? ' style="color:var(--danger);"' : '';
+      return '<div class="failure-box' + danger + '">'
+        + '<div class="panel-label"' + color + ' style="margin-bottom:6px;">' + esc(box[0])
+        + '</div><div style="font-size:11px;">' + esc(box[1]) + '</div></div>';
+    }).join('');
+
+    const scope = $('qual-scope');
+    if (scope) scope.textContent = 'page ' + bundle.image_id + ' • ' + regions.length + ' regions';
+  }
+
+  /* ---------------------------------------------------------- benchmarks */
+
+  function renderBenchmarks(rows) {
+    const reports = $('bench-reports-body');
+    if (reports) {
+      reports.innerHTML = rows.map(function (r) {
+        const active = r.status === 'scored' ? ' class="active-row"' : '';
+        const status = r.status === 'scored' ? 'scored'
+          : ('not run' + (r.reason ? ' — ' + r.reason : ''));
+        return '<tr' + active + '><td>' + esc(r.method) + '</td><td>' + num(r.iou, 4)
+          + '</td><td>' + num(r.iou_std, 4) + '</td><td>' + num(r.f1, 4) + '</td><td>'
+          + num(r.f1_std, 4) + '</td><td>' + esc(status) + '</td></tr>';
+      }).join('');
+    }
+
+    const scored = rows.filter(function (r) { return r.iou !== null || r.f1 !== null; }).length;
+    const count = $('reports-bench-count');
+    if (count) count.textContent = rows.length + ' Methods • ' + scored + ' Scored';
+
+    const max = Math.max.apply(null, rows.map(function (r) {
+      return Math.max(r.iou || 0, r.f1 || 0);
+    }).concat([0.01])) * 1.15;
+
+    barChart($('bench-reports-chart'), rows, max);
+
+    const note = $('reports-chart-note');
+    if (note) note.textContent = 'axis max ' + max.toFixed(3) + ' (rescaled to the data)';
+  }
+
+  /* A 0..1 axis would leave every bar under a seventh of its track — the best
+     recorded IoU is 0.137 — so the axis is scaled to the data and the scale is
+     printed above the chart. */
+  function barChart(container, rows, max) {
+    if (!container) return;
+    const scored = rows.filter(function (r) { return r.iou !== null || r.f1 !== null; });
+    if (!scored.length) {
+      empty(container, 'No method in comparison.json carries recorded metrics.');
+      return;
+    }
+
+    const labelW = 150, plotW = 400, valueW = 52, rowH = 30, top = 4, barH = 9;
+    const width = labelW + plotW + valueW;
+    const height = top + scored.length * rowH + 6;
+
+    let svg = '<svg viewBox="0 0 ' + width + ' ' + height + '" width="100%" '
+      + 'style="display:block; max-height:' + height + 'px;" role="img" '
+      + 'aria-label="Mean IoU and F1 per method">';
+    scored.forEach(function (r, i) {
+      const y = top + i * rowH;
+      const iou = plotW * ((r.iou || 0) / max);
+      const f1 = plotW * ((r.f1 || 0) / max);
+      svg += '<text x="0" y="' + (y + 12) + '" font-size="11" fill="#475569" '
+        + 'font-family="monospace">' + esc(r.method) + '</text>';
+      svg += '<rect x="' + labelW + '" y="' + (y + 3) + '" width="' + plotW + '" height="'
+        + barH + '" fill="#f1f5f9"></rect>';
+      svg += '<rect x="' + labelW + '" y="' + (y + 3) + '" width="' + iou.toFixed(2)
+        + '" height="' + barH + '" fill="#8b5cf6"></rect>';
+      svg += '<text x="' + (labelW + plotW + 6) + '" y="' + (y + 12)
+        + '" font-size="10" fill="#64748b" font-family="monospace">'
+        + num(r.iou, 4) + '</text>';
+      svg += '<rect x="' + labelW + '" y="' + (y + 15) + '" width="' + plotW + '" height="'
+        + barH + '" fill="#f1f5f9"></rect>';
+      svg += '<rect x="' + labelW + '" y="' + (y + 15) + '" width="' + f1.toFixed(2)
+        + '" height="' + barH + '" fill="#3b82f6"></rect>';
+      svg += '<text x="' + (labelW + plotW + 6) + '" y="' + (y + 24)
+        + '" font-size="10" fill="#64748b" font-family="monospace">'
+        + num(r.f1, 4) + '</text>';
+    });
+    svg += '</svg>';
+
+    container.innerHTML = '<div style="display:flex; gap:14px; font-size:10px; '
+      + 'color:var(--text-muted); margin-bottom:4px;">'
+      + '<span><span style="display:inline-block; width:8px; height:8px; background:#8b5cf6; '
+      + 'border-radius:2px;"></span> IoU</span>'
+      + '<span><span style="display:inline-block; width:8px; height:8px; background:#3b82f6; '
+      + 'border-radius:2px;"></span> F1</span>'
+      + '<span>mean scores, axis max ' + max.toFixed(3) + '</span></div>' + svg;
+  }
+
+  /* ------------------------------------------------------------- exports */
+
+  function renderExports(bundle) {
+    const rendered = bundle.artifacts.rendered;
+    const links = [
+      ['dl-rendered', rendered],
+      ['dl-meta', siblingRef(rendered, 'metadata.json')],
+      ['dl-ocr', siblingRef(rendered, 'ocr.json')],
+      ['dl-trans', siblingRef(rendered, 'translations.json')]
+    ];
+    let ready = 0;
+    links.forEach(function (pair) {
+      const a = $(pair[0]);
+      if (!a) return;
+      if (pair[1]) {
+        a.href = artURL(pair[1]);
+        a.setAttribute('download', '');
+        a.style.opacity = '';
+        a.style.pointerEvents = '';
+        ready += 1;
+      } else {
+        a.removeAttribute('href');
+        a.style.opacity = '0.45';
+        a.style.pointerEvents = 'none';
+      }
+    });
+    const badgeEl = $('exports-badge');
+    if (badgeEl) badgeEl.textContent = ready + (ready === 1 ? ' File Ready' : ' Files Ready');
+  }
+
+  /* ------------------------------------------------------------- counters */
+
+  function renderCounters(bundle) {
+    const regions = bundle.regions || [];
+    const failures = regions.filter(function (r) {
+      return (r.ocr_status && r.ocr_status !== 'ok')
+        || (r.translation_status && r.translation_status !== 'ok')
+        || r.render_status === 'failed';
+    }).length;
+
+    const label = $('regions-panel-label');
+    if (label) label.textContent = 'Region Inspector (' + regions.length + ' Detected)';
+
+    const badgeEl = $('regions-panel-badge');
+    if (badgeEl) {
+      badgeEl.className = failures ? 'status-badge' : 'status-badge valid';
+      badgeEl.innerHTML = '<svg width="8" height="8" viewBox="0 0 24 24" fill="none" '
+        + 'stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline>'
+        + '</svg>' + failures + (failures === 1 ? ' Failure' : ' Failures');
+    }
+
+    /* The export's three nav telemetry badges are placeholders with no id; they
+       are repurposed to the recorded run rather than left showing a GPU. */
+    const telemetry = document.querySelectorAll('.telemetry-badges .t-badge');
+    if (telemetry.length >= 3) {
+      telemetry[0].textContent = 'RUN: ' + (bundle.provenance.translation_run_id || '—');
+      telemetry[1].textContent = 'PAGE: ' + bundle.image_id;
+      telemetry[2].textContent = 'REGIONS: ' + regions.length;
+    }
+  }
+
+  /* --------------------------------------------------------- page loading */
+
+  function fillSelect(select, options, selected) {
+    if (!select) return;
+    select.innerHTML = options.map(function (opt) {
+      return '<option value="' + esc(opt[0]) + '"'
+        + (opt[0] === selected ? ' selected' : '') + '>' + esc(opt[1]) + '</option>';
+    }).join('');
+  }
+
+  /* The four selects that survive are the two in the context bar and the two in
+     the left rail; both pairs read the same page. The pipeline's segmentation /
+     inpainting / NMT choices are shown in the provenance panel, not as pickers:
+     the demo has no endpoint that could act on a change.
+
+     This is the only thing that fills them, and it fills all four from the
+     catalog — that list is what makes the context bar a real selector. A second
+     filler that wrote a one-option select from the bundle used to run after
+     this one, so every dropdown collapsed to the page already loaded. */
+  function renderCatalogSelectors(catalog, selectedId) {
+    const mangaOptions = catalog.mangas.map(function (m) {
+      return [m.manga, m.manga + ' (' + m.pages.length + ' pages)'];
+    });
+    const current = String(selectedId || '').split('/')[0];
+    fillSelect($('ctx-manga'), mangaOptions, current);
+    fillSelect($('sel-corpus'), mangaOptions, current);
+
+    const manga = catalog.mangas.filter(function (m) { return m.manga === current; })[0]
+      || catalog.mangas[0];
+    const pageOptions = (manga ? manga.pages : []).map(function (page) {
+      return [manga.manga + '/' + page, page];
+    });
+    fillSelect($('ctx-page'), pageOptions, selectedId);
+    fillSelect($('sel-page'), pageOptions, selectedId);
+  }
+
+  async function loadPage(imageId) {
+    try {
+      const bundle = await getJSON('/api/demo/page?image_id=' + encodeURIComponent(imageId));
+      DEMO.bundle = bundle;
+      renderCatalogSelectors(DEMO.catalog, imageId);
+      renderChain(bundle);
+      renderRegionList(bundle);
+      renderProvenance(bundle);
+      renderTimeline(bundle);
+      renderQualitative(bundle);
+      renderExports(bundle);
+      renderCounters(bundle);
+      applyState(bundle);
+    } catch (err) {
+      empty($('region-list'), 'Could not load ' + imageId + ': ' + err.message);
+      const guideText = $('state-guide-text');
+      if (guideText) guideText.textContent = 'Load failed: ' + err.message;
+    }
+  }
+
+  async function boot() {
+    try {
+      DEMO.catalog = await getJSON('/api/demo/catalog');
+    } catch (err) {
+      empty($('region-list'), 'Could not reach the demo backend: ' + err.message);
+      return;
+    }
+    renderBenchmarks(DEMO.catalog.benchmarks || []);
+    if (!DEMO.catalog.pages.length) {
+      empty($('region-list'), 'No translated page is recorded under the translation root.');
+      return;
+    }
+    await loadPage(DEMO.catalog.pages[0].image_id);
+  }
+
+  /* --------------------------------------------------------------- wiring */
+
+  ['ctx-manga', 'sel-corpus'].forEach(function (id) {
+    const el = $(id);
+    if (el) el.addEventListener('change', function () {
+      renderCatalogSelectors(DEMO.catalog, el.value + '/');
+      // Picking a manga repopulates the page list but leaves the old page
+      // selected, so load the new manga's first page — otherwise the two
+      // selects disagree and nothing on screen changes.
+      const page = $('ctx-page');
+      if (page && page.value) loadPage(page.value);
+    });
+  });
+  ['ctx-page', 'sel-page'].forEach(function (id) {
+    const el = $(id);
+    if (el) el.addEventListener('change', function () { loadPage(el.value); });
+  });
+
+  const regionList = $('region-list');
+  if (regionList) {
+    regionList.addEventListener('click', function (ev) {
+      const row = ev.target.closest('.region-card-row');
+      if (row) openRegion(Number(row.dataset.regionId));
+    });
+    regionList.addEventListener('mouseover', function (ev) {
+      const row = ev.target.closest('.region-card-row');
+      if (row) highlightRegion(Number(row.dataset.regionId));
+    });
+  }
+
+  /* "Re-evaluate Chain" has no endpoint of its own: re-reading the recorded
+     page is what the demo can honestly do. */
+  const recompute = $('btn-recompute');
+  if (recompute) {
+    recompute.addEventListener('click', function () {
+      if (DEMO.bundle) loadPage(DEMO.bundle.image_id);
+    });
+  }
+
+  window.addEventListener('resize', refitStages);
+  document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>

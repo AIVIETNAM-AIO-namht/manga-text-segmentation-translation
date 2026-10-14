@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Manga Text Segmentation and Translation Workbench</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    :root {
+      /* TASK A: Strict Corner-Radius Tokens - ZERO literal px elsewhere */
+      --radius-sm: 4px;   /* tags, pills, badges, mini-buttons, metric pills */
+      --radius-md: 8px;   /* DEFAULT: containers, viewports, cards, frames, inputs, standard buttons, tables, errors */
+      --radius-lg: 16px;  /* large overlay shells */
+      --radius-full: 9999px; /* ONLY toggle switches and status dot nodes */
+
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+
+      /* Categorical Method Colors */
+      --color-classical: #3b82f6;
+      --color-manga-text-seg: #10b981;
+      --color-comic-text-detector: #f59e0b;
+      --color-unetpp-effv2: #8b5cf6;
+
+      /* Palette Tokens */
+      --bg: #f8f9ff;
+      --surface: #ffffff;
+      --surface-subtle: #eff4ff;
+      --surface-border: #c6c6cd;
+      --border-dark: #76777d;
+      --text: #0b1c30;
+      --text-muted: #45464d;
+      --text-subtle: #76777d;
+      --primary: #000000;
+      --accent: #0051d5;
+      --accent-light: #eff4ff;
+      /* Status tokens - RESERVED. Never reuse a categorical method color here. */
+      --danger: #ba1a1a;
+      --danger-bg: #ffdad6;
+      --success: #047857;
+      --success-bg: #ecfdf5;
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    * { box-shadow: none !important; }
+    .popover-shadow { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important; }
+
+    a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    #app-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--surface-border);
+    }
+    .brand-wrap { display: flex; align-items: center; gap: 10px; }
+    .brand-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chip-code {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .research-team-card {
+      border: 1px solid var(--surface-border);
+      background: var(--surface-subtle);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      text-align: right;
+    }
+    .research-team-title {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+    .team-line { font-size: 11px; line-height: 1.25; color: var(--text); white-space: nowrap; }
+
+    .nav-tabs-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--surface-border);
+      background: var(--surface);
+    }
+    .nav-tabs { display: flex; gap: 16px; height: 38px; }
+    .nav-tab-btn {
+      display: flex;
+      align-items: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      height: 100%;
+      border: none;
+      background: transparent;
+      border-bottom: 2px solid transparent;
+      padding: 0 4px;
+      cursor: pointer;
+    }
+    .nav-tab-btn:hover { color: var(--text); }
+    .nav-tab-btn[aria-current="page"] {
+      color: var(--accent);
+      font-weight: 600;
+      border-bottom-color: var(--accent);
+    }
+    .telemetry-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .t-badge {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      padding: 3px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+    }
+
+    .context-bar {
+      background: var(--surface-subtle);
+      padding: 6px 16px;
+      border-bottom: 1px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .context-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .context-group { display: flex; align-items: center; gap: 6px; }
+    .context-group label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .select-native {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+    }
+
+    main#app-main { padding: 12px 16px; min-height: 80vh; }
+    .screen-view { display: none; }
+    .screen-view.is-active { display: block; }
+
+    .state-switcher-container {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 12px;
+    }
+    .state-switcher-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .state-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .state-chips-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+    .state-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border: 1px solid var(--surface-border);
+      background: var(--surface);
+      font-size: 11px;
+      font-family: var(--font-mono);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .state-btn.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+    .state-btn .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+    }
+    .state-guide-box {
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: var(--surface-subtle);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--accent);
+      font-size: 12px;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .workbench-grid {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr) 360px;
+      gap: 14px;
+      align-items: start;
+    }
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--surface-subtle);
+    }
+    .panel-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--surface-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--surface-border);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .status-badge.valid { background: var(--success-bg); color: var(--success); border-color: #86efac; }
+    .status-badge.warning { background: var(--warning-bg); color: var(--warning); border-color: #fde68a; }
+    .status-badge.error { background: var(--danger-bg); color: var(--danger); border-color: #fca5a5; }
+
+    .status-badge svg { vertical-align: -1px; margin-right: 3px; }
+
+    .form-group { margin-bottom: 10px; }
+    .form-label { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
+    .field-select, .field-input, .field-textarea {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 8px;
+      color: var(--text);
+    }
+    .field-textarea { font-family: var(--font-sans); resize: vertical; min-height: 60px; }
+
+    .btn-action-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid var(--primary);
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-action-primary:hover { background: #222222; }
+
+    .method-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    .method-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--surface-border);
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+    .method-swatch { width: 8px; height: 8px; border-radius: var(--radius-sm); flex-shrink: 0; }
+
+    .toolbar-pipeline {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-tool {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-tool.active { background: var(--text); color: #ffffff; border-color: var(--text); }
+
+    .pipeline-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .pipeline-cards-grid.flow-vertical { grid-template-columns: 1fr; }
+    .chain-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .chain-card-header {
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chain-card-title { font-size: 11px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .chain-index {
+      width: 16px;
+      height: 16px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-full);
+    }
+    .chain-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--surface-border);
+      background: var(--surface);
+      color: var(--text-muted);
+    }
+    .chain-viewport {
+      background: #0f172a;
+      height: 380px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .chain-viewport.light-bg { background: #f8fafc; }
+    .chain-viewport svg { width: 100%; height: 100%; max-height: 380px; display: block; }
+    .chain-card-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 8px;
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+    }
+    .download-btn:hover { background: #e2e8f0; }
+
+    .region-card-row {
+      background: var(--surface-subtle);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+    .region-card-row:hover, .region-card-row.is-highlighted {
+      background: #ede9fe;
+      border-color: var(--color-unetpp-effv2);
+    }
+    .region-card-row.warning-state {
+      background: #ffdad6;
+      border-color: var(--danger);
+    }
+    .region-meta-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .region-id-tag {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--color-unetpp-effv2);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .region-tag-index {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-full);
+      background: var(--color-unetpp-effv2);
+      color: #fff;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .region-coord-str { font-family: var(--font-mono); font-size: 10px; color: var(--text-subtle); margin-bottom: 6px; }
+    .ocr-translation-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
+    .text-box-ja, .text-box-target {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      padding: 4px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .text-sub-label { font-size: 9px; font-weight: 700; color: var(--text-subtle); text-transform: uppercase; margin-bottom: 2px; }
+    .text-val { font-size: 11px; line-height: 1.3; color: var(--text); }
+
+    .quant-table { width: 100%; border-collapse: collapse; font-size: 11px; border-radius: var(--radius-md); overflow: hidden; }
+    .quant-table th, .quant-table td { border: 1px solid var(--surface-border); padding: 5px 8px; text-align: left; }
+    .quant-table th { background: var(--surface-subtle); font-family: var(--font-mono); font-weight: 600; color: var(--text-muted); }
+    .quant-table td { font-family: var(--font-mono); }
+    .quant-table tr.active-row { background: rgba(139, 92, 246, 0.08); font-weight: 600; }
+
+    /* Screen 2: Region Edit */
+    .region-edit-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(380px, 1fr); gap: 16px; align-items: start; }
+    .split-trans-block {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 10px;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      background: var(--surface-subtle);
+    }
+    .vertical-ja-box {
+      writing-mode: vertical-rl;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.8;
+      letter-spacing: 0.1em;
+      border-right: 1px dashed var(--surface-border);
+      padding-right: 10px;
+      min-height: 180px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .editable-vi-box { display: flex; flex-direction: column; gap: 8px; }
+    .provenance-strip {
+      border: 1px solid var(--surface-border);
+      background: #eef2ff;
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Screen 3: Summaries */
+    .summary-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      margin-bottom: 14px;
+    }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .page-chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .page-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--surface-border);
+      background: var(--surface-subtle);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .page-chip.missing { background: var(--danger-bg); border-color: #fca5a5; color: var(--danger); font-weight: 700; }
+
+    /* Screen 4: Reports */
+    .report-section {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .failure-grid-7 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .failure-box {
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      background: var(--surface-subtle);
+    }
+    .failure-box.has-border-danger { border-color: #fca5a5; background: #ffdad6; }
+
+    /* Screen 5: Batch */
+    .batch-item-row {
+      display: grid;
+      grid-template-columns: 32px 140px 100px 1fr 100px 90px;
+      align-items: center;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--surface-border);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .batch-item-row:last-child { border-bottom: none; }
+    .progress-track {
+      background: var(--surface-border);
+      height: 10px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin: 8px 0;
+    }
+    .progress-fill {
+      background: var(--color-manga-text-seg);
+      height: 100%;
+      border-radius: var(--radius-md);
+      width: 80%;
+    }
+
+    /* Screen 6: Run Status */
+    .timeline-steps {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 20px 0;
+      padding: 0 10px;
+    }
+    .timeline-steps::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: var(--surface-border);
+      z-index: 1;
+    }
+    .timeline-step {
+      position: relative;
+      z-index: 2;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .step-circle {
+      width: 30px;
+      height: 30px;
+      border-radius: var(--radius-full);
+      border: 2px solid var(--surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      font-weight: 700;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .step-circle.done { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+    .step-circle.active { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+    .state-guide-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .state-guide-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    footer#app-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--surface-border);
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+<!-- FIXED TOP NAVIGATION BAR -->
+<header id="app-header">
+  <div class="top-bar">
+    <div class="brand-wrap">
+      <svg fill="none" height="22" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="22">
+        <rect height="18" rx="2" width="18" x="3" y="3"></rect>
+        <path d="M7 7h10"></path>
+        <path d="M7 12h7"></path>
+        <path d="M7 17h4"></path>
+      </svg>
+      <div class="brand-title">
+        <span>Manga Text Segmentation and Translation</span>
+        <span class="chip-code">manga-text-seg</span>
+      </div>
+    </div>
+    <!-- EXACT RESEARCH TEAM CARD -->
+    <div class="research-team-card">
+      <div class="research-team-title">PROJECT RESEARCH TEAM</div>
+      <div class="team-line">Huỳnh Thuyên Nam - 24110109</div>
+      <div class="team-line">Phạm Nguyễn Vương Quốc - 24110126</div>
+      <div class="team-line">Hà Duy Anh - 24110072</div>
+      <div class="team-line">Nguyễn Quang Huy - 24110095</div>
+    </div>
+  </div>
+
+  <!-- WORKING NAV TABS FOR ALL SIX SCREENS (TASK B) -->
+  <div class="nav-tabs-bar">
+    <nav aria-label="Main Navigation" class="nav-tabs">
+      <button class="nav-tab-btn" aria-current="page" id="tab-workbench" onclick="switchTab('workbench')">Workbench</button>
+      <button class="nav-tab-btn" id="tab-region-edit" onclick="switchTab('region-edit')">Region Edit</button>
+      <button class="nav-tab-btn" id="tab-summaries" onclick="switchTab('summaries')">Summaries</button>
+      <button class="nav-tab-btn" id="tab-reports" onclick="switchTab('reports')">Reports</button>
+      <button class="nav-tab-btn" id="tab-batch" onclick="switchTab('batch')">Batch</button>
+      <button class="nav-tab-btn" id="tab-run-status" onclick="switchTab('run-status')">Run Status</button>
+    </nav>
+    <div class="telemetry-badges">
+      <span class="t-badge">GPU: CUDA:0 (Titan RTX)</span>
+      <span class="t-badge">MEM: 7.2 / 24 GB</span>
+      <span class="t-badge">LATENCY: 38.0ms</span>
+    </div>
+  </div>
+
+  <!-- PERSISTENT CONTEXT BAR -->
+  <div class="context-bar">
+    <div class="context-label">
+      <svg fill="none" height="12" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="12">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      CONTEXT:
+    </div>
+    <div class="context-group">
+      <label for="ctx-manga">Manga:</label>
+      <select class="select-native" id="ctx-manga">
+        <option selected="" value="manga_tit_vol01">manga_tit_vol01</option>
+        <option value="manga_csm_vol04">manga_csm_vol04</option>
+        <option value="manga_fma_vol12">manga_fma_vol12</option>
+      </select>
+    </div>
+    <div class="context-group">
+      <label for="ctx-page">Page:</label>
+      <select class="select-native" id="ctx-page">
+        <option selected="" value="page_0042.png">page_0042.png (1080x1620)</option>
+        <option value="page_0043.png">page_0043.png (1080x1620)</option>
+        <option value="page_0044.png">page_0044.png (1080x1620)</option>
+      </select>
+    </div>
+    <div class="context-group">
+      <label for="ctx-seg">Segmentation Method:</label>
+      <select class="select-native" id="ctx-seg" style="border-left: 3px solid var(--color-unetpp-effv2);">
+        <option value="classical">Classical Baseline (#3b82f6)</option>
+        <option value="manga_text_seg">Manga-Text-Segmentation (#10b981)</option>
+        <option value="comic_text_detector">comic-text-detector (#f59e0b)</option>
+        <option selected="" value="unetpp">UNet++ EfficientNetV2 (#8b5cf6)</option>
+      </select>
+    </div>
+    <div class="context-group">
+      <label for="ctx-inpaint">Inpainting Checkpoint:</label>
+      <select class="select-native" id="ctx-inpaint">
+        <option selected="" value="run_inp_lama_v3">run_inp_lama_v3 (Fourier-FFT)</option>
+        <option value="run_inp_mat_large">run_inp_mat_large_v1</option>
+        <option value="run_inp_ldm_manga">run_inp_ldm_manga_512</option>
+      </select>
+    </div>
+    <div class="context-group">
+      <label for="ctx-nmt">NMT Run:</label>
+      <select class="select-native" id="ctx-nmt">
+        <option selected="" value="run_tr_m2m100_vi">run_tr_m2m100_vi (LoRA-v2)</option>
+        <option value="run_tr_nllb200_1.3b">run_tr_nllb200_1.3b_vi</option>
+        <option value="run_tr_qwen25_7b">run_tr_qwen25_7b_manga</option>
+      </select>
+    </div>
+    <div class="context-group">
+      <label for="ctx-lang">Target Language:</label>
+      <select class="select-native" id="ctx-lang">
+        <option selected="" value="vi">Vietnamese [vi-VN]</option>
+        <option value="en">English [en-US]</option>
+        <option value="ko">Korean [ko-KR]</option>
+      </select>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN VIEWPORT CONTAINER (CONTAINING ALL 6 SCREENS) -->
+<main id="app-main">
+
+  <!-- ========================================== -->
+  <!-- SCREEN 1: WORKBENCH (DEFAULT)              -->
+  <!-- ========================================== -->
+  <div class="screen-view is-active" id="view-workbench">
+    <section aria-label="Workbench Lifecycle States" class="state-switcher-container">
+      <div class="state-switcher-header">
+        <span class="state-title">Single-Page Pipeline State Controller (8 States Lifecycle)</span>
+        <span class="status-badge valid">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          State Machine: Nominal
+        </span>
+      </div>
+      <div class="state-chips-wrap">
+        <button class="state-btn" onclick="setState(1)">
+          <span class="dot" style="background:#94a3b8;"></span> 1. Empty / Unselected
+        </button>
+        <button class="state-btn" onclick="setState(2)">
+          <span class="dot" style="background:var(--color-classical);"></span> 2. Loading Pipeline
+        </button>
+        <button class="state-btn" onclick="setState(3)">
+          <span class="dot" style="background:var(--warning);"></span> 3. Partial Run
+        </button>
+        <button class="state-btn active" onclick="setState(4)">
+          <span class="dot" style="background:var(--success);"></span> 4. Nominal Complete
+        </button>
+        <button class="state-btn" onclick="setState(5)">
+          <span class="dot" style="background:#64748b;"></span> 5. Degenerate OCR (0 regions)
+        </button>
+        <button class="state-btn" onclick="setState(6)">
+          <span class="dot" style="background:#ef4444;"></span> 6. Inpaint Divergence
+        </button>
+        <button class="state-btn" onclick="setState(7)">
+          <span class="dot" style="background:#dc2626;"></span> 7. NMT Timeout (408)
+        </button>
+        <button class="state-btn" onclick="setState(8)">
+          <span class="dot" style="background:#8b5cf6;"></span> 8. Run Ambiguity Conflict
+        </button>
+      </div>
+      <div class="state-guide-box" id="stateGuideNotice">
+        <span><strong>State: 4. Nominal Complete</strong> — All 6 pipeline artifacts intact. Zero bounding-box overlaps detected. OCR confidence &mu; = 0.964.</span>
+        <span style="font-family: var(--font-mono); font-size: 11px;">Status: 200 OK</span>
+      </div>
+    </section>
+
+    <!-- 3-Column Layout: Left Rail 280px / Center Fluid / Right Panel 360px -->
+    <div class="workbench-grid">
+      <!-- LEFT RAIL -->
+      <aside class="left-rail">
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Pipeline Controls</span>
+            <span class="status-badge valid">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="8"></circle></svg>
+              Live Mode
+            </span>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-corpus">Corpus Volume</label>
+            <select class="field-select" id="sel-corpus">
+              <option>manga_tit_vol01 (Attack On Titan)</option>
+              <option>manga_csm_vol04 (Chainsaw Man)</option>
+              <option>manga_fma_vol12 (Fullmetal)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-page">Target Page Index</label>
+            <select class="field-select" id="sel-page">
+              <option selected="">page_0042.png [1080 × 1620]</option>
+              <option>page_0043.png [1080 × 1620]</option>
+              <option>page_0044.png [1080 × 1620]</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-model">Active Segmentation Backbone</label>
+            <select class="field-select" id="sel-model">
+              <option>Classical Baseline (Otsu + Canny)</option>
+              <option>Manga-Text-Segmentation (ResNet50)</option>
+              <option>comic-text-detector (DBNet)</option>
+              <option selected="">UNet++ EfficientNetV2 (Active: #8b5cf6)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-inpaint-model">Inpainting Algorithm</label>
+            <select class="field-select" id="sel-inpaint-model">
+              <option selected="">LaMa-Fourier-v3 (Fast FFT)</option>
+              <option>MAT Mask-Aware Transformer</option>
+              <option>LDM Manga Latent Diffusion</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="sel-translation-model">NMT Engine</label>
+            <select class="field-select" id="sel-translation-model">
+              <option selected="">M2M-100 418M (LoRA manga-vi)</option>
+              <option>NLLB-200 1.3B Distilled</option>
+              <option>Qwen-2.5-7B-Instruct</option>
+            </select>
+          </div>
+          <button class="btn-action-primary" id="btn-recompute">
+            <svg fill="none" height="14" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14">
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            Re-evaluate Chain
+          </button>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Segmentation Taxonomy</span>
+            <span class="status-badge">4 Methods</span>
+          </div>
+          <div class="method-legend">
+            <div class="method-item">
+              <span class="method-swatch" style="background: var(--color-classical);"></span>
+              <span>Classical (#3b82f6)</span>
+            </div>
+            <div class="method-item">
+              <span class="method-swatch" style="background: var(--color-manga-text-seg);"></span>
+              <span>MangaTextSeg (#10b981)</span>
+            </div>
+            <div class="method-item">
+              <span class="method-swatch" style="background: var(--color-comic-text-detector);"></span>
+              <span>comic-text (#f59e0b)</span>
+            </div>
+            <div class="method-item" style="border-color: var(--color-unetpp-effv2); background: rgba(139,92,246,0.06); font-weight:600;">
+              <span class="method-swatch" style="background: var(--color-unetpp-effv2);"></span>
+              <span>UNet++ EffV2 (#8b5cf6)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Provenance Hash</span>
+            <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>7f81b9d4e9</span>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 11px; line-height: 1.8;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-subtle);">
+              <span style="color:var(--text-muted);">image_id:</span>
+              <span>page_0042</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-subtle);">
+              <span style="color:var(--text-muted);">seg_method:</span>
+              <span style="color:var(--color-unetpp-effv2); font-weight:600;">unetpp_effv2</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-subtle);">
+              <span style="color:var(--text-muted);">inpaint_alg:</span>
+              <span>LaMa-Fourier-v3</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-subtle);">
+              <span style="color:var(--text-muted);">seg_run_id:</span>
+              <span>run_seg_20250214_01</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--surface-subtle);">
+              <span style="color:var(--text-muted);">tr_run_id:</span>
+              <span>run_tr_20250214_09</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="color:var(--text-muted);">target_lang:</span>
+              <span style="color:var(--accent); font-weight:600;">vi [UTF-8]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Quantitative Benchmark</span>
+            <span class="status-badge">IoU &amp; BLEU</span>
+          </div>
+          <table aria-label="Quantitative comparison across methods" class="quant-table">
+            <thead>
+              <tr>
+                <th>Backbone</th>
+                <th>IoU</th>
+                <th>F1</th>
+                <th>BLEU</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Classical</td>
+                <td>0.612</td>
+                <td>0.741</td>
+                <td>31.4</td>
+              </tr>
+              <tr>
+                <td>MangaTextSeg</td>
+                <td>0.844</td>
+                <td>0.892</td>
+                <td>39.8</td>
+              </tr>
+              <tr>
+                <td>comic-text-det</td>
+                <td>0.871</td>
+                <td>0.915</td>
+                <td>41.5</td>
+              </tr>
+              <tr class="active-row">
+                <td style="color:var(--color-unetpp-effv2);">UNet++ EffV2</td>
+                <td>0.912</td>
+                <td>0.948</td>
+                <td>44.2</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Single-Axis Handcrafted SVG Bar Chart -->
+          <div style="margin-top:12px;">
+            <div style="font-size:10px; font-weight:700; color:var(--text-subtle); text-transform:uppercase; margin-bottom:4px;">IoU Score Distribution</div>
+            <svg height="80" style="background:var(--surface-subtle); border-radius:var(--radius-md); border:1px solid var(--surface-border);" viewBox="0 0 250 80" width="100%">
+              <line stroke="#94a3b8" stroke-width="1" x1="30" x2="30" y1="10" y2="65"></line>
+              <line stroke="#94a3b8" stroke-width="1" x1="30" x2="240" y1="65" y2="65"></line>
+              <text fill="#64748b" font-family="monospace" font-size="8" text-anchor="end" x="25" y="15">1.0</text>
+              <text fill="#64748b" font-family="monospace" font-size="8" text-anchor="end" x="25" y="40">0.5</text>
+              <text fill="#64748b" font-family="monospace" font-size="8" text-anchor="end" x="25" y="65">0.0</text>
+              <rect fill="#3b82f6" height="34" width="30" x="45" y="31"></rect>
+              <text fill="#475569" font-family="monospace" font-size="7" text-anchor="middle" x="60" y="75">Base</text>
+              <rect fill="#10b981" height="47" width="30" x="95" y="18"></rect>
+              <text fill="#475569" font-family="monospace" font-size="7" text-anchor="middle" x="110" y="75">MTS</text>
+              <rect fill="#f59e0b" height="49" width="30" x="145" y="16"></rect>
+              <text fill="#475569" font-family="monospace" font-size="7" text-anchor="middle" x="160" y="75">CTD</text>
+              <rect fill="#8b5cf6" height="51" width="30" x="195" y="14"></rect>
+              <text fill="#8b5cf6" font-family="monospace" font-size="7" font-weight="bold" text-anchor="middle" x="210" y="75">UNet++</text>
+            </svg>
+          </div>
+        </div>
+      </aside>
+
+      <!-- CENTER FLUID COLUMN: Artifact Pipeline Chain -->
+      <section aria-label="Artifact Pipeline Chain" class="center-chain">
+        <div class="toolbar-pipeline">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.04em;">Artifact Pipeline Chain</span>
+            <span class="status-badge">6 Stages Active</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn-tool active" id="btn-grid-matrix" onclick="setLayout('matrix')">2×3 Matrix</button>
+            <button class="btn-tool" id="btn-grid-flow" onclick="setLayout('flow')">Vertical Flow</button>
+          </div>
+        </div>
+
+        <div class="pipeline-cards-grid" id="pipelineGrid">
+          <!-- 1. Original Manga Page -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">1</span><span>Original Manga Page</span></div>
+              <span class="chain-badge">RAW SCAN</span>
+            </div>
+            <div class="chain-viewport light-bg">
+              <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#ffffff" height="600" stroke="#cbd5e1" stroke-width="2" width="400"></rect>
+                <rect fill="none" height="260" stroke="#000000" stroke-width="3" width="360" x="20" y="20"></rect>
+                <rect fill="none" height="290" stroke="#000000" stroke-width="3" width="175" x="20" y="290"></rect>
+                <rect fill="none" height="290" stroke="#000000" stroke-width="3" width="175" x="205" y="290"></rect>
+                <path d="M 270 40 C 270 30, 360 30, 360 55 C 360 100, 360 120, 360 140 C 350 160, 320 160, 310 175 C 310 160, 270 155, 270 140 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5"></path>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="315" y="80">この力は</text>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="315" y="105">一体…！？</text>
+                <ellipse cx="90" cy="80" fill="#ffffff" rx="55" ry="40" stroke="#000000" stroke-width="2.5"></ellipse>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="90" y="75">逃げろ！</text>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="90" y="95">早く！</text>
+                <ellipse cx="290" cy="360" fill="#ffffff" rx="60" ry="45" stroke="#000000" stroke-width="2.5"></ellipse>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="290" y="365">信じられない…</text>
+                <polygon fill="#ffffff" points="50,330 150,320 160,370 140,400 40,390" stroke="#000000" stroke-width="2.5"></polygon>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="100" y="365">奴が来るぞ！</text>
+                <path d="M 230 450 Q 360 440 350 510 Q 340 560 250 550 Q 230 560 220 540 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5"></path>
+                <text fill="#000" font-family="sans-serif" font-size="11" font-weight="900" text-anchor="middle" x="290" y="495">防御結界を</text>
+                <text fill="#000" font-family="sans-serif" font-size="11" font-weight="900" text-anchor="middle" x="290" y="515">展開しろ！</text>
+                <ellipse cx="100" cy="490" fill="#ffffff" rx="55" ry="35" stroke="#000000" stroke-width="2.5"></ellipse>
+                <text fill="#000" font-family="sans-serif" font-size="12" font-weight="900" text-anchor="middle" x="100" y="495">了解しました！</text>
+              </svg>
+            </div>
+            <div class="chain-card-footer"><span>source: page_0042.png</span><span>1080×1620 px</span></div>
+          </article>
+
+          <!-- 2. Prediction Mask -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">2</span><span>Prediction Mask (UNet++)</span></div>
+              <span class="chain-badge" style="color:var(--color-unetpp-effv2); font-weight:600;">IoU: 0.912</span>
+            </div>
+            <div class="chain-viewport">
+              <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#000000" height="600" width="400"></rect>
+                <path d="M 275 45 C 275 35, 355 35, 355 60 C 355 100, 355 115, 355 135 C 345 155, 320 155, 310 170 C 310 158, 275 150, 275 135 Z" fill="#ffffff"></path>
+                <ellipse cx="90" cy="80" fill="#ffffff" rx="52" ry="38"></ellipse>
+                <ellipse cx="290" cy="360" fill="#ffffff" rx="56" ry="42"></ellipse>
+                <polygon fill="#ffffff" points="53,333 147,323 157,367 137,397 43,387"></polygon>
+                <path d="M 235 455 Q 355 445 345 505 Q 335 555 255 545 Q 235 555 225 538 Z" fill="#ffffff"></path>
+                <ellipse cx="100" cy="490" fill="#ffffff" rx="52" ry="32"></ellipse>
+              </svg>
+            </div>
+            <div class="chain-card-footer"><span>unetpp_effv2_fp16</span><span>Thresh: 0.50 Softmax</span></div>
+          </article>
+
+          <!-- 3. Processed Mask -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">3</span><span>Processed Mask (Dilation)</span></div>
+              <span class="chain-badge">Kernel: 5×5</span>
+            </div>
+            <div class="chain-viewport">
+              <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#000000" height="600" width="400"></rect>
+                <path d="M 268 38 C 268 28, 362 28, 362 55 C 362 105, 362 120, 362 142 C 352 165, 322 165, 312 180 C 312 165, 268 158, 268 142 Z" fill="#ffffff"></path>
+                <ellipse cx="90" cy="80" fill="#ffffff" rx="58" ry="44"></ellipse>
+                <ellipse cx="290" cy="360" fill="#ffffff" rx="63" ry="48"></ellipse>
+                <polygon fill="#ffffff" points="48,326 153,316 164,374 144,404 38,394"></polygon>
+                <path d="M 228 448 Q 362 438 352 512 Q 342 562 248 552 Q 228 562 218 542 Z" fill="#ffffff"></path>
+                <ellipse cx="100" cy="490" fill="#ffffff" rx="58" ry="38"></ellipse>
+              </svg>
+            </div>
+            <div class="chain-card-footer"><span>cv2.morphologyEx(ELLIPSE)</span><span>Iter: 2 • ConvexHull</span></div>
+          </article>
+
+          <!-- 4. Inpainted Canvas -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">4</span><span>Inpainted Canvas (LaMa)</span></div>
+              <span class="chain-badge" style="color:var(--success); font-weight:600;">PSNR: 36.4dB</span>
+            </div>
+            <div class="chain-viewport light-bg">
+              <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#ffffff" height="600" stroke="#cbd5e1" stroke-width="2" width="400"></rect>
+                <rect fill="none" height="260" stroke="#000000" stroke-width="3" width="360" x="20" y="20"></rect>
+                <rect fill="none" height="290" stroke="#000000" stroke-width="3" width="175" x="20" y="290"></rect>
+                <rect fill="none" height="290" stroke="#000000" stroke-width="3" width="175" x="205" y="290"></rect>
+                <ellipse cx="90" cy="80" fill="#ffffff" rx="55" ry="40" stroke="#000000" stroke-width="2.5"></ellipse>
+                <ellipse cx="290" cy="360" fill="#ffffff" rx="60" ry="45" stroke="#000000" stroke-width="2.5"></ellipse>
+                <polygon fill="#ffffff" points="50,330 150,320 160,370 140,400 40,390" stroke="#000000" stroke-width="2.5"></polygon>
+                <path d="M 230 450 Q 360 440 350 510 Q 340 560 250 550 Q 230 560 220 540 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5"></path>
+                <ellipse cx="100" cy="490" fill="#ffffff" rx="55" ry="35" stroke="#000000" stroke-width="2.5"></ellipse>
+              </svg>
+            </div>
+            <div class="chain-card-footer"><span>lama_fourier_v3</span><span>Latency: 12.9ms</span></div>
+          </article>
+
+          <!-- 5. Interactive Region Overlay (Strict: stroke #8b5cf6, fill rgba(139,92,246,0.12)) -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title">
+                <span class="chain-index" style="background:var(--color-unetpp-effv2);">5</span>
+                <span>Region Overlay (UNet++)</span>
+              </div>
+              <span class="chain-badge" style="background:rgba(139,92,246,0.1); color:var(--color-unetpp-effv2); font-weight:700;">6 Polygons</span>
+            </div>
+            <div class="chain-viewport light-bg">
+              <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#f8fafc" height="600" stroke="#cbd5e1" stroke-width="2" width="400"></rect>
+                <rect fill="none" height="260" stroke="#94a3b8" stroke-width="1.5" width="360" x="20" y="20"></rect>
+                <rect fill="none" height="290" stroke="#94a3b8" stroke-width="1.5" width="175" x="20" y="290"></rect>
+                <rect fill="none" height="290" stroke="#94a3b8" stroke-width="1.5" width="175" x="205" y="290"></rect>
+                <!-- Region 1 -->
+                <g class="interactive-region" id="svg-reg-1" style="cursor:pointer;">
+                  <rect fill="rgba(139, 92, 246, 0.12)" height="130" stroke="#8b5cf6" stroke-width="2" width="105" x="260" y="32"></rect>
+                  <circle cx="272" cy="44" fill="#8b5cf6" r="9"></circle>
+                  <text fill="#ffffff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" x="272" y="47.5">#1</text>
+                  <text fill="#8b5cf6" font-family="monospace" font-size="9" font-weight="bold" x="286" y="47">reg_0042_01</text>
+                </g>
+                <!-- Region 2 -->
+                <g class="interactive-region" id="svg-reg-2" style="cursor:pointer;">
+                  <rect fill="rgba(139, 92, 246, 0.12)" height="90" stroke="#8b5cf6" stroke-width="2" width="115" x="35" y="45"></rect>
+                  <circle cx="47" cy="57" fill="#8b5cf6" r="9"></circle>
+                  <text fill="#ffffff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" x="47" y="60.5">#2</text>
+                  <text fill="#8b5cf6" font-family="monospace" font-size="9" font-weight="bold" x="61" y="60">reg_0042_02</text>
+                </g>
+                <!-- Region 3 -->
+                <g class="interactive-region" id="svg-reg-3" style="cursor:pointer;">
+                  <rect fill="rgba(139, 92, 246, 0.12)" height="95" stroke="#8b5cf6" stroke-width="2" width="130" x="225" y="315"></rect>
+                  <circle cx="237" cy="327" fill="#8b5cf6" r="9"></circle>
+                  <text fill="#ffffff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" x="237" y="330.5">#3</text>
+                  <text fill="#8b5cf6" font-family="monospace" font-size="9" font-weight="bold" x="251" y="330">reg_0042_03</text>
+                </g>
+                <!-- Region 4 -->
+                <g class="interactive-region" id="svg-reg-4" style="cursor:pointer;">
+                  <rect fill="rgba(139, 92, 246, 0.12)" height="90" stroke="#8b5cf6" stroke-width="2" width="135" x="35" y="315"></rect>
+                  <circle cx="47" cy="327" fill="#8b5cf6" r="9"></circle>
+                  <text fill="#ffffff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" x="47" y="330.5">#4</text>
+                  <text fill="#8b5cf6" font-family="monospace" font-size="9" font-weight="bold" x="61" y="330">reg_0042_04</text>
+                </g>
+                <!-- Region 5 -->
+                <g class="interactive-region" id="svg-reg-5" style="cursor:pointer;">
+                  <rect fill="rgba(139, 92, 246, 0.12)" height="120" stroke="#8b5cf6" stroke-width="2" width="145" x="215" y="440"></rect>
+                  <circle cx="227" cy="452" fill="#8b5cf6" r="9"></circle>
+                  <text fill="#ffffff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" x="227" y="455.5">#5</text>
+                  <text fill="#8b5cf6" font-family="monospace" font-size="9" font-weight="bold" x="241" y="455">reg_0042_05</text>
+                </g>
+                <!-- Region 6 -->
+                <g class="interactive-region" id="svg-reg-6" style="cursor:pointer;">
+                  <rect fill="rgba(139, 92, 246, 0.12)" height="85" stroke="#8b5cf6" stroke-width="2" width="125" x="40" y="450"></rect>
+                  <circle cx="52" cy="462" fill="#8b5cf6" r="9"></circle>
+                  <text fill="#ffffff" font-family="monospace" font-size="9" font-weight="bold" text-anchor="middle" x="52" y="465.5">#6</text>
+                  <text fill="#8b5cf6" font-family="monospace" font-size="9" font-weight="bold" x="66" y="465">reg_0042_06</text>
+                </g>
+              </svg>
+            </div>
+            <div class="chain-card-footer">
+              <span>R-to-L, Top-to-Bottom</span>
+              <span style="color:var(--color-unetpp-effv2); font-weight:600;">stroke: #8b5cf6</span>
+            </div>
+          </article>
+
+          <!-- 6. Rendered Translated Page -->
+          <article class="chain-card">
+            <div class="chain-card-header">
+              <div class="chain-card-title"><span class="chain-index">6</span><span>Rendered Translated Page</span></div>
+              <span class="chain-badge" style="color:var(--accent); font-weight:600;">vi-VN Final</span>
+            </div>
+            <div class="chain-viewport light-bg">
+              <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+                <rect fill="#ffffff" height="600" stroke="#cbd5e1" stroke-width="2" width="400"></rect>
+                <rect fill="none" height="260" stroke="#000000" stroke-width="3" width="360" x="20" y="20"></rect>
+                <rect fill="none" height="290" stroke="#000000" stroke-width="3" width="175" x="20" y="290"></rect>
+                <rect fill="none" height="290" stroke="#000000" stroke-width="3" width="175" x="205" y="290"></rect>
+                <ellipse cx="290" cy="360" fill="#ffffff" rx="60" ry="45" stroke="#000000" stroke-width="2.5"></ellipse>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="700" text-anchor="middle" x="290" y="356">Không thể</text>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="700" text-anchor="middle" x="290" y="373">tin được...</text>
+                <polygon fill="#ffffff" points="50,330 150,320 160,370 140,400 40,390" stroke="#000000" stroke-width="2.5"></polygon>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="800" text-anchor="middle" x="100" y="358">Hắn đang</text>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="800" text-anchor="middle" x="100" y="375">tới đấy!</text>
+                <path d="M 230 450 Q 360 440 350 510 Q 340 560 250 550 Q 230 560 220 540 Z" fill="#ffffff" stroke="#000000" stroke-width="2.5"></path>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="700" text-anchor="middle" x="290" y="490">Mau giăng</text>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="700" text-anchor="middle" x="290" y="506">kết giới</text>
+                <text fill="#000" font-family="sans-serif" font-size="10.5" font-weight="700" text-anchor="middle" x="290" y="522">phòng ngự!</text>
+              </svg>
+            </div>
+            <div class="chain-card-footer"><span>Font: WildWords-VN</span><span style="color:var(--accent);">BLEU: 44.2</span></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- RIGHT RAIL -->
+      <aside class="right-rail">
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Artifact Exports</span>
+            <span class="status-badge">4 Files Ready</span>
+          </div>
+          <div class="download-grid">
+            <a class="download-btn" href="#download-rendered">Rendered Page</a>
+            <a class="download-btn" href="#download-meta">Metadata JSON</a>
+            <a class="download-btn" href="#download-ocr">OCR Transcripts</a>
+            <a class="download-btn" href="#download-trans">Translation JSON</a>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Region Inspector (6 Detected)</span>
+            <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>0 Overlaps</span>
+          </div>
+          <div style="font-size:10px; color:var(--text-subtle); margin-bottom:8px; display:flex; justify-content:space-between;">
+            <span>READING ORDER (R → L, TOP → BTM)</span>
+            <span>QUALITY AUDIT</span>
+          </div>
+          <!-- Region 1 -->
+          <div class="region-card-row" onclick="switchTab('region-edit')">
+            <div class="region-meta-head">
+              <div class="region-id-tag"><span class="region-tag-index">1</span><span>reg_0042_01</span></div>
+              <div style="display:flex; gap:4px;">
+                <span class="status-badge" style="color:var(--color-unetpp-effv2);">OCR 99%</span>
+                <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Trans ✓</span>
+              </div>
+            </div>
+            <div class="region-coord-str">x: 680 • y: 80 • w: 240 • h: 340</div>
+            <div class="ocr-translation-pair">
+              <div class="text-box-ja"><div class="text-sub-label">JA (OCR Source)</div><div class="text-val">この力は一体…！？</div></div>
+              <div class="text-box-target"><div class="text-sub-label" style="color:var(--accent);">VI (Target)</div><div class="text-val" style="font-weight:600;">Sức mạnh này rốt cuộc là...!?</div></div>
+            </div>
+          </div>
+          <!-- Region 2 -->
+          <div class="region-card-row">
+            <div class="region-meta-head">
+              <div class="region-id-tag"><span class="region-tag-index">2</span><span>reg_0042_02</span></div>
+              <div style="display:flex; gap:4px;">
+                <span class="status-badge" style="color:var(--color-unetpp-effv2);">OCR 98%</span>
+                <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Trans ✓</span>
+              </div>
+            </div>
+            <div class="region-coord-str">x: 220 • y: 120 • w: 200 • h: 280</div>
+            <div class="ocr-translation-pair">
+              <div class="text-box-ja"><div class="text-sub-label">JA (OCR Source)</div><div class="text-val">逃げろ！早く！</div></div>
+              <div class="text-box-target"><div class="text-sub-label" style="color:var(--accent);">VI (Target)</div><div class="text-val" style="font-weight:600;">Mau chạy đi! Nhanh lên!</div></div>
+            </div>
+          </div>
+          <!-- Region 3 -->
+          <div class="region-card-row">
+            <div class="region-meta-head">
+              <div class="region-id-tag"><span class="region-tag-index">3</span><span>reg_0042_03</span></div>
+              <div style="display:flex; gap:4px;">
+                <span class="status-badge" style="color:var(--color-unetpp-effv2);">OCR 95%</span>
+                <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Trans ✓</span>
+              </div>
+            </div>
+            <div class="region-coord-str">x: 740 • y: 490 • w: 190 • h: 360</div>
+            <div class="ocr-translation-pair">
+              <div class="text-box-ja"><div class="text-sub-label">JA (OCR Source)</div><div class="text-val">信じられない…</div></div>
+              <div class="text-box-target"><div class="text-sub-label" style="color:var(--accent);">VI (Target)</div><div class="text-val" style="font-weight:600;">Không thể tin được...</div></div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 2: REGION EDIT                      -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-region-edit">
+    <div class="provenance-strip">
+      <div><strong>PAGE STATUS:</strong> page_0042.png was manually modified and re-rendered on <span style="color:var(--accent);">2025-02-14 14:32 UTC</span></div>
+      <div><span>Editor: <strong>human_annotator_03</strong></span> • <span>Active Region: <strong>reg_0042_01</strong></span></div>
+    </div>
+
+    <div class="region-edit-grid">
+      <!-- Center Interactive Page Canvas with Violet Overlay at 25% fill -->
+      <section class="panel-card" style="padding:0; overflow:hidden;">
+        <div class="panel-header" style="padding:8px 12px; margin:0; background:var(--surface-subtle);">
+          <span class="panel-label">Interactive Canvas Inspection</span>
+          <span class="status-badge" style="color:var(--color-unetpp-effv2); background:rgba(139,92,246,0.1);">Region #1 Selected</span>
+        </div>
+        <div style="background:#f1f5f9; display:flex; justify-content:center; padding:16px;">
+          <svg style="max-width:440px; height:auto; background:#ffffff; border:1px solid var(--surface-border); border-radius:var(--radius-md);" viewBox="0 0 400 600">
+            <rect fill="#ffffff" height="600" width="400"></rect>
+            <rect fill="none" height="260" stroke="#000000" stroke-width="2.5" width="360" x="20" y="20"></rect>
+            <rect fill="none" height="290" stroke="#000000" stroke-width="2.5" width="175" x="20" y="290"></rect>
+            <rect fill="none" height="290" stroke="#000000" stroke-width="2.5" width="175" x="205" y="290"></rect>
+            
+            <!-- SELECTED REGION #1: Violet Overlay at 25% fill (#8b5cf6) -->
+            <rect fill="rgba(139, 92, 246, 0.25)" height="135" stroke="#8b5cf6" stroke-width="3" width="110" x="258" y="30"></rect>
+            <circle cx="272" cy="44" fill="#8b5cf6" r="10"></circle>
+            <text fill="#ffffff" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle" x="272" y="47.5">#1</text>
+            <text fill="#8b5cf6" font-family="monospace" font-size="10" font-weight="bold" x="288" y="47">ACTIVE FOCUS</text>
+            
+            <!-- Region 2 -->
+            <rect fill="rgba(139, 92, 246, 0.08)" height="90" stroke="#8b5cf6" stroke-width="1.5" width="115" x="35" y="45"></rect>
+            <circle cx="47" cy="57" fill="#8b5cf6" r="8"></circle>
+            <text fill="#ffffff" font-family="monospace" font-size="9" text-anchor="middle" x="47" y="60">#2</text>
+            
+            <!-- Region 3 (Warning state with warning triangle icon) -->
+            <rect fill="rgba(220, 38, 38, 0.12)" height="95" stroke="#ba1a1a" stroke-dasharray="4 2" stroke-width="2" width="130" x="225" y="315"></rect>
+            <circle cx="237" cy="327" fill="#ba1a1a" r="8"></circle>
+            <text fill="#ffffff" font-family="monospace" font-size="8" font-weight="bold" text-anchor="middle" x="237" y="330">!</text>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Right Panel: Split-Cell Translation Block & Form -->
+      <section>
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Split-Cell Alignment Editor</span>
+            <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Alignment: 0.94</span>
+          </div>
+
+          <div class="split-trans-block">
+            <!-- Left vertical JA OCR in monospace -->
+            <div>
+              <div class="text-sub-label" style="margin-bottom:6px;">OCR Source (JA)</div>
+              <div class="vertical-ja-box">この力は一体…！？</div>
+            </div>
+            <!-- Right editable translation VI -->
+            <div class="editable-vi-box">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="text-sub-label" style="color:var(--accent);">Target Translation (VI)</span>
+                <span class="status-badge">Confidence: 0.94</span>
+              </div>
+              <textarea class="field-textarea" id="edit-trans-field" rows="4">Sức mạnh này rốt cuộc là...!?</textarea>
+              <div style="display:flex; gap:8px;">
+                <button class="btn-action-primary" style="margin-top:0;" onclick="alert('Translation update applied!')">Apply Modification</button>
+                <button class="btn-tool" style="padding:8px 12px;">Revert</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <span class="panel-label">Manual Edit History &amp; Quality Audit</span>
+            <span class="status-badge">1 Override</span>
+          </div>
+          
+          <table class="quant-table" style="margin-top:0; margin-bottom:12px;">
+            <thead>
+              <tr>
+                <th>Region ID</th>
+                <th>Original Text</th>
+                <th>Edited Text</th>
+                <th>Status</th>
+                <th>Editor</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--color-unetpp-effv2); font-weight:700;">reg_0042_01</td>
+                <td>Sức mạnh này là gì!?</td>
+                <td style="font-weight:600; color:var(--text);">Sức mạnh này rốt cuộc là...!?</td>
+                <td><span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Applied</span></td>
+                <td>annotator_03</td>
+                <td>14:32:08 UTC</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Warning Visual State Card (Hard Requirement: error token color PLUS shape-distinctive warning icon) -->
+          <div class="region-card-row warning-state">
+            <div class="region-meta-head">
+              <div class="region-id-tag" style="color:var(--danger);">
+                <span class="region-tag-index" style="background:var(--danger);">3</span>
+                <span>reg_0042_03</span>
+              </div>
+              <div style="display:flex; gap:4px; align-items:center;">
+                <span class="status-badge error">
+                  <svg fill="none" height="10" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="10">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" x2="12" y1="9" y2="13"></line>
+                    <line x1="12" x2="12.01" y1="17" y2="17"></line>
+                  </svg>
+                  LOW OCR CONFIDENCE (42%)
+                </span>
+              </div>
+            </div>
+            <div class="region-coord-str">x: 740 • y: 490 • w: 190 • h: 360 [OVERLAP DETECTED ON BORDER]</div>
+            <div class="ocr-translation-pair">
+              <div class="text-box-ja"><div class="text-sub-label">JA (OCR Raw)</div><div class="text-val" style="color:var(--danger);">信じ... [Ambiguous Kanji]</div></div>
+              <div class="text-box-target"><div class="text-sub-label" style="color:var(--danger);">VI (Predicted)</div><div class="text-val">Không thể... [Requires Human Verification]</div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 3: SUMMARIES                        -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-summaries">
+    <div class="summary-toolbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <label for="sum-lang" style="font-weight:600; font-size:11px;">Target Language:</label>
+        <select class="select-native" id="sum-lang">
+          <option selected="" value="vi">Vietnamese (vi-VN)</option>
+          <option value="en">English (en-US)</option>
+          <option value="ja">Japanese (ja-JP)</option>
+        </select>
+        <div style="height:16px; width:1px; background:var(--surface-border);"></div>
+        <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-muted);">
+          Provider: <strong>OpenAI</strong> • Model: <strong>gpt-4o-mini-v2.1</strong>
+        </span>
+        <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Cache Hit (TTL: 84h)</span>
+      </div>
+      <div>
+        <button class="btn-action-primary" style="margin-top:0; padding:6px 14px;" onclick="alert('Generating updated summaries...')">Generate Summaries</button>
+      </div>
+    </div>
+
+    <div class="summary-grid">
+      <section class="panel-card">
+        <div class="panel-header">
+          <span class="panel-label">Single Page Synthesis (page_0042.png)</span>
+          <span class="status-badge">6 Dialogue Units</span>
+        </div>
+        <div style="font-size:12px; line-height:1.6; color:var(--text); margin-bottom:12px;">
+          <p style="margin-bottom:8px;"><strong>Bối cảnh &amp; Diễn biến chính:</strong> Cuộc chạm trán bất ngờ nổ ra ở khu vực ngoại vi thành quách. Các thành viên đội trinh sát hoảng loạn trước một nguồn sức mạnh dị thường vừa thức tỉnh.</p>
+          <p style="margin-bottom:8px;"><strong>Phân tích hội thoại (Dialogue Sentiment):</strong> Mức độ khẩn cấp được đẩy lên cao độ (High Tension). Nhân vật kêu gọi kích hoạt kết giới phòng thủ ngay lập tức khi đối tượng thù địch tiến vào tầm ngắm.</p>
+          <div style="background:var(--surface-subtle); border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:8px 10px; font-family:var(--font-mono); font-size:11px;">
+            <div>• Key Characters: Eren [reg_0042_01], Armin [reg_0042_02], Mikasa [reg_0042_05]</div>
+            <div>• Emotional Valence: Fear &amp; Tactical Urgency (-0.72)</div>
+            <div>• Translation Integrity Index: 0.962 (M2M100 + LoRA)</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <div class="panel-header">
+          <span class="panel-label">Chapter Summary Manifest (Vol 01 - Ch 04)</span>
+          <span class="status-badge">48 Pages Audited</span>
+        </div>
+        <div style="font-size:12px; line-height:1.6; color:var(--text); margin-bottom:12px;">
+          <p style="margin-bottom:8px;"><strong>Tóm lược chương:</strong> Quân đoàn phòng thủ chịu tổn thất nặng nề sau đợt tấn công thứ nhất. Chương truyện tập trung vào việc tái cơ cấu đội hình chiến đấu và bảo toàn phòng tuyến trung tâm.</p>
+          
+          <div style="margin-top:10px;">
+            <div class="text-sub-label">Ordered Page Ingestion List (Presence Markers):</div>
+            <div class="page-chip-list">
+              <span class="page-chip">page_0040.png ✓</span>
+              <span class="page-chip">page_0041.png ✓</span>
+              <span class="page-chip" style="background:#ede9fe; border-color:#8b5cf6; font-weight:700;">page_0042.png (Current)</span>
+              <span class="page-chip">page_0043.png ✓</span>
+              <span class="page-chip">page_0044.png ✓</span>
+              <span class="page-chip">page_0045.png ✓</span>
+              <span class="page-chip">page_0046.png ✓</span>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;">
+            <div class="text-sub-label" style="color:var(--danger);">Missing / Incomplete Pages:</div>
+            <div class="page-chip-list">
+              <span class="page-chip missing">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                page_0047 [MISSING]
+              </span>
+              <span class="page-chip missing">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                page_0051 [CORRUPTED_STREAM]
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 4: REPORTS                          -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-reports">
+    <div class="report-section">
+      <div class="panel-header">
+        <span class="panel-label">1. Quantitative Benchmark Report (Full Corpus Validation)</span>
+        <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>N = 1,420 Pages</span>
+      </div>
+
+      <table class="quant-table" style="margin-bottom:14px;">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>IoU</th>
+            <th>Precision</th>
+            <th>Recall</th>
+            <th>F1</th>
+            <th>Avg Time ± Std</th>
+            <th>Success</th>
+            <th>Failure</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method-swatch" style="display:inline-block; vertical-align:middle; background:var(--color-classical);"></span> Classical Baseline</td>
+            <td>0.612</td><td>0.684</td><td>0.808</td><td>0.741</td><td>18.4ms ± 2.1ms</td><td>1,340</td><td style="color:var(--danger); font-weight:700;">80</td>
+          </tr>
+          <tr>
+            <td><span class="method-swatch" style="display:inline-block; vertical-align:middle; background:var(--color-manga-text-seg);"></span> Manga-Text-Segmentation</td>
+            <td>0.844</td><td>0.880</td><td>0.905</td><td>0.892</td><td>32.1ms ± 4.5ms</td><td>1,398</td><td style="color:var(--danger); font-weight:700;">22</td>
+          </tr>
+          <tr>
+            <td><span class="method-swatch" style="display:inline-block; vertical-align:middle; background:var(--color-comic-text-detector);"></span> comic-text-detector</td>
+            <td>0.871</td><td>0.901</td><td>0.930</td><td>0.915</td><td>45.8ms ± 6.2ms</td><td>1,406</td><td style="color:var(--danger); font-weight:700;">14</td>
+          </tr>
+          <tr class="active-row">
+            <td style="color:var(--color-unetpp-effv2);"><span class="method-swatch" style="display:inline-block; vertical-align:middle; background:var(--color-unetpp-effv2);"></span> UNet++ EfficientNetV2</td>
+            <td>0.912</td><td>0.942</td><td>0.954</td><td>0.948</td><td>38.0ms ± 3.8ms</td><td>1,414</td><td style="color:var(--success); font-weight:700;">6</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Single-Axis Handcrafted SVG Grouped Bar Chart -->
+      <div style="background:var(--surface-subtle); border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:12px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:11px; font-weight:700; text-transform:uppercase;">Method Metric Comparison (Single-Axis Mean Scores)</span>
+          <div style="display:flex; gap:10px; font-family:var(--font-mono); font-size:10px;">
+            <span style="display:flex; align-items:center; gap:4px;"><span class="method-swatch" style="background:#3b82f6;"></span>Classical</span>
+            <span style="display:flex; align-items:center; gap:4px;"><span class="method-swatch" style="background:#10b981;"></span>MTS</span>
+            <span style="display:flex; align-items:center; gap:4px;"><span class="method-swatch" style="background:#f59e0b;"></span>CTD</span>
+            <span style="display:flex; align-items:center; gap:4px;"><span class="method-swatch" style="background:#8b5cf6;"></span>UNet++</span>
+          </div>
+        </div>
+        <svg height="110" viewBox="0 0 600 110" width="100%">
+          <line stroke="#cbd5e1" stroke-width="1" x1="40" x2="580" y1="85" y2="85"></line>
+          <text fill="#64748b" font-family="monospace" font-size="9" text-anchor="end" x="35" y="88">0.0</text>
+          <text fill="#64748b" font-family="monospace" font-size="9" text-anchor="end" x="35" y="48">0.5</text>
+          <text fill="#64748b" font-family="monospace" font-size="9" text-anchor="end" x="35" y="15">1.0</text>
+          <!-- IoU Group -->
+          <rect fill="#3b82f6" height="43" width="18" x="70" y="42"></rect>
+          <rect fill="#10b981" height="59" width="18" x="92" y="26"></rect>
+          <rect fill="#f59e0b" height="61" width="18" x="114" y="24"></rect>
+          <rect fill="#8b5cf6" height="64" width="18" x="136" y="21"></rect>
+          <text fill="#475569" font-family="sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="112" y="100">IoU</text>
+          <!-- Precision Group -->
+          <rect fill="#3b82f6" height="48" width="18" x="200" y="37"></rect>
+          <rect fill="#10b981" height="62" width="18" x="222" y="23"></rect>
+          <rect fill="#f59e0b" height="63" width="18" x="244" y="22"></rect>
+          <rect fill="#8b5cf6" height="66" width="18" x="266" y="19"></rect>
+          <text fill="#475569" font-family="sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="242" y="100">Precision</text>
+          <!-- Recall Group -->
+          <rect fill="#3b82f6" height="57" width="18" x="330" y="28"></rect>
+          <rect fill="#10b981" height="63" width="18" x="352" y="22"></rect>
+          <rect fill="#f59e0b" height="65" width="18" x="374" y="20"></rect>
+          <rect fill="#8b5cf6" height="67" width="18" x="396" y="18"></rect>
+          <text fill="#475569" font-family="sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="372" y="100">Recall</text>
+          <!-- F1 Group -->
+          <rect fill="#3b82f6" height="52" width="18" x="460" y="33"></rect>
+          <rect fill="#10b981" height="62" width="18" x="482" y="23"></rect>
+          <rect fill="#f59e0b" height="64" width="18" x="504" y="21"></rect>
+          <rect fill="#8b5cf6" height="66" width="18" x="526" y="19"></rect>
+          <text fill="#475569" font-family="sans-serif" font-size="10" font-weight="600" text-anchor="middle" x="502" y="100">F1 Score</text>
+        </svg>
+      </div>
+
+      <div style="background:var(--surface-subtle); border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:10px; font-family:var(--font-mono); font-size:11px;">
+        <div><strong>EXECUTION PROVENANCE &amp; ENVIRONMENT:</strong></div>
+        <div style="margin-top:4px; color:var(--text-muted);">
+          • Checkpoints: fold_04_best_val_loss.pt (UNet++), dbnet_resnet18_fp16.onnx (CTD)<br/>
+          • Split Strategy: Leave-one-fold-out 5-fold cross validation on Manga109-s<br/>
+          • Reproducibility: Validated deterministic offline execution with SEED=42. Reproducible from artifacts alone.
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualitative Section with 7 separated sections -->
+    <div class="report-section">
+      <div class="panel-header">
+        <span class="panel-label">2. Qualitative Breakdown (Seven Separated Failure Dimensions)</span>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <label for="rep-policy" style="font-size:11px;">Policy:</label>
+          <select class="select-native" id="rep-policy">
+            <option>best-N + worst-N + typical-N</option>
+            <option>first-N</option>
+            <option>manual-list</option>
+          </select>
+          <input class="field-input" style="width:50px; padding:3px 6px;" type="number" value="5"/>
+        </div>
+      </div>
+
+      <div class="failure-grid-7">
+        <div class="failure-box"><div class="panel-label" style="margin-bottom:6px;">1. Best Cases (IoU &gt; 0.95)</div><div style="font-size:11px;">page_0012, page_0042, page_0088 intact with high fidelity boundaries.</div></div>
+        <div class="failure-box"><div class="panel-label" style="margin-bottom:6px;">2. Worst Cases (IoU &lt; 0.70)</div><div style="font-size:11px;">page_0104, page_0219 degraded due to screentone interference.</div></div>
+        <div class="failure-box"><div class="panel-label" style="margin-bottom:6px;">3. Typical Cases (IoU ~ 0.88)</div><div style="font-size:11px;">Standard conversational bubbles with vertical Japanese typography.</div></div>
+        <div class="failure-box has-border-danger"><div class="panel-label" style="color:var(--danger); margin-bottom:6px;">4. OCR Failures (Complete)</div><div style="font-size:11px;">• page_0067_reg02: Blurred furigana<br/>• page_0112_reg01: Hand-drawn SFX sound effect</div></div>
+        <div class="failure-box has-border-danger"><div class="panel-label" style="color:var(--danger); margin-bottom:6px;">5. Translation Failures (Complete)</div><div style="font-size:11px;">• page_0042_reg03: Out-of-vocabulary archaic slang<br/>• page_0099_reg04: Truncated beam search token</div></div>
+        <div class="failure-box has-border-danger"><div class="panel-label" style="color:var(--danger); margin-bottom:6px;">6. Rendering Failures (Complete)</div><div style="font-size:11px;">• page_0015: Overflow text bbox<br/>• page_0081: Missing glyph in WildWords font</div></div>
+        <div class="failure-box"><div class="panel-label" style="margin-bottom:6px;">7. Inpainting Artifacts</div><div style="font-size:11px;">High frequency boundary halos observed on screech lines.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 5: BATCH                            -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-batch">
+    <div class="panel-card">
+      <div class="panel-header">
+        <span class="panel-label">Batch Job Submission &amp; Queue</span>
+        <span class="status-badge">1 Job Active</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:12px;">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input checked="" id="chk-all-pages" type="checkbox"/>
+          <label for="chk-all-pages" style="font-size:11px; font-weight:600;">Process Entire Corpus Manifest (manga_tit_vol01: 48 pages)</label>
+        </div>
+        <button class="btn-action-primary" style="width:auto; margin-top:0; padding:6px 14px;">Submit Batch</button>
+      </div>
+
+      <div style="border:1px solid var(--surface-border); border-radius:var(--radius-md); padding:12px; background:var(--surface-subtle); margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span style="font-family:var(--font-mono); font-weight:700;">job_20250214_batch_04</span>
+            <span class="status-badge valid" style="margin-left:8px;"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>Running (4 / 5 Pages Finished)</span>
+          </div>
+          <span style="font-family:var(--font-mono); font-size:11px;">80% Completed</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill"></div></div>
+      </div>
+
+      <!-- Batch Item Table (Hard Requirement: ONE row failed, rest succeeded) -->
+      <div style="border:1px solid var(--surface-border); border-radius:var(--radius-md); overflow:hidden; background:var(--surface);">
+        <div class="batch-item-row" style="background:var(--surface-subtle); font-weight:700; color:var(--text-muted);">
+          <span>#</span><span>PAGE ID</span><span>STATUS</span><span>STAGES</span><span>TIME</span><span>ACTION</span>
+        </div>
+        <div class="batch-item-row">
+          <span>01</span><span>page_0040.png</span>
+          <span class="status-badge valid"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>SUCCESS</span>
+          <span>Load ✓ • Seg ✓ • Inp ✓ • OCR ✓ • NMT ✓</span><span>124ms</span>
+          <span><button class="btn-tool" style="font-size:10px;">Inspect</button></span>
+        </div>
+        <div class="batch-item-row">
+          <span>02</span><span>page_0041.png</span>
+          <span class="status-badge valid"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>SUCCESS</span>
+          <span>Load ✓ • Seg ✓ • Inp ✓ • OCR ✓ • NMT ✓</span><span>118ms</span>
+          <span><button class="btn-tool" style="font-size:10px;">Inspect</button></span>
+        </div>
+        <div class="batch-item-row" style="background:#ffdad6;">
+          <span>03</span><span style="color:var(--danger); font-weight:700;">page_0042.png</span>
+          <span class="status-badge error">
+            <svg fill="none" height="8" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" width="8">
+              <line x1="18" x2="6" y1="6" y2="18"></line><line x1="6" x2="18" y1="6" y2="18"></line>
+            </svg>
+            FAILED
+          </span>
+          <span style="color:var(--danger);">Load ✓ • Seg ✓ • Inp Divergence (NaN)</span><span>84ms</span>
+          <span><button class="btn-tool" style="font-size:10px; background:#fff; border-color:var(--danger); color:var(--danger);" onclick="alert('Retrying page_0042...')">Retry</button></span>
+        </div>
+        <div class="batch-item-row">
+          <span>04</span><span>page_0043.png</span>
+          <span class="status-badge valid"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>SUCCESS</span>
+          <span>Load ✓ • Seg ✓ • Inp ✓ • OCR ✓ • NMT ✓</span><span>131ms</span>
+          <span><button class="btn-tool" style="font-size:10px;">Inspect</button></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- SCREEN 6: RUN STATUS                       -->
+  <!-- ========================================== -->
+  <div class="screen-view" id="view-run-status">
+    <div class="panel-card">
+      <div class="panel-header">
+        <div>
+          <span class="panel-label">Current Execution Run ID:</span>
+          <span style="font-family:var(--font-mono); font-weight:700; margin-left:6px;">run_seg_20250214_01</span>
+        </div>
+        <span class="status-badge valid"><svg width='8' height='8' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='3'><polyline points='20 6 9 17 4 12'></polyline></svg>READ-ONLY EXECUTION STATE</span>
+      </div>
+
+      <!-- Pipeline Stages Timeline -->
+      <div style="margin:20px 0;">
+        <div style="font-size:11px; font-weight:700; text-transform:uppercase; margin-bottom:8px;">Pipeline Stage Progression</div>
+        <div class="timeline-steps">
+          <div class="timeline-step">
+            <div class="step-circle done">✓</div>
+            <span style="font-size:11px; font-weight:600;">1. Ingestion</span>
+          </div>
+          <div class="timeline-step">
+            <div class="step-circle done">✓</div>
+            <span style="font-size:11px; font-weight:600;">2. Segmentation</span>
+          </div>
+          <div class="timeline-step">
+            <div class="step-circle active">●</div>
+            <span style="font-size:11px; font-weight:600; color:var(--accent);">3. Inpainting</span>
+          </div>
+          <div class="timeline-step">
+            <div class="step-circle">4</div>
+            <span style="font-size:11px; color:var(--text-muted);">4. OCR &amp; NMT</span>
+          </div>
+          <div class="timeline-step">
+            <div class="step-circle">5</div>
+            <span style="font-size:11px; color:var(--text-muted);">5. Typesetting</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Provenance -->
+      <div style="margin-top:20px;">
+        <div class="panel-label" style="margin-bottom:8px;">Provenance &amp; Attribution</div>
+        <table class="quant-table">
+          <thead>
+            <tr><th>Field</th><th>Value</th><th>Source</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Run ID</td><td>run_seg_20250214_01</td><td>this session</td></tr>
+            <tr><td>Consumed Run IDs</td><td>run_seg_20250213_04, run_inp_20250213_04</td><td>Spec 2, Spec 3</td></tr>
+            <tr><td>Method</td><td>unetpp_effv2_b4</td><td>benchmark selection</td></tr>
+            <tr><td>Fold / Checkpoint</td><td>fold_0 / epoch_42.pt</td><td>training manifest</td></tr>
+            <tr><td>OCR Engine</td><td>manga-ocr</td><td>Spec 4</td></tr>
+            <tr><td>NMT Provider</td><td>OpenAI / gpt-4o-mini-v2.1</td><td>summaries adapter</td></tr>
+            <tr><td>Environment</td><td>CPU-only, SEED=42</td><td>execution</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- State Guide Panel -->
+      <div style="margin-top:20px;">
+        <div class="panel-label" style="margin-bottom:8px;">State Guide &amp; Lifecycle Diagnostics (Never Color Alone)</div>
+        <div class="state-guide-list">
+          <div class="state-guide-item">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-badge valid"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg> Nominal Complete</span>
+              <span>All 6 pipeline artifacts present, validated, and inspectable.</span>
+            </div>
+            <span style="font-family:var(--font-mono); font-size:10px;">HTTP 200</span>
+          </div>
+          <div class="state-guide-item">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-badge warning"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Partial Run</span>
+              <span>Interrupted or cached checkpoint missing downstream stages.</span>
+            </div>
+            <span style="font-family:var(--font-mono); font-size:10px;">HTTP 206</span>
+          </div>
+          <div class="state-guide-item">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-badge error"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg> Inpaint Divergence</span>
+              <span>Fourier coefficient explosion (NaN) caught gracefully. Session preserved.</span>
+            </div>
+            <span style="font-family:var(--font-mono); font-size:10px;">HTTP 500</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- PERSISTENT FOOTER -->
+<footer id="app-footer">
+  <div>Manga Text Segmentation &amp; Translation Workbench • Research Build v2.4 (Offline Native)</div>
+  <div>Pipeline: Ingestion → UNet++ → Morph-Dilation → LaMa FFT → M2M100 • UTF-8</div>
+</footer>
+
+<!-- VANILLA JS TAB & STATE CONTROLLER -->
+<script>
+  function switchTab(tabId) {
+    document.querySelectorAll('.screen-view').forEach(function(el) {
+      el.classList.remove('is-active');
+    });
+    document.querySelectorAll('.nav-tab-btn').forEach(function(btn) {
+      btn.removeAttribute('aria-current');
+    });
+    
+    const activeView = document.getElementById('view-' + tabId);
+    const activeBtn = document.getElementById('tab-' + tabId);
+    if (activeView) activeView.classList.add('is-active');
+    if (activeBtn) activeBtn.setAttribute('aria-current', 'page');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setLayout(mode) {
+    const grid = document.getElementById('pipelineGrid');
+    const btnMatrix = document.getElementById('btn-grid-matrix');
+    const btnFlow = document.getElementById('btn-grid-flow');
+    if (mode === 'flow') {
+      grid.classList.add('flow-vertical');
+      btnFlow.classList.add('active');
+      btnMatrix.classList.remove('active');
+    } else {
+      grid.classList.remove('flow-vertical');
+      btnMatrix.classList.add('active');
+      btnFlow.classList.remove('active');
+    }
+  }
+
+  function setState(stateNum) {
+    const btns = document.querySelectorAll('.state-btn');
+    btns.forEach((b, idx) => {
+      if (idx === stateNum - 1) b.classList.add('active');
+      else b.classList.remove('active');
+    });
+    const notice = document.getElementById('stateGuideNotice');
+    const msgs = [
+      'State: 1. Empty / Unselected — Select manga volume and page from context bar to begin.',
+      'State: 2. Loading Pipeline — Fetching prediction tensors and morphological mask cache.',
+      'State: 3. Partial Run — Checkpoint loaded up to Stage 3. Inpainting stage ready to run.',
+      'State: 4. Nominal Complete — All 6 pipeline artifacts intact. Zero bounding-box overlaps detected.',
+      'State: 5. Degenerate OCR — No text regions detected on scan. OCR and NMT panels omitted gracefully.',
+      'State: 6. Inpaint Divergence — Fourier divergence detected. Session safely preserved.',
+      'State: 7. NMT Timeout — NMT translation service timeout (408). Region editing remains active.',
+      'State: 8. Run Ambiguity Conflict — Multiple candidate runs discovered. Please select active run.'
+    ];
+    if (notice) notice.innerHTML = `<span><strong>${msgs[stateNum - 1]}</strong></span><span style="font-family: var(--font-mono); font-size: 11px;">State #${stateNum}</span>`;
+  }
+</script>
+</body>
+</html>

@@ -27,6 +27,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from ..config import WebConfig
+from .demo import register_demo_routes
 from .errors import error_response
 from .security import (
     ArtifactRefused,
@@ -125,6 +126,11 @@ def create_app(config: WebConfig) -> FastAPI:
     async def health() -> dict:
         """Liveness plus the one condition worth knowing before a demo."""
         return {"status": "ok", "static_root_ready": _static_ready(config.static_root)}
+
+    # The demo's three routes (demo.py). Mounted here rather than in a router
+    # module: they read the recorded runs directly, which is what a demo needs
+    # and what the session/job endpoints of plan.md would otherwise be built for.
+    register_demo_routes(app, config)
 
     if _static_ready(config.static_root):
         # ponytail: html=True serves index.html for `/` and for directory
