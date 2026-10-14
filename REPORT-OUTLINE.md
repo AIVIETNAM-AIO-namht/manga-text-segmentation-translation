@@ -10,19 +10,19 @@
 
 ## 0. Cách dùng file này
 
-- Mỗi mục có nhãn **`[TV1]` `[TV2]` `[TV3]` `[TV4]`**. Ai có nhãn nào thì viết mục đó.
-- Mục ghi **`[CHUNG]`** là cả bốn người cùng viết, TV4 chốt bản cuối.
+- Mỗi mục có nhãn **`[TV4]` `[TV2]` `[TV3]` `[TV1]`**. Ai có nhãn nào thì viết mục đó.
+- Mục ghi **`[CHUNG]`** là cả bốn người cùng viết, TV1 chốt bản cuối.
 - Sau mỗi mục có dòng **Nguồn:** trỏ tới file trong repo để lấy số liệu/hình. **Trích nguyên văn, không tính lại.**
-- Mục 7 là danh sách **bắt buộc nói thật** — đọc trước khi viết bất cứ phần nào.
+- Mục 7 là danh sách **bắt buộc nói thật** — đọc trước khi viết bất cứ phần nào. Trong `REPORT-OUTLINE.docx`, mục này là **Phụ lục A**, còn mục 8 là **Phụ lục B**; hai file cùng nội dung, chỉ khác số mục.
 
 ### Bốn người và phần việc đã làm
 
 | Nhãn | Người | Việc đã làm trong repo | Spec |
 |---|---|---|---|
-| **TV1** | Nguyễn Quang Huy (`HuyyCter`) | Toàn bộ làn "nhận mask & inpainting" của Spec 003: `intake.py`, `maskproc.py`, `inpaint.py`, `runs.py`, `config.py`, `cli.py`, `configs/inpainting.json`. Chạy notebook **Manga-Text-Segmentation** (U-Net ResNet34) và chọn REISSUE Path 1 → phương pháp này **không được chấm điểm**. | 003-A |
+| **TV4** | Nguyễn Quang Huy (`HuyyCter`) | Toàn bộ làn "nhận mask & inpainting" của Spec 003: `intake.py`, `maskproc.py`, `inpaint.py`, `runs.py`, `config.py`, `cli.py`, `configs/inpainting.json`. Chạy notebook **Manga-Text-Segmentation** (U-Net ResNet34) và chọn REISSUE Path 1 → phương pháp này **không được chấm điểm**. | 003-A |
 | **TV2** | Hà Duy Anh (`PhemieIris`) | Làn batch / selection / boards / qualitative / ablation của Spec 003: `boards.py`, `qualitative.py`, `ablation.py`, `selection.py`. Chạy notebook **comic-text-detector** (YOLOv5 + DBNet + U-Net). | 003-B |
 | **TV3** | `Penguin-cell34` *(điền tên thật)* | Toàn bộ Spec 004 (82 task): trích vùng chữ, OCR, dịch, render, batch, chạy lại có chọn lọc. Chạy notebook **UNet++ EfficientNetV2**. | 004-C |
-| **TV4** | `CapyCoder` *(bạn)* | Spec 001 (baseline cổ điển 6 phương pháp), Spec 002 (benchmark, admission, metric, report, receipt), toàn bộ tài liệu (`ONBOARDING.md`, `REISSUE.md`, `TEAM-ASSIGNMENT.md`), và nền web Spec 005. | 001, 002, 005 |
+| **TV1** | `CapyCoder` *(bạn)* | Spec 001 (baseline cổ điển 6 phương pháp), Spec 002 (benchmark, admission, metric, report, receipt), toàn bộ tài liệu (`ONBOARDING.md`, `REISSUE.md`, `TEAM-ASSIGNMENT.md`), và nền web Spec 005. | 001, 002, 005 |
 
 ### Mức độ đóng góp gợi ý (điền vào bảng bìa)
 
@@ -33,7 +33,7 @@
 | *(điền)* | *(tên thật của Penguin-cell34)* | 25 |
 | *(điền)* | *(tên bạn)* | 25 |
 
-> Chia đều 25% là mặc định hợp lý: bốn người, bốn làn việc tách bạch (TV1 = inpainting, TV2 = đánh giá định tính, TV3 = OCR/dịch/render, TV4 = baseline + benchmark + web). **Sửa lại nếu thực tế lệch** — đừng để bảng bìa nói sai.
+> Chia đều 25% là mặc định hợp lý: bốn người, bốn làn việc tách bạch (TV4 = inpainting, TV2 = đánh giá định tính, TV3 = OCR/dịch/render, TV1 = baseline + benchmark + web). **Sửa lại nếu thực tế lệch** — đừng để bảng bìa nói sai.
 
 ---
 
@@ -49,7 +49,7 @@
 
 ## 2. Outline chi tiết
 
-### Trang bìa — `[TV4]`
+### Trang bìa — `[TV1]`
 
 Hai trang, làm đúng khuôn template: trang tiếng Anh (`HCMC UNIVERSITY OF TECHNOLOGY AND ENGINEERING / FACULTY OF INFORMATION TECHNOLOGY`) và trang tiếng Việt (`TRƯỜNG ĐH CÔNG NGHỆ KỸ THUẬT TP. HỒ CHÍ MINH / KHOA CÔNG NGHỆ THÔNG TIN`).
 
@@ -63,7 +63,7 @@ Hai trang, làm đúng khuôn template: trang tiếng Anh (`HCMC UNIVERSITY OF T
 
 ---
 
-### Mục lục · Danh mục viết tắt · Danh sách hình vẽ · Danh sách bảng biểu — `[TV4]`
+### Mục lục · Danh mục viết tắt · Danh sách hình vẽ · Danh sách bảng biểu — `[TV1]`
 
 Sinh tự động từ heading sau khi cả bốn người viết xong. Viết **sau cùng**, không viết trước.
 
@@ -87,18 +87,18 @@ Sinh tự động từ heading sau khi cả bốn người viết xong. Viết *
 
 ---
 
-## PHẦN 1. MỞ ĐẦU (mô tả về project) — `[TV4]`, có `[TV1][TV2][TV3]` góp
+## PHẦN 1. MỞ ĐẦU (mô tả về project) — `[TV1]`, có `[TV4][TV2][TV3]` góp
 
 Đây là phần chuyển thể từ đề cương đã nộp, **viết lại theo văn phong báo cáo** (không copy nguyên văn), và **cập nhật theo thực tế đã làm**.
 
-### 1.1. Phát biểu bài toán — `[TV4]`
+### 1.1. Phát biểu bài toán — `[TV1]`
 - Manga là nội dung số có nhu cầu dịch tự động cao; xử lý ảnh manga khó hơn ảnh tài liệu thường: chữ nằm trong bong bóng thoại hình dạng không cố định, font cách điệu, hiệu ứng âm thanh, nền phức tạp, bố cục trang đa dạng.
 - Trong pipeline dịch manga, **phân đoạn vùng văn bản mức pixel** và **xóa – phục hồi bằng inpainting** là hai bước xử lý ảnh quyết định.
 - Đây là bài toán vận dụng đúng kiến thức môn học: biến đổi cường độ, phân ngưỡng, phát hiện vùng đặc trưng, phát hiện biên, hình thái học, phục hồi ảnh.
 
 **Nguồn:** đề cương mục 1.
 
-### 1.2. Mục đích, yêu cầu cần thực hiện — `[TV4]`
+### 1.2. Mục đích, yêu cầu cần thực hiện — `[TV1]`
 Năm mục tiêu, mỗi mục ghi rõ **đã đạt hay chưa**:
 
 1. Baseline cổ điển cho phân đoạn mức pixel (phân ngưỡng, MSER, biên, hình thái học) — **đạt**.
@@ -109,7 +109,7 @@ Năm mục tiêu, mỗi mục ghi rõ **đã đạt hay chưa**:
 
 **Nguồn:** đề cương mục 2.
 
-### 1.3. Phạm vi và đối tượng — `[TV4]`
+### 1.3. Phạm vi và đối tượng — `[TV1]`
 - **Đối tượng**: ảnh trang truyện manga, tập trung vùng chứa văn bản (lời thoại, chú thích, hiệu ứng âm thanh).
 - **Phạm vi chính**: hai bước xử lý ảnh — phân đoạn mức pixel và xóa/phục hồi bằng inpainting.
 - **Ngoài phạm vi benchmark**: OCR, dịch máy, chèn chữ, tóm tắt nội dung — triển khai ở mức demo, dùng công cụ có sẵn, **không huấn luyện mới**, **không dùng để xếp hạng** bốn phương pháp phân đoạn.
@@ -121,7 +121,7 @@ Năm mục tiêu, mỗi mục ghi rõ **đã đạt hay chưa**:
 
 ## PHẦN 2. CƠ SỞ LÝ THUYẾT — chia theo phương pháp, mỗi người viết phần của mình
 
-### 2.1. Công cụ, môi trường, ngôn ngữ — `[TV4]`
+### 2.1. Công cụ, môi trường, ngôn ngữ — `[TV1]`
 - **Ngôn ngữ**: Python 3.12.13 (pipeline chính); Python 3.10.1 (môi trường kiểm tra khả dụng trong `benchmark/availability.json`).
 - **Thư viện**: OpenCV (phân ngưỡng, MSER, morphology, inpainting), NumPy, Pillow, FastAPI + Uvicorn (web), pytest.
 - **Quản lý gói**: `uv` + `pyproject.toml` + `uv.lock`.
@@ -131,7 +131,7 @@ Năm mục tiêu, mỗi mục ghi rõ **đã đạt hay chưa**:
 
 **Nguồn:** [`README.md`](README.md); `deliverables/spec002/run.json`; `outputs/inpainting/spec003-main/performance.json`.
 
-### 2.2. Kỹ thuật xử lý ảnh cổ điển dùng trong baseline — `[TV4]`
+### 2.2. Kỹ thuật xử lý ảnh cổ điển dùng trong baseline — `[TV1]`
 Viết lý thuyết cho **từng** kỹ thuật, mỗi kỹ thuật nửa trang:
 
 - **Chuyển ảnh xám** và chuẩn hóa cường độ.
@@ -143,7 +143,7 @@ Viết lý thuyết cho **từng** kỹ thuật, mỗi kỹ thuật nửa trang:
 
 **Nguồn:** `src/manga_text_seg/` (module baseline Spec 001); `outputs/segmentation/default/metrics.csv`; giáo trình Gonzalez & Woods.
 
-### 2.3. Manga-Text-Segmentation — U-Net + ResNet34 — `[TV1]`
+### 2.3. Manga-Text-Segmentation — U-Net + ResNet34 — `[TV4]`
 - Kiến trúc **U-Net** (encoder–decoder, skip connection), backbone **ResNet34**.
 - Ứng dụng cho phân đoạn mức pixel trên manga; huấn luyện trên mask Manga109.
 - Nêu rõ **vì sao đề tài dùng bản pretrained**: không huấn luyện lại, chỉ suy luận.
@@ -165,7 +165,7 @@ Viết lý thuyết cho **từng** kỹ thuật, mỗi kỹ thuật nửa trang:
 
 **Nguồn:** [`notebooks/deliverables/unetpp-efficientnetv2/`](notebooks/deliverables/unetpp-efficientnetv2/); đề cương mục 4.
 
-### 2.6. Inpainting: TELEA và Navier–Stokes — `[TV1]`
+### 2.6. Inpainting: TELEA và Navier–Stokes — `[TV4]`
 - Nguyên lý hai thuật toán inpainting cổ điển trong OpenCV.
 - Vì sao dùng inpainting cổ điển thay vì model sinh ảnh: **không có ảnh sạch làm ground-truth** để huấn luyện hay đánh giá.
 - Vì sao đánh giá **định tính** chứ không dùng PSNR/SSIM: bộ dữ liệu không cung cấp ảnh manga sạch không chứa văn bản.
@@ -184,7 +184,7 @@ Viết lý thuyết cho **từng** kỹ thuật, mỗi kỹ thuật nửa trang:
 
 ## PHẦN 3. PHÂN TÍCH, THIẾT KẾ GIẢI PHÁP
 
-### 3.1. Sơ đồ khối tổng thể — `[TV4]`
+### 3.1. Sơ đồ khối tổng thể — `[TV1]`
 Vẽ sơ đồ khối toàn pipeline, đúng chuỗi trong README:
 
 ```
@@ -199,14 +199,14 @@ Trên sơ đồ phải phân biệt bằng màu/khối:
 
 **Nguồn:** [`README.md`](README.md) (khối pipeline); `specs/002-*/spec.md`.
 
-### 3.2. Thiết kế baseline cổ điển — `[TV4]`
+### 3.2. Thiết kế baseline cổ điển — `[TV1]`
 - Sơ đồ khối riêng cho nhánh cổ điển: tiền xử lý → phân ngưỡng/MSER/biên → hình thái học → connected components → binary mask.
 - **Sáu biến thể** được cài: `otsu`, `adaptive`, `mser`, `edges`, `morphology`, `components`.
 - Giải thích vì sao baseline có sáu biến thể: để tìm cấu hình tốt nhất trong họ cổ điển trước khi so với DL.
 
 **Nguồn:** `src/manga_text_seg/` (Spec 001); `outputs/segmentation/default/metrics.csv`.
 
-### 3.3. Hợp đồng mask và quy trình kết nạp kết quả — `[TV4]`
+### 3.3. Hợp đồng mask và quy trình kết nạp kết quả — `[TV1]`
 Đây là phần thiết kế **quan trọng nhất về mặt kỹ thuật**, phải viết kỹ:
 
 - **Định dạng mask bắt buộc**: ảnh một kênh `uint8`, kích thước `(1170, 1654)`, giá trị chỉ thuộc `{0, 255}`.
@@ -220,7 +220,7 @@ Trên sơ đồ phải phân biệt bằng màu/khối:
 
 **Nguồn:** [`ONBOARDING.md`](ONBOARDING.md) §2, §7, §8; `benchmark/availability.json`; `deliverables/spec002/run.json`; `deliverables/spec002/comparison.csv` (cột `disclosure`).
 
-### 3.4. Thiết kế quy trình xóa và phục hồi — `[TV1]`
+### 3.4. Thiết kế quy trình xóa và phục hồi — `[TV4]`
 - Sơ đồ: nhận prediction mask → **dilation ellipse 3×3, 1 vòng lặp** → áp mask lên ảnh gốc → inpainting **TELEA** và **NS**, **radius = 3** → ảnh PNG.
 - Vì sao **cùng một quy trình** áp cho cả ba phương pháp: bảo đảm tính nhất quán khi so sánh.
 - Vì sao có bước dilation: mask dự đoán thường sát nét chữ, để lại viền chữ sau khi xóa.
@@ -247,7 +247,7 @@ Trên sơ đồ phải phân biệt bằng màu/khối:
 
 **Nguồn:** `src/manga_text_seg/translation/`; `outputs/translation/spec004-live/run.json`.
 
-### 3.7. Thiết kế web demo — `[TV4]`
+### 3.7. Thiết kế web demo — `[TV1]`
 - Kiến trúc: FastAPI + Uvicorn, phục vụ một bundle giao diện tĩnh.
 - **Ba route đang chạy thật** trong bản demo:
   `GET /api/demo/catalog`, `GET /api/demo/page?image_id=<manga>/<page>`, `GET /api/artifact?ref=<root>/<tail>`.
@@ -261,7 +261,7 @@ Trên sơ đồ phải phân biệt bằng màu/khối:
 
 ## PHẦN 4. THỰC NGHIỆM, ĐÁNH GIÁ, PHÂN TÍCH KẾT QUẢ
 
-### 4.1. Dữ liệu và giao thức đánh giá — `[TV4]`
+### 4.1. Dữ liệu và giao thức đánh giá — `[TV1]`
 - **Nguồn dữ liệu**: ảnh và mask phân đoạn từ bộ công khai Manga-Text-Segmentation, dựa trên **Manga109**.
 - **Quy mô**: **390 ảnh thuộc 45 manga** — dùng nhất quán cho cả bốn phương pháp.
 - Ánh xạ `<manga>/<page_id>`, ví dụ `AisazuNihaIrarenai/000`.
@@ -284,7 +284,7 @@ Mỗi người ghi cấu hình của **phần mình chạy**:
 
 **Nguồn:** `deliverables/spec002/run.json`; `outputs/inpainting/spec003-main/performance.json` (khối `runtime`).
 
-### 4.3. Kết quả benchmark định lượng — `[TV4]` (bảng), `[TV1][TV2][TV3]` (đọc số của mình)
+### 4.3. Kết quả benchmark định lượng — `[TV1]` (bảng), `[TV4][TV2][TV3]` (đọc số của mình)
 
 **Bảng chính của báo cáo.** Chép đúng số từ `deliverables/spec002/comparison.csv`:
 
@@ -311,7 +311,7 @@ Mỗi người ghi cấu hình của **phần mình chạy**:
 
 ### 4.4. Phân tích từng phương pháp — mỗi người một mục
 
-#### 4.4.1. Manga-Text-Segmentation — `[TV1]`
+#### 4.4.1. Manga-Text-Segmentation — `[TV4]`
 - Trình bày **quy trình đã thực hiện**: chạy notebook trên Colab, xuất prediction mask theo đúng hợp đồng.
 - Trình bày **lý do không có kết quả điểm**: thiếu 5 checkpoint fold (mỗi file ~344 MB) từ `github.com/juvian/Manga-Text-Segmentation`, và không xác nhận được revision đã ghim `de8f148c78978d70ad0e0ae3242566da6d70f3a5`.
 - Trình bày **quyết định**: chọn REISSUE Path 1 → phương pháp được ghi nhận trạng thái `unavailable`, **không được chấm điểm**.
@@ -338,7 +338,7 @@ Mỗi người ghi cấu hình của **phần mình chạy**:
 
 **Nguồn:** `deliverables/spec002/comparison.csv`; `deliverables/spec002/unetpp-efficientnetv2/`; `outputs/inpainting/spec003-main/selection.json`.
 
-#### 4.4.4. Baseline cổ điển — `[TV4]`
+#### 4.4.4. Baseline cổ điển — `[TV1]`
 - **Adaptive Threshold là biến thể tốt nhất** (IoU 0.0711 / F1 0.1261) và **được chọn làm đại diện** cho baseline cổ điển trong các bước sau.
 - Đặc trưng chung của họ cổ điển: **Recall rất cao nhưng Precision rất thấp** — edges đạt Recall 0.9857 với Precision 0.0356; mser Recall 0.9549 với Precision 0.0452. Nghĩa là bắt gần hết chữ nhưng tô lan ra nền.
 - **Otsu tệ nhất** (IoU 0.0081) — ngưỡng toàn cục không phù hợp ảnh manga có nền gradient và screentone.
@@ -347,9 +347,9 @@ Mỗi người ghi cấu hình của **phần mình chạy**:
 
 **Nguồn:** `deliverables/spec002/comparison.csv`; `outputs/segmentation/default/metrics.csv`.
 
-### 4.5. Kết quả xóa và phục hồi — `[TV1]` (số liệu) + `[TV2]` (đánh giá định tính)
+### 4.5. Kết quả xóa và phục hồi — `[TV4]` (số liệu) + `[TV2]` (đánh giá định tính)
 
-#### 4.5.1. Thời gian inpainting — `[TV1]`
+#### 4.5.1. Thời gian inpainting — `[TV4]`
 390 mẫu mỗi tổ hợp, **0 lỗi**, CPU Intel64, Python 3.12.13:
 
 | Phương pháp | TELEA (s/ảnh) | NS (s/ảnh) |
@@ -410,7 +410,7 @@ Quy tắc `highest_iou_f1`, phương pháp `unetpp_efficientnetv2`:
 
 **Nguồn:** `outputs/translation/*/run.json`, `errors.json`; `outputs/translation/spec004-vilao/`.
 
-### 4.7. Giao diện phần mềm và hướng dẫn thực thi — `[TV4]`
+### 4.7. Giao diện phần mềm và hướng dẫn thực thi — `[TV1]`
 - **Ảnh chụp giao diện** web demo (`web-ui/index.html` trên nền bundle Stitch).
 - **Hướng dẫn thực thi** từng bước, kèm lệnh thật:
 
@@ -455,26 +455,26 @@ pytest -o addopts='' -q
 
 ## PHẦN 5. KẾT LUẬN
 
-### 5.1. Đánh giá những kết quả đã thực hiện được — `[CHUNG]`, TV4 chốt
+### 5.1. Đánh giá những kết quả đã thực hiện được — `[CHUNG]`, TV1 chốt
 
-Mỗi người viết **2–3 gạch đầu dòng** cho phần mình, TV4 gộp lại và viết đoạn mở/đoạn kết:
+Mỗi người viết **2–3 gạch đầu dòng** cho phần mình, TV1 gộp lại và viết đoạn mở/đoạn kết:
 
-- `[TV4]` Baseline cổ điển sáu biến thể hoàn chỉnh; quy trình kết nạp kết quả có kiểm tra và có công bố nhiễm bẩn; bảng benchmark 390 ảnh × 45 manga; web demo chạy được trên kết quả thật.
-- `[TV1]` Quy trình inpainting hoàn chỉnh, áp thống nhất cho mọi phương pháp, 390 mẫu × 3 phương pháp × 2 thuật toán, 0 lỗi; quyết định REISSUE Path 1 cho Manga-Text-Segmentation được ghi nhận minh bạch thay vì che giấu.
+- `[TV1]` Baseline cổ điển sáu biến thể hoàn chỉnh; quy trình kết nạp kết quả có kiểm tra và có công bố nhiễm bẩn; bảng benchmark 390 ảnh × 45 manga; web demo chạy được trên kết quả thật.
+- `[TV4]` Quy trình inpainting hoàn chỉnh, áp thống nhất cho mọi phương pháp, 390 mẫu × 3 phương pháp × 2 thuật toán, 0 lỗi; quyết định REISSUE Path 1 cho Manga-Text-Segmentation được ghi nhận minh bạch thay vì che giấu.
 - `[TV2]` Hệ thống board so sánh và đánh giá định tính theo năm tiêu chí; 60 ảnh board; quy tắc lựa chọn trang tái lập được.
 - `[TV3]` Pipeline OCR → dịch → render chạy end-to-end, cô lập lỗi hai mức, chạy lại có chọn lọc; run 28 trang hoàn chỉnh.
 
 **Kết luận kỹ thuật trung thực cần có**: trên bộ dữ liệu này, baseline cổ điển tốt nhất (adaptive) **vượt comic-text-detector** về IoU/F1, và **thua UNet++ EfficientNetV2**; nhưng kết quả của UNet++ **bị nhiễm bẩn hoàn toàn** nên không thể dùng để khẳng định ưu thế của học sâu. Đây là kết luận đúng và phải được viết ra.
 
 ### 5.2. Định hướng phát triển — `[CHUNG]`
-- `[TV1]` Bổ sung 5 checkpoint fold để chấm được Manga-Text-Segmentation theo đúng quy tắc LOFO.
+- `[TV4]` Bổ sung 5 checkpoint fold để chấm được Manga-Text-Segmentation theo đúng quy tắc LOFO.
 - `[TV2]` Gắn cờ artifact thủ công cho quy tắc `manual_artifact_flags` (hiện đang trống).
 - `[TV3]` Mở rộng đánh giá OCR/dịch/render lên nhiều trang hơn; hiện phần lớn run chỉ có 1 trang.
-- `[TV4]` Hoàn thiện 17 endpoint còn lại của Spec 005 (session, jobs, summary, reports, edit); mở rộng demo xử lý theo lô một chương truyện; tổng hợp tóm tắt xuyên suốt nhiều trang thành tóm tắt chương.
+- `[TV1]` Hoàn thiện 17 endpoint còn lại của Spec 005 (session, jobs, summary, reports, edit); mở rộng demo xử lý theo lô một chương truyện; tổng hợp tóm tắt xuyên suốt nhiều trang thành tóm tắt chương.
 
 ---
 
-## Tài liệu tham khảo — `[TV4]`
+## Tài liệu tham khảo — `[TV1]`
 
 Tám tài liệu từ đề cương, **giữ nguyên thứ tự**, mỗi tài liệu ghi rõ vị trí được tham chiếu trong báo cáo:
 
@@ -493,31 +493,31 @@ Tám tài liệu từ đề cương, **giữ nguyên thứ tự**, mỗi tài li
 
 | # | Tên hình | Người cấp | Nguồn |
 |---|---|---|---|
-| 1 | Sơ đồ khối pipeline tổng thể | TV4 | `README.md` |
-| 2 | Sơ đồ nhánh baseline cổ điển | TV4 | `src/manga_text_seg/` |
-| 3 | Kiến trúc U-Net + ResNet34 | TV1 | `notebooks/deliverables/manga-text-segmentation/` |
+| 1 | Sơ đồ khối pipeline tổng thể | TV1 | `README.md` |
+| 2 | Sơ đồ nhánh baseline cổ điển | TV1 | `src/manga_text_seg/` |
+| 3 | Kiến trúc U-Net + ResNet34 | TV4 | `notebooks/deliverables/manga-text-segmentation/` |
 | 4 | Kiến trúc comic-text-detector | TV2 | `notebooks/deliverables/comic-text-detector/` |
 | 5 | Kiến trúc UNet++ + EfficientNetV2 | TV3 | `notebooks/deliverables/unetpp-efficientnetv2/` |
-| 6 | Biểu đồ so sánh IoU/F1 theo phương pháp | TV4 | `deliverables/spec002/charts/accuracy-by-method.png` |
+| 6 | Biểu đồ so sánh IoU/F1 theo phương pháp | TV1 | `deliverables/spec002/charts/accuracy-by-method.png` |
 | 7 | Mask dự đoán của các phương pháp trên cùng một trang | TV2 | `outputs/inpainting/spec003-main/boards/*/highest_iou_f1/` |
 | 8 | Board so sánh xóa và inpainting | TV2 | `outputs/inpainting/spec003-main/boards/` |
 | 9 | Ca thành công điển hình | TV2 | board `highest_iou_f1` |
 | 10 | Ca thất bại điển hình (`EvaLady/006`) | TV3 | board `lowest_iou_f1` |
 | 11 | Kết quả OCR → dịch → render | TV3 | `outputs/translation/spec004-vilao/` |
-| 12 | Giao diện web demo | TV4 | `web-ui/index.html` |
+| 12 | Giao diện web demo | TV1 | `web-ui/index.html` |
 
 ## Danh sách bảng biểu (dự kiến)
 
 | # | Tên bảng | Người cấp | Nguồn |
 |---|---|---|---|
-| 1 | Tiêu chí đánh giá và mục đích đo lường | TV4 | đề cương, Bảng 2 |
+| 1 | Tiêu chí đánh giá và mục đích đo lường | TV1 | đề cương, Bảng 2 |
 | 2 | Tham số và cấu hình từng phương pháp | CHUNG | `deliverables/spec002/run.json` |
-| 3 | Kết quả benchmark định lượng (IoU/P/R/F1/thời gian) | TV4 | `deliverables/spec002/comparison.csv` |
-| 4 | Thời gian inpainting theo phương pháp × thuật toán | TV1 | `outputs/inpainting/spec003-main/performance.json` |
+| 3 | Kết quả benchmark định lượng (IoU/P/R/F1/thời gian) | TV1 | `deliverables/spec002/comparison.csv` |
+| 4 | Thời gian inpainting theo phương pháp × thuật toán | TV4 | `outputs/inpainting/spec003-main/performance.json` |
 | 5 | Năm trang được chọn cho pipeline demo | TV2 | `outputs/inpainting/spec003-main/selection.json` |
 | 6 | Cấu hình OCR / dịch / render | TV3 | `outputs/translation/*/run.json` |
 | 7 | So sánh trực quan inpainting theo năm tiêu chí | TV2 | đề cương, Bảng 3 |
-| 8 | Mức độ đóng góp của các thành viên | TV4 | trang bìa |
+| 8 | Mức độ đóng góp của các thành viên | TV1 | trang bìa |
 
 ---
 
@@ -525,7 +525,7 @@ Tám tài liệu từ đề cương, **giữ nguyên thứ tự**, mỗi tài li
 
 Đọc mục này trước khi viết bất cứ phần nào. Bốn điểm dưới đây là **điểm mạnh** của báo cáo nếu trình bày trung thực, và là **gian lận học thuật** nếu bị làm mờ.
 
-### 7.1. Manga-Text-Segmentation không có điểm — `[TV1]`
+### 7.1. Manga-Text-Segmentation không có điểm — `[TV4]`
 
 Phương pháp **không chấm được**, lý do là thiếu checkpoint. **Không được** suy diễn từ kết quả Colab thăm dò, **không được** lấy số từ nguồn khác, **không được** bỏ dòng này khỏi bảng. Ghi trạng thái `unavailable` và lý do.
 
@@ -545,7 +545,7 @@ Mask dự đoán là mask duy nhất được mở. Board, hình so sánh, ảnh
 
 Run record ghi **tên biến môi trường** (`ANTHROPIC_API_KEY`, `ANTHROPIC_AUTH_TOKEN`, `MANGA_TRANSLATE_API_KEY`). **Giá trị khoá không được xuất hiện ở bất kỳ đâu** trong báo cáo, hình, hay phụ lục.
 
-### 7.6. Không nêu tên miền `data/no-need-to-read/` như một phần dữ liệu — `[TV4]`
+### 7.6. Không nêu tên miền `data/no-need-to-read/` như một phần dữ liệu — `[TV1]`
 
 Thư mục này nằm ngoài phạm vi xử lý. Chỉ nhắc một câu ở Phần 4.1 nếu cần, và nói rõ nó **không được đọc**.
 
@@ -556,11 +556,11 @@ Thư mục này nằm ngoài phạm vi xử lý. Chỉ nhắc một câu ở Ph�
 | Mốc | Việc | Ai |
 |---|---|---|
 | Ngày 1–2 | Phần 2 (mỗi người viết phương pháp của mình) | cả bốn, song song |
-| Ngày 2–3 | Phần 3.4 `[TV1]`, 3.5 `[TV2]`, 3.6 `[TV3]` | TV1, TV2, TV3 |
-| Ngày 3–4 | Phần 4.4 mỗi người một mục; 4.5.2 board | TV1, TV2, TV3 |
-| Ngày 4–5 | Phần 4.6 `[TV3]`; Phần 1 + 4.1 + 4.3 + 4.7 `[TV4]` | TV3, TV4 |
-| Ngày 5 | Phần 5 — mỗi người gửi gạch đầu dòng, TV4 gộp | cả bốn |
-| Ngày 6 | Mục lục, danh mục, danh sách hình/bảng, định dạng, rà mục 7 | TV4 |
-| Ngày 6 | PPT slides | cả bốn, TV4 gộp |
+| Ngày 2–3 | Phần 3.4 `[TV4]`, 3.5 `[TV2]`, 3.6 `[TV3]` | TV4, TV2, TV3 |
+| Ngày 3–4 | Phần 4.4 mỗi người một mục; 4.5.2 board | TV4, TV2, TV3 |
+| Ngày 4–5 | Phần 4.6 `[TV3]`; Phần 1 + 4.1 + 4.3 + 4.7 `[TV1]` | TV3, TV1 |
+| Ngày 5 | Phần 5 — mỗi người gửi gạch đầu dòng, TV1 gộp | cả bốn |
+| Ngày 6 | Mục lục, danh mục, danh sách hình/bảng, định dạng, rà mục 7 | TV1 |
+| Ngày 6 | PPT slides | cả bốn, TV1 gộp |
 
 **Chốt trước khi nộp**: rà lại toàn báo cáo xem có câu nào vô tình khẳng định ưu thế của học sâu dựa trên điểm của UNet++ mà chưa kèm cảnh báo nhiễm bẩn. Đó là lỗi dễ mắc nhất và là lỗi nặng nhất.

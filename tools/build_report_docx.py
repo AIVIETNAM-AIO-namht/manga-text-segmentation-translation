@@ -129,6 +129,16 @@ REFERENCES = [
     "Gonzalez, R. C., Woods, R. E. Digital Image Processing. — Phần 2.2.",
 ]
 
+SCHEDULE = [
+    ("Ngày 1–2", "Phần 2 (mỗi người viết phương pháp của mình)", "cả bốn, song song"),
+    ("Ngày 2–3", "Phần 3.4 [TV4], 3.5 [TV2], 3.6 [TV3]", "TV4, TV2, TV3"),
+    ("Ngày 3–4", "Phần 4.4 mỗi người một mục; 4.5.2 board", "TV4, TV2, TV3"),
+    ("Ngày 4–5", "Phần 4.6 [TV3]; Phần 1 + 4.1 + 4.3 + 4.7 [TV1]", "TV3, TV1"),
+    ("Ngày 5", "Phần 5 — mỗi người gửi gạch đầu dòng, TV1 gộp", "cả bốn"),
+    ("Ngày 6", "Mục lục, danh mục, danh sách hình/bảng, định dạng, rà mục A", "TV1"),
+    ("Ngày 6", "PPT slides", "cả bốn, TV1 gộp"),
+]
+
 SHELL = """uv sync
 manga-text-seg run --config configs/segmentation.json --method adaptive
 manga-text-seg status --config configs/dl.json
@@ -302,7 +312,7 @@ def build(force=False):
     section(doc, "1.1. Phát biểu bài toán", 2, "[TV1]", "đề cương mục 1")
     section(doc, "1.2. Mục đích, yêu cầu cần thực hiện", 2, "[TV1]", "đề cương mục 2",
             note="Năm mục tiêu, mỗi mục ghi rõ đã đạt hay chưa. Mục tiêu 2 chỉ ĐẠT MỘT PHẦN — "
-                 "Manga-Text-Segmentation không chấm được (mục 7.1 của outline).")
+                 "Manga-Text-Segmentation không chấm được (Phụ lục A.1).")
     section(doc, "1.3. Phạm vi và đối tượng", 2, "[TV1]",
             "đề cương mục 3; README.md; ONBOARDING.md")
 
@@ -319,12 +329,12 @@ def build(force=False):
     section(doc, "2.3. Manga-Text-Segmentation — U-Net + ResNet34", 2, "[TV4]",
             "notebooks/deliverables/manga-text-segmentation/README.md; benchmark/availability.json",
             note="Kết mục bằng câu chuyển ý: phương pháp đã vào quy trình nhưng KHÔNG chấm được điểm "
-                 "(mục 7.1, 4.4.1).")
+                 "(Phụ lục A.1, 4.4.1).")
     section(doc, "2.4. comic-text-detector — YOLOv5 + DBNet + U-Net", 2, "[TV2]",
             "notebooks/deliverables/comic-text-detector/; đề cương mục 4")
     section(doc, "2.5. UNet++ EfficientNetV2 (ContemporaryCat)", 2, "[TV3]",
             "notebooks/deliverables/unetpp-efficientnetv2/; đề cương mục 4",
-            note="Nói trước cảnh báo nhiễm bẩn dữ liệu ở đây; phân tích ở 4.4.3 và mục 7.2.")
+            note="Nói trước cảnh báo nhiễm bẩn dữ liệu ở đây; phân tích ở 4.4.3 và Phụ lục A.2.")
     section(doc, "2.6. Inpainting: TELEA và Navier–Stokes", 2, "[TV4]",
             "src/manga_text_seg/inpaint.py; configs/inpainting.json")
     section(doc, "2.7. OCR, dịch máy, render chữ", 2, "[TV3]",
@@ -354,10 +364,10 @@ def build(force=False):
             "outputs/inpainting/spec003-main/selection.json",
             note="Bốn quy tắc × 5 trang: highest_iou_f1, lowest_iou_f1, most_false_positives, "
                  "most_false_negatives. Quy tắc thứ năm manual_artifact_flags hiện TRỐNG "
-                 "(shortfall: 5) — xem mục 7.4.")
+                 "(shortfall: 5) — xem Phụ lục A.4.")
     section(doc, "3.6. Thiết kế trích vùng, OCR, dịch, render", 2, "[TV3]",
             "src/manga_text_seg/translation/; outputs/translation/spec004-live/run.json",
-            note="Ghi provider/model nhưng TUYỆT ĐỐI không ghi giá trị khoá API (mục 7.5).")
+            note="Ghi provider/model nhưng TUYỆT ĐỐI không ghi giá trị khoá API (Phụ lục A.5).")
     section(doc, "3.7. Thiết kế web demo", 2, "[TV1]",
             "src/manga_text_seg/web/demo.py, schemas.py, security.py; web-ui/index.html; "
             "stitch_manga_translation_pipeline_workbench/",
@@ -369,7 +379,7 @@ def build(force=False):
     section(doc, "4.1. Dữ liệu và giao thức đánh giá", 2, "[TV1]",
             "benchmark/; deliverables/spec002/run.json; đề cương mục 5.1, 5.3",
             note="390 ảnh / 45 manga. KHÔNG dùng Pixel Accuracy. KHÔNG dùng PSNR/SSIM cho inpainting. "
-                 "Thư mục data/no-need-to-read/ nằm ngoài phạm vi, không được đọc (mục 7.6).")
+                 "Thư mục data/no-need-to-read/ nằm ngoài phạm vi, không được đọc (Phụ lục A.6).")
     section(doc, "4.2. Cấu hình phần cứng và tham số", 2, "[CHUNG]",
             "deliverables/spec002/run.json; outputs/inpainting/spec003-main/performance.json",
             note="Mỗi người ghi cấu hình phần mình chạy. Ghi cả sha256 của checkpoint đã dùng.")
@@ -378,7 +388,7 @@ def build(force=False):
             "deliverables/spec002/comparison.csv, comparison.json, run.json",
             note="Phải ghi kèm ngay dưới bảng: độ lệch chuẩn từng chỉ số (IoU của UNet++ có std 0.1219 "
                  "— phân tán rất lớn); cột công bố nhiễm bẩn; dòng Manga-Text-Segmentation ghi rõ lý do "
-                 "không chấm (mục 7.1).")
+                 "không chấm (Phụ lục A.1).")
     table(doc,
           ("Phương pháp", "IoU", "Precision", "Recall", "F1", "Thời gian/ảnh (s)", "Thiết bị"),
           BENCHMARK)
@@ -390,7 +400,7 @@ def build(force=False):
             "benchmark/availability.json; REISSUE.md; notebooks/deliverables/manga-text-segmentation/",
             note="Thiếu 5 checkpoint fold (~344 MB mỗi file), không xác nhận được revision đã ghim "
                  "de8f148c78978d70ad0e0ae3242566da6d70f3a5 → chọn REISSUE Path 1, trạng thái "
-                 "unavailable. Đây là kết quả âm hợp lệ, báo cáo trung thực (mục 7.1). "
+                 "unavailable. Đây là kết quả âm hợp lệ, báo cáo trung thực (Phụ lục A.1). "
                  "Không suy diễn, không lấy số từ nguồn khác, không bỏ dòng khỏi bảng.")
     section(doc, "4.4.2. comic-text-detector", 3, "[TV2]",
             "deliverables/spec002/comparison.csv; deliverables/spec002/comic-text-detector/",
@@ -402,7 +412,7 @@ def build(force=False):
             note="IoU 0.1375 / F1 0.2240 — cao nhất trong các phương pháp chấm được, NHƯNG nhiễm bẩn "
                  "hoàn toàn: checkpoint huấn luyện trên toàn bộ 45 cuốn sách của tập ground truth, "
                  "nên mọi điểm số là điểm trên tập huấn luyện. Câu này phải nằm ngay cạnh bảng kết quả, "
-                 "không để ở phụ lục (mục 7.2). Ca thất bại điển hình: EvaLady/006, IoU = 0, "
+                 "không để ở phụ lục (Phụ lục A.2). Ca thất bại điển hình: EvaLady/006, IoU = 0, "
                  "310.000 pixel dương tính giả.")
     section(doc, "4.4.4. Baseline cổ điển", 3, "[TV1]",
             "deliverables/spec002/comparison.csv; outputs/segmentation/default/metrics.csv",
@@ -422,7 +432,7 @@ def build(force=False):
             note="Nhận xét theo đúng năm tiêu chí của đề cương: mức độ xóa hoàn toàn văn bản; mức độ "
                  "bỏ sót; mức độ xóa nhầm vùng nền; độ tự nhiên vùng sau inpainting; artifact/viền/nhiễu. "
                  "60 ảnh board (3 phương pháp × 4 quy tắc × 5 trang). Board KHÔNG được chứa ground truth "
-                 "(mục 7.3).")
+                 "(Phụ lục A.3).")
     section(doc, "4.5.3. Năm trang được chọn cho pipeline demo", 3, "[TV2]",
             "outputs/inpainting/spec003-main/selection.json",
             note="Quy tắc highest_iou_f1, phương pháp unetpp_efficientnetv2.")
@@ -431,7 +441,7 @@ def build(force=False):
     section(doc, "4.6. Kết quả OCR, dịch, render", 3, "[TV3]",
             "outputs/translation/*/run.json, errors.json; outputs/translation/spec004-vilao/",
             note="Ghi TÊN biến môi trường chứa khoá (ANTHROPIC_API_KEY, ANTHROPIC_AUTH_TOKEN, "
-                 "MANGA_TRANSLATE_API_KEY) — tuyệt đối không ghi giá trị khoá (mục 7.5). "
+                 "MANGA_TRANSLATE_API_KEY) — tuyệt đối không ghi giá trị khoá (Phụ lục A.5). "
                  "Ghi nhận các vùng/ảnh lỗi, không che.")
     table(doc, ("Run", "Phương pháp phân đoạn", "Đích", "Provider / Model", "Số trang"), RUNS)
 
@@ -458,6 +468,50 @@ def build(force=False):
     for i, ref in enumerate(REFERENCES, 1):
         para(doc, f"[{i}] {ref}", after=Pt(4))
 
+    # ---- Phụ lục A: việc PHẢI nói thật (đọc trước khi viết bất cứ phần nào)
+    heading(doc, "PHỤ LỤC A. VIỆC PHẢI NÓI THẬT — KHÔNG ĐƯỢC CHE, KHÔNG ĐƯỢC BỊA",
+            1, page_break=True)
+    para(doc, "Đọc mục này trước khi viết bất cứ phần nào. Bốn điểm dưới đây là điểm mạnh của báo cáo "
+              "nếu trình bày trung thực, và là gian lận học thuật nếu bị làm mờ. Phụ lục này KHÔNG in "
+              "vào báo cáo nộp — nó là danh sách rà soát.",
+         size=SMALL, italic=True, color=GRAY)
+
+    section(doc, "A.1. Manga-Text-Segmentation không có điểm", 2, "[TV4]",
+            "benchmark/availability.json; REISSUE.md",
+            note="Phương pháp KHÔNG chấm được, lý do là thiếu checkpoint. KHÔNG được suy diễn từ kết quả "
+                 "Colab thăm dò, KHÔNG được lấy số từ nguồn khác, KHÔNG được bỏ dòng này khỏi bảng. "
+                 "Ghi trạng thái unavailable và lý do.")
+    section(doc, "A.2. UNet++ EfficientNetV2 nhiễm bẩn hoàn toàn", 2, "[TV3]",
+            "deliverables/spec002/unetpp-efficientnetv2/",
+            note="Đây là phương pháp có điểm cao nhất VÀ là phương pháp duy nhất có công bố nhiễm bẩn ở "
+                 "mức nặng nhất: checkpoint được huấn luyện trên toàn bộ 45 cuốn sách của tập ground "
+                 "truth. Mọi điểm số của nó LÀ điểm trên tập huấn luyện. Phải viết câu này ngay cạnh "
+                 "bảng kết quả, không được để ở phụ lục.")
+    section(doc, "A.3. Không có ground truth trong bất kỳ hình nào", 2, "[TV2][TV3]",
+            "outputs/inpainting/spec003-main/boards/",
+            note="Mask dự đoán là mask duy nhất được mở. Board, hình so sánh, ảnh minh họa KHÔNG được "
+                 "chứa ground truth. Không có chế độ GT-assisted.")
+    section(doc, "A.4. Quy tắc manual_artifact_flags trả về rỗng", 2, "[TV2]",
+            "outputs/inpainting/spec003-main/selection.json",
+            note="selection.json ghi manual_artifact_flags với shortfall: 5 — tức KHÔNG có trang nào "
+                 "được gắn cờ thủ công. Nếu phần đánh giá định tính có nhắc tới quy tắc này thì phải nói "
+                 "rõ nó chưa được thực hiện, KHÔNG được viết như thể đã có kết quả.")
+    section(doc, "A.5. Không ghi giá trị khoá API", 2, "[TV3]",
+            "outputs/translation/*/run.json",
+            note="Run record ghi TÊN biến môi trường (ANTHROPIC_API_KEY, ANTHROPIC_AUTH_TOKEN, "
+                 "MANGA_TRANSLATE_API_KEY). Giá trị khoá KHÔNG được xuất hiện ở bất kỳ đâu trong báo "
+                 "cáo, hình, hay phụ lục.")
+    section(doc, "A.6. Không nêu data/no-need-to-read/ như một phần dữ liệu", 2, "[TV1]", "—",
+            note="Thư mục này nằm ngoài phạm vi xử lý. Chỉ nhắc một câu ở Phần 4.1 nếu cần, và nói rõ "
+                 "nó KHÔNG được đọc.")
+
+    # ---- Phụ lục B: nhịp làm việc
+    heading(doc, "PHỤ LỤC B. NHỊP LÀM VIỆC ĐỀ XUẤT", 1, page_break=True)
+    table(doc, ("Mốc", "Việc", "Ai"), SCHEDULE)
+    para(doc, "Chốt trước khi nộp: rà lại toàn báo cáo xem có câu nào vô tình khẳng định ưu thế của học "
+              "sâu dựa trên điểm của UNet++ mà chưa kèm cảnh báo nhiễm bẩn. Đó là lỗi dễ mắc nhất và là "
+              "lỗi nặng nhất.", size=SMALL, bold=True, color=WARN)
+
     doc.core_properties.title = "Báo cáo cuối kỳ — Xử lý ảnh số — Nhóm 9"
     doc.core_properties.comments = (
         "Khung sinh từ tools/build_report_docx.py. Nội dung chi tiết đọc ở REPORT-OUTLINE.md."
@@ -476,8 +530,8 @@ def verify():
             round(s.bottom_margin.cm, 1)) == (2.0, 2.0, 2.0), "right/top/bottom margin must be 2cm"
     assert d.styles["Normal"].font.size == BODY, "body font must be 13pt"
     breaks = sum(1 for p in d.paragraphs if p.paragraph_format.page_break_before)
-    assert breaks == 11, f"page break count changed: {breaks}"
-    assert len(d.tables) == 9, f"table count changed: {len(d.tables)}"
+    assert breaks == 13, f"page break count changed: {breaks}"
+    assert len(d.tables) == 10, f"table count changed: {len(d.tables)}"
     print(f"ok: A4, margins 3/2/2/2, 13pt, {breaks} page breaks, {len(d.tables)} tables")
 
 
