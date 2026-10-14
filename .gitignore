@@ -66,3 +66,7 @@ tools/_diag_tmp/
 
 .specify/
 .claude/
+
+# Local scratch: browser profiles, DOM dumps, extracted PDF/DOCX text.
+# Never a deliverable; 59 MB of Edge profile data lives here.
+.scratch/
