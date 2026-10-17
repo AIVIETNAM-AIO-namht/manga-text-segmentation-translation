@@ -70,3 +70,12 @@ tools/_diag_tmp/
 # Local scratch: browser profiles, DOM dumps, extracted PDF/DOCX text.
 # Never a deliverable; 59 MB of Edge profile data lives here.
 .scratch/
+
+# The submission staging area and its ZIP. `.drive-upload/` holds the 390
+# source pages of Manga109-s, which readme.txt rule 1 forbids redistributing;
+# this repo is public, so neither may ever be committed here.
+.drive-upload/
+09_24110109_Huynh-Thuyen-Nam/
+
+# Word/Excel lock files (~$name.docx) left behind when an office app is open.
+~$*

@@ -383,7 +383,18 @@
        overlay is stacked on top of it rather than beside it. */
     .chain-viewport { position: relative; }
     .chain-viewport img { max-width: 100%; max-height: 380px; object-fit: contain; display: block; }
-    .chain-viewport .overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; max-height: 380px; }
+    .chain-viewport { cursor: zoom-in; }
+    /* Every host that draws an overlay stacks it on its own image and lets
+       fitStage position it from that image's rendered box, so the rule only
+       has to say "on top". */
+    .overlay-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    /* The svg is laid over the whole host while the image it annotates is
+       letterboxed inside it, so the svg covers pixels the image does not. Left
+       hit-testable it swallows every click that misses a shape, and the image
+       underneath never sees one. Hand the empty area back to the image; the
+       shapes take their own clicks again below. */
+    .overlay-svg { pointer-events: none; }
+    .overlay-svg .interactive-region { pointer-events: all; }
 
     .download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .download-btn {
@@ -401,6 +412,48 @@
       text-decoration: none;
     }
     .download-btn:hover { background: #e2e8f0; }
+
+    /* Zoom dialog: a second host for whichever stage was clicked, so the region
+       overlay scales with the image instead of being left behind at 380px. */
+    .zoom-dialog {
+      width: min(96vw, 1440px);
+      max-width: none;
+      max-height: 92vh;
+      padding: 0;
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      color: var(--text);
+    }
+    .zoom-dialog::backdrop { background: rgba(11, 28, 48, 0.72); }
+    .zoom-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 12px;
+      background: var(--surface-subtle);
+      border-bottom: 1px solid var(--surface-border);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .zoom-actions { display: flex; gap: 6px; }
+    .zoom-actions .download-btn { cursor: pointer; }
+    .zoom-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f8fafc;
+      overflow: auto;
+      max-height: calc(92vh - 46px);
+    }
+    .zoom-stage img {
+      max-width: 100%;
+      max-height: calc(92vh - 46px);
+      object-fit: contain;
+      display: block;
+    }
 
     .region-card-row {
       background: var(--surface-subtle);
@@ -884,6 +937,19 @@
   <div id="footer-pipeline">Loading recorded pipeline…</div>
 </footer>
 
+<!-- ZOOM DIALOG — one host, reused for every card image. -->
+<dialog class="zoom-dialog" id="zoom-dialog">
+  <div class="zoom-head">
+    <span id="zoom-title">Artifact</span>
+    <div class="zoom-actions">
+      <button class="download-btn" id="zoom-copy" type="button">Copy Image</button>
+      <button class="download-btn" id="zoom-download" type="button">Download PNG</button>
+      <button class="download-btn" id="zoom-close" type="button">Close</button>
+    </div>
+  </div>
+  <div class="zoom-stage" id="zoom-stage"></div>
+</dialog>
+
 <!-- VANILLA JS TAB & STATE CONTROLLER -->
 <script>
   function switchTab(tabId) {
@@ -899,6 +965,9 @@
     if (activeView) activeView.classList.add('is-active');
     if (activeBtn) activeBtn.setAttribute('aria-current', 'page');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    /* A hidden view has no layout box, so the overlay keeps whatever geometry
+       it had when it was last on screen — stale after a resize on another tab. */
+    refitStages();
   }
 
   function setLayout(mode) {
@@ -1030,7 +1099,7 @@
      overlay therefore takes its viewBox from the loaded image, and is sized to
      the image's rendered box rather than the viewport's, because the image is
      object-fit: contain inside a fixed-height flex box. */
-  function mountStage(host, ref, regions, id) {
+  function mountStage(host, ref, regions, id, label) {
     if (!host) return;
     host.innerHTML = '';
     if (!ref) {
@@ -1040,6 +1109,7 @@
 
     const img = document.createElement('img');
     img.alt = (id || 'artifact') + ' (recorded)';
+    img.title = 'Click to enlarge';
     img.src = artURL(ref);
     host.appendChild(img);
 
@@ -1071,8 +1141,16 @@
       });
     }
 
-    const stage = { img: img, svg: svg };
+    const stage = {
+      id: id, ref: ref, img: img, svg: svg,
+      label: label || id || 'Artifact', regions: regions || null
+    };
     if (id) STAGES[id] = stage;
+
+    /* Clicking the image enlarges it. The listener goes on the image, not the
+       viewport: the region overlay sits on top of the image, so a click on a
+       region still selects that region instead of opening the dialog. */
+    if (id !== 'zoom') img.addEventListener('click', function () { openZoom(stage); });
 
     const fit = function () { fitStage(stage); };
     if (img.complete) fit(); else img.addEventListener('load', fit);
@@ -1080,6 +1158,9 @@
 
   function fitStage(stage) {
     if (!stage.svg || !stage.img) return;
+    /* A closed dialog still holds its stage; with no layout box there is
+       nothing to fit to, and the overlay keeps the geometry it last had. */
+    if (!stage.img.offsetWidth && !stage.img.offsetHeight) return;
     const w = stage.img.naturalWidth || 1;
     const h = stage.img.naturalHeight || 1;
     stage.svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
@@ -1093,6 +1174,105 @@
 
   function refitStages() {
     Object.keys(STAGES).forEach(function (k) { fitStage(STAGES[k]); });
+  }
+
+  /* -------------------------------------------------------------- zooming */
+
+  /* The card image opens enlarged in a dialog that mounts the very same stage
+     again — image, recorded overlay, region selection — instead of a bare
+     <img>. Opening the artifact URL in a tab can never show the strokes: the
+     SVG is a DOM sibling of the image, and the recorded PNG carries no strokes
+     of its own. The dialog keeps them, and "Copy Image" / "Download PNG" hand
+     back the composited canvas for anyone who wants the overlay in a file. */
+  function zoomStage() {
+    const dialog = $('zoom-dialog');
+    const host = $('zoom-stage');
+    const stage = STAGES.zoom;
+    if (!dialog || !host || !stage || !stage.img) return;
+
+    const title = $('zoom-title');
+    if (title) title.textContent = stage.label;
+
+    const fit = function () { fitStage(stage); };
+    if (stage.img.complete) fit(); else stage.img.addEventListener('load', fit);
+    dialog.showModal();
+    /* showModal() is what gives the dialog its layout box, so the fit above
+       runs before the image has a rendered size. Fit once more on the next
+       frame, which is also what the scroll container needs. */
+    requestAnimationFrame(function () {
+      fit();
+      host.scrollTop = 0;
+      host.scrollLeft = 0;
+    });
+  }
+
+  function openZoom(stage) {
+    if (!stage || !stage.ref) return;
+    const host = $('zoom-stage');
+    if (!host) return;
+    const dialog = $('zoom-dialog');
+    if (!dialog || typeof dialog.showModal !== 'function') {
+      /* No <dialog> support: the recorded artifact still opens in a tab. */
+      window.open(artURL(stage.ref), '_blank');
+      return;
+    }
+    /* The dialog is a second host for the same stage, so it gets the recorded
+       regions again and stays in step with the card's selection. */
+    mountStage(host, stage.ref, stage.regions, 'zoom', stage.label);
+    /* The fresh shapes carry the default fill, so re-apply whatever region the
+       page already has selected. */
+    paintSelectedShape(SELECTED);
+    zoomStage();
+  }
+
+  /* The composited artifact: the image as served, plus the strokes and fills
+     this page draws on top of it. Same-origin, so the canvas can be exported. */
+  function composeStage(stage, cb) {
+    if (!stage || !stage.img) return cb(null);
+    const img = stage.img;
+    const done = function () {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth || 1;
+      canvas.height = img.naturalHeight || 1;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      if (stage.svg) {
+        /* The strokes are painted by the browser at display scale and held at 2
+           CSS pixels by vector-effect, so a straight re-render at the page's own
+           pixel size would draw them invisibly thin. Restate the weight the
+           screen shows instead: the display-to-natural ratio, applied to the
+           same 2 / 3 px the shapes carry. */
+        const clone = stage.svg.cloneNode(true);
+        clone.setAttribute('width', canvas.width);
+        clone.setAttribute('height', canvas.height);
+        const shown = img.offsetWidth || canvas.width;
+        const k = canvas.width / shown;
+        clone.querySelectorAll('polygon, rect').forEach(function (shape) {
+          shape.removeAttribute('vector-effect');
+          shape.setAttribute('stroke-width',
+            (shape.getAttribute('stroke-width') === '3' ? 3 : 2) * k);
+        });
+        const markup = new XMLSerializer().serializeToString(clone);
+        const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(markup);
+        const layer = new Image();
+        layer.onload = function () {
+          ctx.drawImage(layer, 0, 0, canvas.width, canvas.height);
+          cb(canvas);
+        };
+        layer.onerror = function () { cb(canvas); };
+        layer.src = url;
+        return;
+      }
+      cb(canvas);
+    };
+
+    if (img.complete && img.naturalWidth) done();
+    else img.addEventListener('load', done);
+  }
+
+  function zoomCanvas(cb) {
+    composeStage(STAGES.zoom, cb);
   }
 
   /* A polygon of three or more points is the real shape. Anything less is
@@ -1145,6 +1325,8 @@
     SELECTED = regionId;
     paintSelectedShape(regionId);
     highlightRegion(regionId);
+    /* A shape clicked inside the enlarged view selects in the card behind it,
+       and vice versa, because paintSelectedShape walks every mounted stage. */
   }
 
   /* -------------------------------------------------------- region inspector */
@@ -1290,12 +1472,17 @@
 
   function renderChain(bundle) {
     const a = bundle.artifacts;
-    mountStage($('chain-original'), a.original, null, 'chain-original');
-    mountStage($('chain-prediction-mask'), a.prediction_mask, null, 'chain-prediction-mask');
-    mountStage($('chain-processed-mask'), a.processed_mask, null, 'chain-processed-mask');
-    mountStage($('chain-inpainted'), a.inpainted, null, 'chain-inpainted');
-    mountStage($('chain-region-overlay'), a.rendered, bundle.regions, 'chain-region-overlay');
-    mountStage($('chain-rendered'), a.rendered, null, 'chain-rendered');
+    mountStage($('chain-original'), a.original, null, 'chain-original', '1. Original Page');
+    mountStage($('chain-prediction-mask'), a.prediction_mask, null, 'chain-prediction-mask',
+      '2. Prediction Mask');
+    mountStage($('chain-processed-mask'), a.processed_mask, null, 'chain-processed-mask',
+      '3. Processed Mask');
+    mountStage($('chain-inpainted'), a.inpainted, null, 'chain-inpainted',
+      '4. Inpainted Page');
+    mountStage($('chain-region-overlay'), a.rendered, bundle.regions, 'chain-region-overlay',
+      '5. Region Overlay — ' + (bundle.regions || []).length + ' regions');
+    mountStage($('chain-rendered'), a.rendered, null, 'chain-rendered',
+      '6. Rendered Translated Page');
 
     /* Each badge shows one recorded value and stays hidden when the run
        recorded none, so no card ever claims a number the bundle did not carry.
@@ -1645,6 +1832,46 @@
   if (recompute) {
     recompute.addEventListener('click', function () {
       if (DEMO.bundle) loadPage(DEMO.bundle.image_id);
+    });
+  }
+
+  const zoomDialog = $('zoom-dialog');
+  if (zoomDialog) {
+    zoomDialog.addEventListener('click', function (ev) {
+      /* The dialog fills its own backdrop, so a click outside the panel lands
+         on the dialog element itself. */
+      if (ev.target === zoomDialog) zoomDialog.close();
+    });
+  }
+
+  const zoomClose = $('zoom-close');
+  if (zoomClose) zoomClose.addEventListener('click', function () { zoomDialog.close(); });
+
+  const zoomDownload = $('zoom-download');
+  if (zoomDownload) {
+    zoomDownload.addEventListener('click', function () {
+      zoomCanvas(function (canvas) {
+        if (!canvas) return;
+        const a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = String((STAGES.zoom && STAGES.zoom.id) || 'artifact') + '.png';
+        a.click();
+      });
+    });
+  }
+
+  const zoomCopy = $('zoom-copy');
+  if (zoomCopy) {
+    zoomCopy.addEventListener('click', function () {
+      zoomCanvas(function (canvas) {
+        if (!canvas || !navigator.clipboard || !window.ClipboardItem) return;
+        canvas.toBlob(function (blob) {
+          if (!blob) return;
+          navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+            .then(function () { zoomCopy.textContent = 'Copied'; })
+            .catch(function () { zoomCopy.textContent = 'Copy blocked'; });
+        });
+      });
     });
   }
 
